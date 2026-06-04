@@ -1,0 +1,2946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPBME Lab – IIT Indore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --c-primary: #0F4C81;
+  --c-primary-dark: #0a3560;
+  --c-secondary: #2A7F9E;
+  --c-accent: #4DA8DA;
+  --c-accent-light: #e8f4fb;
+  --c-bg: #F8FAFC;
+  --c-white: #FFFFFF;
+  --c-card: #FFFFFF;
+  --c-text: #1F2937;
+  --c-muted: #6B7280;
+  --c-border: #E5E7EB;
+  --c-border-light: #F3F4F6;
+  --c-success: #059669;
+  --c-warning: #D97706;
+  --c-danger: #DC2626;
+  --c-info: #2563EB;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.05);
+  --nav-h: 70px;
+  --font-head: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-serif: 'Lora', serif;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--c-text); background: var(--c-bg); line-height: 1.6; overflow-x: hidden; }
+img { max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+input, select, textarea { font-family: inherit; }
+ul { list-style: none; }
+
+/* ===== UTILITY ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container-wide { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+.hidden { display: none !important; }
+.section { padding: 80px 0; }
+.section-sm { padding: 50px 0; }
+.text-center { text-align: center; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; font-family: var(--font-body); }
+.badge-blue { background: #EFF6FF; color: #1D4ED8; }
+.badge-green { background: #ECFDF5; color: #065F46; }
+.badge-amber { background: #FFFBEB; color: #92400E; }
+.badge-gray { background: #F9FAFB; color: #374151; border: 1px solid var(--c-border); }
+.badge-red { background: #FEF2F2; color: #991B1B; }
+.chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; background: var(--c-accent-light); color: var(--c-secondary); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; background: var(--c-border-light); color: var(--c-muted); }
+
+/* Btn */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; font-family: var(--font-body); transition: all 0.2s; cursor: pointer; }
+.btn-primary { background: var(--c-primary); color: #fff; }
+.btn-primary:hover { background: var(--c-primary-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,76,129,0.35); }
+.btn-secondary { background: transparent; color: var(--c-primary); border: 1.5px solid var(--c-primary); }
+.btn-secondary:hover { background: var(--c-primary); color: #fff; }
+.btn-outline { background: transparent; color: var(--c-text); border: 1.5px solid var(--c-border); }
+.btn-outline:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.btn-danger { background: var(--c-danger); color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-success { background: var(--c-success); color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn-lg { padding: 14px 32px; font-size: 16px; }
+.btn-icon { padding: 8px; border-radius: var(--radius-md); }
+
+/* Section headers */
+.section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-secondary); margin-bottom: 10px; font-family: var(--font-body); }
+.section-title { font-family: var(--font-head); font-size: clamp(26px, 4vw, 38px); font-weight: 700; color: var(--c-text); line-height: 1.2; margin-bottom: 16px; }
+.section-desc { font-size: 17px; color: var(--c-muted); max-width: 600px; line-height: 1.7; }
+.section-header { margin-bottom: 50px; }
+.section-header.center { text-align: center; }
+.section-header.center .section-desc { margin: 0 auto; }
+
+/* Cards */
+.card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 24px; transition: all 0.2s; }
+.card:hover { box-shadow: var(--shadow-md); border-color: transparent; transform: translateY(-2px); }
+.card-flat { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 24px; }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; color: var(--c-text); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--c-border); border-radius: var(--radius-md); font-size: 14px; color: var(--c-text); background: var(--c-white); transition: border-color 0.2s; outline: none; }
+.form-input:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(77,168,218,0.15); }
+.form-input::placeholder { color: #9CA3AF; }
+select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+textarea.form-input { resize: vertical; min-height: 100px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--c-border); margin: 24px 0; }
+
+/* Alert */
+.alert { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+.alert-success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #065F46; }
+.alert-error { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+.alert-info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+
+/* ===== TOP BAR ===== */
+.topbar { background: var(--c-primary-dark); color: rgba(255,255,255,0.85); font-size: 12px; padding: 7px 0; }
+.topbar .container { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.topbar-left, .topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar a:hover { color: #fff; }
+
+/* ===== NAVBAR ===== */
+.navbar { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--c-border); height: var(--nav-h); }
+.navbar .container { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.nav-brand { display: flex; align-items: center; gap: 12px; }
+.nav-logo { width: 44px; height: 44px; background: var(--c-primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 800; color: #fff; font-size: 14px; letter-spacing: -0.5px; flex-shrink: 0; }
+.nav-brand-text { line-height: 1.2; }
+.nav-brand-name { font-family: var(--font-head); font-weight: 700; font-size: 15px; color: var(--c-primary); }
+.nav-brand-sub { font-size: 11px; color: var(--c-muted); }
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-link { padding: 8px 14px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--c-muted); transition: all 0.2s; cursor: pointer; white-space: nowrap; }
+.nav-link:hover, .nav-link.active { color: var(--c-primary); background: var(--c-accent-light); }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.hamburger { display: none; padding: 8px; border-radius: var(--radius-md); }
+.hamburger svg { width: 22px; height: 22px; stroke: var(--c-text); stroke-width: 2; fill: none; }
+
+/* Mobile nav */
+.mobile-nav { display: none; position: fixed; inset: 0; z-index: 950; background: #fff; padding: 24px; flex-direction: column; gap: 8px; overflow-y: auto; }
+.mobile-nav.open { display: flex; }
+.mobile-nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.mobile-nav-link { padding: 14px 16px; border-radius: var(--radius-md); font-size: 16px; font-weight: 500; color: var(--c-text); cursor: pointer; transition: background 0.2s; }
+.mobile-nav-link:hover { background: var(--c-bg); color: var(--c-primary); }
+
+/* ===== PAGES ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== HERO ===== */
+.hero { background: linear-gradient(135deg, #0a2d4e 0%, #0F4C81 45%, #1a6ba8 100%); color: #fff; padding: 90px 0 80px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+.hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; padding: 6px 16px; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+.hero-title { font-family: var(--font-head); font-size: clamp(30px, 4.5vw, 52px); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+.hero-title span { color: var(--c-accent); }
+.hero-desc { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.7; margin-bottom: 32px; max-width: 540px; }
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero-btn-primary { background: #fff; color: var(--c-primary); padding: 13px 28px; border-radius: var(--radius-md); font-weight: 600; font-size: 15px; font-family: var(--font-body); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.hero-btn-outline { background: transparent; color: #fff; padding: 13px 28px; border-radius: var(--radius-md); font-weight: 500; font-size: 15px; font-family: var(--font-body); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.hero-btn-outline:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.7); }
+.hero-stats { display: flex; gap: 32px; margin-top: 40px; flex-wrap: wrap; }
+.hero-stat-num { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: #fff; }
+.hero-stat-label { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.hero-visual { position: relative; }
+.hero-img-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-xl); padding: 28px; backdrop-filter: blur(8px); }
+.hero-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.hero-img-placeholder { border-radius: var(--radius-md); overflow: hidden; }
+.hero-img-placeholder svg { width: 100%; display: block; }
+.hero-keywords { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-keyword { padding: 4px 12px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; font-size: 11px; color: rgba(255,255,255,0.85); }
+
+/* Scroll indicator */
+.hero-scroll { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(255,255,255,0.5); font-size: 11px; letter-spacing: 0.1em; }
+.scroll-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; animation: scrollBounce 1.5s infinite; }
+@keyframes scrollBounce { 0%,100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(4px); opacity: 1; } }
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announcement { background: linear-gradient(90deg, #EFF6FF, #F0FDF4); border-bottom: 1px solid var(--c-border); padding: 10px 0; }
+.announcement .container { display: flex; align-items: center; gap: 12px; }
+.ann-badge { background: var(--c-primary); color: #fff; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.ann-text { font-size: 13px; color: var(--c-text); }
+.ann-text a { color: var(--c-primary); font-weight: 500; }
+
+/* ===== RESEARCH HIGHLIGHTS ===== */
+.research-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 28px; transition: all 0.25s; cursor: pointer; position: relative; overflow: hidden; }
+.research-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, var(--c-accent)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.research-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: transparent; }
+.research-icon { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 24px; }
+.research-card-title { font-family: var(--font-head); font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.research-card-desc { font-size: 14px; color: var(--c-muted); line-height: 1.6; }
+.research-card-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--c-primary); margin-top: 16px; transition: gap 0.2s; }
+.research-card:hover .research-card-link { gap: 8px; }
+
+/* ===== STATS ===== */
+.stats-section { background: var(--c-primary); color: #fff; padding: 60px 0; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 40px; }
+.stat-item { text-align: center; }
+.stat-num { font-family: var(--font-head); font-size: 44px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 14px; color: rgba(255,255,255,0.7); }
+
+/* ===== PUBLICATIONS ===== */
+.pub-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 24px; display: flex; gap: 20px; transition: all 0.2s; }
+.pub-card:hover { box-shadow: var(--shadow-md); border-color: var(--c-accent); }
+.pub-year-badge { flex-shrink: 0; width: 48px; height: 48px; background: var(--c-accent-light); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; font-size: 13px; color: var(--c-secondary); }
+.pub-content { flex: 1; min-width: 0; }
+.pub-title { font-family: var(--font-head); font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+.pub-authors { font-size: 13px; color: var(--c-muted); margin-bottom: 6px; }
+.pub-journal { font-size: 13px; color: var(--c-secondary); font-weight: 500; font-style: italic; }
+.pub-meta { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+
+/* ===== TEAM ===== */
+.team-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 24px; text-align: center; transition: all 0.2s; }
+.team-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: transparent; }
+.team-avatar { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 16px; background: var(--c-accent-light); border: 3px solid var(--c-white); box-shadow: 0 0 0 2px var(--c-accent); overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--c-primary); }
+.team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.team-name { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.team-role { font-size: 13px; color: var(--c-secondary); margin-bottom: 8px; font-weight: 500; }
+.team-research { font-size: 12px; color: var(--c-muted); line-height: 1.5; margin-bottom: 12px; }
+.team-links { display: flex; justify-content: center; gap: 8px; }
+.team-link { width: 30px; height: 30px; border-radius: var(--radius-sm); background: var(--c-bg); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--c-muted); transition: all 0.2s; text-decoration: none; border: 1px solid var(--c-border); }
+.team-link:hover { background: var(--c-primary); color: #fff; border-color: transparent; }
+
+/* ===== PI PROFILE ===== */
+.pi-card { background: var(--c-card); border-radius: var(--radius-xl); border: 1px solid var(--c-border); padding: 40px; display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: start; }
+.pi-photo { width: 160px; height: 160px; border-radius: var(--radius-lg); background: var(--c-accent-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 48px; font-weight: 800; color: var(--c-primary); flex-shrink: 0; overflow: hidden; }
+.pi-photo img { width: 100%; height: 100%; object-fit: cover; }
+.pi-name { font-family: var(--font-head); font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.pi-designation { font-size: 16px; color: var(--c-secondary); margin-bottom: 4px; font-weight: 500; }
+.pi-institute { font-size: 14px; color: var(--c-muted); margin-bottom: 20px; }
+.pi-bio { font-size: 15px; color: var(--c-muted); line-height: 1.8; margin-bottom: 20px; }
+.pi-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== NEWS ===== */
+.news-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); overflow: hidden; transition: all 0.2s; }
+.news-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: transparent; }
+.news-img { height: 180px; background: linear-gradient(135deg, var(--c-accent-light), #dbeafe); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.news-body { padding: 20px; }
+.news-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.news-date { font-size: 12px; color: var(--c-muted); }
+.news-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+.news-excerpt { font-size: 13px; color: var(--c-muted); line-height: 1.6; }
+.news-readmore { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--c-primary); margin-top: 12px; }
+
+/* ===== OPPORTUNITIES ===== */
+.opp-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 24px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; transition: all 0.2s; }
+.opp-card:hover { box-shadow: var(--shadow-md); border-color: var(--c-accent); }
+.opp-title { font-family: var(--font-head); font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+.opp-desc { font-size: 14px; color: var(--c-muted); margin-bottom: 12px; line-height: 1.6; }
+.opp-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ===== CONTACT ===== */
+.contact-info-card { background: var(--c-card); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 28px; }
+.contact-item { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--c-border-light); }
+.contact-item:last-child { border-bottom: none; }
+.contact-icon { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--c-accent-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.contact-item-label { font-size: 12px; color: var(--c-muted); margin-bottom: 4px; }
+.contact-item-value { font-size: 14px; font-weight: 500; }
+.map-placeholder { background: linear-gradient(135deg, #e8f4fb, #dbeafe); border-radius: var(--radius-lg); height: 300px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--c-border); flex-direction: column; gap: 8px; color: var(--c-muted); }
+
+/* ===== FOOTER ===== */
+.footer { background: #0d1b2a; color: rgba(255,255,255,0.7); padding: 70px 0 0; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 50px; }
+.footer-brand-name { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.footer-brand-sub { font-size: 13px; margin-bottom: 16px; }
+.footer-about { font-size: 13px; line-height: 1.7; max-width: 300px; margin-bottom: 20px; }
+.footer-col-title { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 16px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-link { font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; transition: color 0.2s; }
+.footer-link:hover { color: var(--c-accent); }
+.footer-contact-item { display: flex; gap: 10px; font-size: 13px; margin-bottom: 10px; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12px; }
+.footer-bottom-links { display: flex; gap: 20px; }
+.footer-bottom-links a { color: rgba(255,255,255,0.5); }
+.footer-bottom-links a:hover { color: var(--c-accent); }
+.social-links { display: flex; gap: 10px; margin-top: 16px; }
+.social-link { width: 34px; height: 34px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(255,255,255,0.7); transition: all 0.2s; }
+.social-link:hover { background: var(--c-accent); color: #fff; }
+
+/* ===== BACK TO TOP ===== */
+.back-to-top { position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%; background: var(--c-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--shadow-md); cursor: pointer; opacity: 0; transition: all 0.3s; z-index: 500; }
+.back-to-top.visible { opacity: 1; }
+.back-to-top:hover { background: var(--c-primary-dark); transform: translateY(-3px); }
+
+/* ===== INNER PAGE HERO ===== */
+.page-hero { background: linear-gradient(135deg, #0a2d4e, #0F4C81); padding: 60px 0; color: #fff; }
+.page-hero-title { font-family: var(--font-head); font-size: clamp(28px, 4vw, 44px); font-weight: 700; margin-bottom: 10px; }
+.page-hero-subtitle { font-size: 16px; color: rgba(255,255,255,0.75); max-width: 600px; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+.breadcrumb-sep { opacity: 0.4; }
+
+/* ===== FILTER BAR ===== */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 20px 0; border-bottom: 1px solid var(--c-border); margin-bottom: 30px; }
+.filter-btn { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--c-border); background: transparent; color: var(--c-muted); cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
+.filter-btn:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.filter-btn.active { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+
+/* ===== SEARCH BOX ===== */
+.search-box { position: relative; max-width: 360px; }
+.search-box input { padding-left: 40px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--c-muted); pointer-events: none; }
+
+/* ===== TABS ===== */
+.tabs { display: flex; border-bottom: 2px solid var(--c-border); gap: 0; margin-bottom: 30px; }
+.tab { padding: 12px 20px; font-size: 14px; font-weight: 500; color: var(--c-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all 0.2s; }
+.tab.active { color: var(--c-primary); border-bottom-color: var(--c-primary); }
+.tab:hover { color: var(--c-primary); }
+
+/* ===== TIMELINE ===== */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--c-primary), var(--c-accent)); border-radius: 1px; }
+.timeline-item { position: relative; padding-bottom: 32px; }
+.timeline-dot { position: absolute; left: -29px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--c-primary); border: 2px solid var(--c-white); box-shadow: 0 0 0 2px var(--c-primary); }
+.timeline-date { font-size: 12px; color: var(--c-muted); margin-bottom: 4px; }
+.timeline-content { background: var(--c-card); border-radius: var(--radius-md); border: 1px solid var(--c-border); padding: 16px 20px; }
+
+/* ===== ACCORDION ===== */
+.accordion-item { border-bottom: 1px solid var(--c-border); }
+.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; cursor: pointer; font-weight: 500; font-size: 15px; gap: 12px; }
+.accordion-body { padding-bottom: 18px; font-size: 14px; color: var(--c-muted); line-height: 1.7; display: none; }
+.accordion-body.open { display: block; }
+.accordion-arrow { font-size: 20px; color: var(--c-muted); transition: transform 0.2s; flex-shrink: 0; }
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+
+/* ===== APPLICATION FORM ===== */
+.app-form-section { background: linear-gradient(135deg, #f0f9ff, var(--c-bg)); border-radius: var(--radius-xl); border: 1px solid var(--c-border); padding: 40px; }
+.upload-area { border: 2px dashed var(--c-border); border-radius: var(--radius-md); padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.upload-area:hover { border-color: var(--c-accent); background: var(--c-accent-light); }
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-text { font-size: 14px; color: var(--c-muted); }
+.upload-text strong { color: var(--c-primary); }
+
+/* ===== ADMIN PANEL ===== */
+.admin-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: var(--c-bg); overflow-y: auto; }
+.admin-overlay.open { display: flex; }
+.admin-sidebar { width: 260px; background: #0d1b2a; color: rgba(255,255,255,0.75); display: flex; flex-direction: column; min-height: 100vh; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.admin-logo { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.admin-logo-badge { background: var(--c-primary); color: #fff; padding: 6px 14px; border-radius: var(--radius-md); font-family: var(--font-head); font-weight: 700; font-size: 13px; display: inline-block; margin-bottom: 10px; }
+.admin-logo-name { font-size: 14px; font-weight: 500; color: #fff; }
+.admin-logo-sub { font-size: 11px; color: rgba(255,255,255,0.45); }
+.admin-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.admin-nav-section { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); padding: 8px 8px 6px; margin-top: 8px; }
+.admin-nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 400; color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
+.admin-nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.admin-nav-item.active { background: var(--c-primary); color: #fff; }
+.admin-nav-item svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+.admin-user { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+.admin-user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--c-primary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; }
+.admin-user-name { font-size: 13px; color: #fff; font-weight: 500; }
+.admin-user-role { font-size: 11px; color: rgba(255,255,255,0.4); }
+.admin-main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; }
+.admin-topbar { background: #fff; border-bottom: 1px solid var(--c-border); padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; gap: 16px; }
+.admin-page-title { font-family: var(--font-head); font-size: 18px; font-weight: 600; }
+.admin-content { flex: 1; padding: 28px; }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+
+/* Stat cards */
+.admin-stat-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 22px; }
+.admin-stat-num { font-family: var(--font-head); font-size: 30px; font-weight: 700; margin-bottom: 4px; }
+.admin-stat-label { font-size: 13px; color: var(--c-muted); }
+.admin-stat-change { font-size: 12px; margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+.change-up { color: var(--c-success); }
+.change-down { color: var(--c-danger); }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { background: var(--c-bg); padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: var(--c-muted); text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--c-border); }
+.data-table td { padding: 13px 14px; border-bottom: 1px solid var(--c-border-light); font-size: 14px; vertical-align: middle; }
+.data-table tr:hover td { background: var(--c-bg); }
+.data-table tr:last-child td { border-bottom: none; }
+.table-wrap { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--c-border); overflow: hidden; }
+.table-head { padding: 16px 20px; border-bottom: 1px solid var(--c-border); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.table-head-title { font-family: var(--font-head); font-size: 15px; font-weight: 600; }
+.table-overflow { overflow-x: auto; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(4px); }
+.modal-box { background: #fff; border-radius: var(--radius-xl); padding: 32px; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: var(--shadow-lg); }
+.modal-title { font-family: var(--font-head); font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.modal-subtitle { font-size: 14px; color: var(--c-muted); margin-bottom: 24px; }
+.modal-close { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; border-radius: var(--radius-md); background: var(--c-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; color: var(--c-muted); border: 1px solid var(--c-border); }
+.modal-close:hover { background: #fee2e2; color: var(--c-danger); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--c-border); }
+
+/* Login */
+.login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #0a2d4e, #0F4C81); display: flex; align-items: center; justify-content: center; z-index: 1100; }
+.login-card { background: #fff; border-radius: var(--radius-xl); padding: 44px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.login-logo { text-align: center; margin-bottom: 28px; }
+.login-logo-badge { width: 60px; height: 60px; background: var(--c-primary); border-radius: var(--radius-lg); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 800; font-size: 18px; color: #fff; }
+.login-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.login-sub { font-size: 14px; color: var(--c-muted); text-align: center; margin-bottom: 28px; }
+.admin-trigger { position: fixed; bottom: 24px; left: 24px; z-index: 400; }
+
+/* Content Editor */
+.content-editor { border: 1.5px solid var(--c-border); border-radius: var(--radius-md); overflow: hidden; }
+.editor-toolbar { background: var(--c-bg); border-bottom: 1px solid var(--c-border); padding: 8px 12px; display: flex; gap: 4px; flex-wrap: wrap; }
+.editor-btn { padding: 4px 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--c-muted); background: transparent; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+.editor-btn:hover { background: var(--c-white); border-color: var(--c-border); color: var(--c-text); }
+.editor-area { padding: 12px; min-height: 150px; outline: none; font-size: 14px; line-height: 1.7; color: var(--c-text); }
+.editor-area:empty::before { content: 'Start typing...'; color: #9CA3AF; }
+
+/* Notification Toast */
+.toast { position: fixed; bottom: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast-item { background: #1F2937; color: #fff; padding: 12px 16px; border-radius: var(--radius-md); font-size: 13px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; pointer-events: all; animation: slideIn 0.3s ease; max-width: 320px; }
+.toast-success { background: #065F46; }
+.toast-error { background: #991B1B; }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* Media Manager */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.media-item { background: var(--c-bg); border: 1.5px solid var(--c-border); border-radius: var(--radius-md); padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+.media-item:hover { border-color: var(--c-primary); }
+.media-item.selected { border-color: var(--c-primary); background: var(--c-accent-light); }
+.media-thumb { width: 100%; height: 90px; border-radius: var(--radius-sm); object-fit: cover; background: var(--c-border-light); display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 8px; }
+.media-name { font-size: 11px; color: var(--c-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-size { font-size: 10px; color: var(--c-border); }
+
+/* Analytics chart placeholder */
+.chart-bar { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+.bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--c-accent-light); transition: height 0.5s ease; min-width: 20px; cursor: pointer; }
+.bar:hover { background: var(--c-accent); }
+.bar-label { font-size: 10px; color: var(--c-muted); text-align: center; margin-top: 4px; }
+
+/* Role badge */
+.role-badge { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.role-owner { background: #FEF3C7; color: #92400E; }
+.role-admin { background: #EDE9FE; color: #5B21B6; }
+.role-editor { background: #ECFDF5; color: #065F46; }
+.role-member { background: #EFF6FF; color: #1E40AF; }
+.status-active { background: #ECFDF5; color: #065F46; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+.status-inactive { background: #FEF2F2; color: #991B1B; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .pi-card { grid-template-columns: 1fr; text-align: center; }
+  .pi-photo { margin: 0 auto; }
+  .pi-tags { justify-content: center; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-actions { display: none; }
+  .hamburger { display: flex; }
+  .topbar-left { display: none; }
+  .section { padding: 50px 0; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .opp-card { flex-direction: column; }
+  .admin-sidebar { display: none; }
+  .admin-sidebar.mobile-open { display: flex; position: fixed; z-index: 2000; height: 100vh; }
+  .admin-main { width: 100%; }
+  .filter-bar { gap: 6px; }
+  .filter-btn { font-size: 12px; padding: 5px 12px; }
+  .pub-card { flex-direction: column; }
+  .pub-year-badge { width: auto; padding: 6px 12px; height: auto; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 60px 0 50px; }
+  .hero-btns { flex-direction: column; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .admin-content { padding: 16px; }
+  .modal-box { padding: 20px; }
+  .login-card { padding: 28px 20px; }
+}
+
+/* ===== PRINT ===== */
+@media print {
+  .navbar, .topbar, .footer, .back-to-top, .admin-trigger, .admin-overlay { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast" id="toastContainer"></div>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-header">
+    <div class="nav-brand">
+      <div class="nav-logo">BP</div>
+      <div class="nav-brand-text">
+        <div class="nav-brand-name">BPBME Lab</div>
+        <div class="nav-brand-sub">IIT Indore</div>
+      </div>
+    </div>
+    <button onclick="toggleMobileNav()" style="font-size:24px;color:var(--c-muted);">✕</button>
+  </div>
+  <a class="mobile-nav-link" onclick="navigate('home');toggleMobileNav()">Home</a>
+  <a class="mobile-nav-link" onclick="navigate('research');toggleMobileNav()">Research</a>
+  <a class="mobile-nav-link" onclick="navigate('people');toggleMobileNav()">People</a>
+  <a class="mobile-nav-link" onclick="navigate('publications');toggleMobileNav()">Publications</a>
+  <a class="mobile-nav-link" onclick="navigate('opportunities');toggleMobileNav()">Opportunities</a>
+  <a class="mobile-nav-link" onclick="navigate('news');toggleMobileNav()">News</a>
+  <a class="mobile-nav-link" onclick="navigate('contact');toggleMobileNav()">Contact</a>
+</nav>
+
+<!-- TOP BAR -->
+<div class="topbar" id="topbarEl">
+  <div class="container">
+    <div class="topbar-left">
+      <span>📍 IIT Indore, Simrol Campus, Indore, MP 453552</span>
+      <span>✉️ <span id="tbEmail">bpbme@iiti.ac.in</span></span>
+    </div>
+    <div class="topbar-right">
+      <a href="#" onclick="navigate('opportunities')">Join Our Lab</a>
+      <span>|</span>
+      <a href="#" onclick="openAdminLogin()">Admin Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbarEl">
+  <div class="container">
+    <div class="nav-brand" onclick="navigate('home')" style="cursor:pointer;">
+      <div class="nav-logo" id="navLogoEl">BP</div>
+      <div class="nav-brand-text">
+        <div class="nav-brand-name" id="navLabName">BPBME Lab</div>
+        <div class="nav-brand-sub" id="navInstitute">IIT Indore</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link active" id="nav-home" onclick="navigate('home')">Home</a>
+      <a class="nav-link" id="nav-research" onclick="navigate('research')">Research</a>
+      <a class="nav-link" id="nav-people" onclick="navigate('people')">People</a>
+      <a class="nav-link" id="nav-publications" onclick="navigate('publications')">Publications</a>
+      <a class="nav-link" id="nav-opportunities" onclick="navigate('opportunities')">Opportunities</a>
+      <a class="nav-link" id="nav-news" onclick="navigate('news')">News</a>
+      <a class="nav-link" id="nav-contact" onclick="navigate('contact')">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-primary btn-sm" onclick="navigate('opportunities')">Join Lab</button>
+    </div>
+    <button class="hamburger" onclick="toggleMobileNav()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ==================== HOME PAGE ==================== -->
+<div class="page active" id="page-home">
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announcement" id="announcementBar">
+    <div class="container">
+      <span class="ann-badge">New</span>
+      <p class="ann-text" id="announcementText">We are looking for motivated PhD students and research assistants — <a href="#" onclick="navigate('opportunities')">Apply Now →</a></p>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-badge">🔬 IIT Indore · School of Biosciences and Biomedical Engineering</div>
+          <h1 class="hero-title" id="heroTitle">Biophysics &amp;<br><span>Biomedical Engineering</span><br>Research Group</h1>
+          <p class="hero-desc" id="heroDesc">Advancing the frontiers of biophotonics, tissue engineering, and regenerative medicine through interdisciplinary research. We develop innovative biomedical solutions to address critical healthcare challenges.</p>
+          <div class="hero-btns">
+            <a class="hero-btn-primary" onclick="navigate('research')">Explore Research →</a>
+            <a class="hero-btn-outline" onclick="navigate('publications')">📄 Publications</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-num" id="statPublications">50+</div>
+              <div class="hero-stat-label">Publications</div>
+            </div>
+            <div>
+              <div class="hero-stat-num" id="statStudents">20+</div>
+              <div class="hero-stat-label">Research Scholars</div>
+            </div>
+            <div>
+              <div class="hero-stat-num" id="statYears">10+</div>
+              <div class="hero-stat-label">Years of Research</div>
+            </div>
+            <div>
+              <div class="hero-stat-num" id="statProjects">15+</div>
+              <div class="hero-stat-label">Funded Projects</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-img-card">
+            <div class="hero-img-grid">
+              <div class="hero-img-placeholder"><svg viewBox="0 0 200 150" style="width:100%;display:block;"><rect width="200" height="150" fill="#1a4a72"/><circle cx="100" cy="75" r="40" fill="none" stroke="#4DA8DA" stroke-width="1.5" opacity="0.6"/><circle cx="100" cy="75" r="25" fill="#4DA8DA" opacity="0.3"/><circle cx="100" cy="75" r="10" fill="#4DA8DA" opacity="0.8"/><text x="100" y="135" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Inter">Biophotonics</text></svg></div>
+              <div class="hero-img-placeholder"><svg viewBox="0 0 200 150" style="width:100%;display:block;"><rect width="200" height="150" fill="#1a4a72"/><rect x="60" y="40" width="80" height="70" rx="4" fill="none" stroke="#4DA8DA" stroke-width="1.5" opacity="0.6"/><line x1="80" y1="75" x2="120" y2="75" stroke="#4DA8DA" stroke-width="1"/><line x1="100" y1="55" x2="100" y2="95" stroke="#4DA8DA" stroke-width="1"/><text x="100" y="135" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Inter">Tissue Engineering</text></svg></div>
+              <div class="hero-img-placeholder"><svg viewBox="0 0 200 150" style="width:100%;display:block;"><rect width="200" height="150" fill="#1a4a72"/><ellipse cx="100" cy="75" rx="50" ry="25" fill="none" stroke="#4DA8DA" stroke-width="1.5" opacity="0.6"/><ellipse cx="100" cy="75" rx="15" ry="8" fill="#4DA8DA" opacity="0.5"/><text x="100" y="135" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Inter">Biofabrication</text></svg></div>
+              <div class="hero-img-placeholder"><svg viewBox="0 0 200 150" style="width:100%;display:block;"><rect width="200" height="150" fill="#1a4a72"/><path d="M50,75 Q75,30 100,75 Q125,120 150,75" fill="none" stroke="#4DA8DA" stroke-width="2" opacity="0.8"/><circle cx="100" cy="75" r="5" fill="#4DA8DA"/><text x="100" y="135" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Inter">Biomedical Devices</text></svg></div>
+            </div>
+            <div class="hero-keywords">
+              <span class="hero-keyword">Biophotonics</span>
+              <span class="hero-keyword">Tissue Engineering</span>
+              <span class="hero-keyword">Regenerative Medicine</span>
+              <span class="hero-keyword">Nanobiotechnology</span>
+              <span class="hero-keyword">Biofabrication</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll"><div class="scroll-dot"></div><span>SCROLL</span></div>
+  </section>
+
+  <!-- RESEARCH HIGHLIGHTS -->
+  <section class="section" style="background:#fff;">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">What We Do</p>
+        <h2 class="section-title">Research Areas</h2>
+        <p class="section-desc">Our interdisciplinary research spans multiple areas at the intersection of physics, biology, and engineering.</p>
+      </div>
+      <div class="grid-3" id="homeResearchGrid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-num" id="statNum1">50+</div>
+          <div class="stat-label">Peer-reviewed Publications</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statNum2">20+</div>
+          <div class="stat-label">Research Scholars</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statNum3">₹5Cr+</div>
+          <div class="stat-label">Research Funding</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statNum4">10+</div>
+          <div class="stat-label">Industry Collaborations</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statNum5">7</div>
+          <div class="stat-label">Research Areas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT THE LAB -->
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;" class="about-grid">
+        <div>
+          <p class="section-label">About Us</p>
+          <h2 class="section-title" id="aboutTitle">Pioneering Biophysics &amp; Biomedical Engineering Research</h2>
+          <p style="font-size:16px;color:var(--c-muted);line-height:1.8;margin-bottom:20px;" id="aboutDesc">The Biophysics &amp; Biomedical Engineering (BPBME) Research Group at IIT Indore is dedicated to advancing fundamental and applied research at the interface of physics, biology, and engineering. Our work focuses on developing novel diagnostic and therapeutic tools using light-matter interactions, engineered biomaterials, and advanced fabrication techniques.</p>
+          <p style="font-size:15px;color:var(--c-muted);line-height:1.8;margin-bottom:28px;" id="aboutDesc2">We are committed to training the next generation of interdisciplinary scientists and engineers who will drive innovation in biomedical research and healthcare technology.</p>
+          <button class="btn btn-primary" onclick="navigate('research')">Explore Our Research →</button>
+        </div>
+        <div>
+          <div class="card-flat" style="padding:32px;">
+            <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;margin-bottom:20px;">Research Mission</h3>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="font-size:20px;flex-shrink:0;">🔬</span>
+                <div><strong style="font-size:14px;">Fundamental Discovery</strong><p style="font-size:13px;color:var(--c-muted);margin-top:3px;">Unraveling biophysical mechanisms at cellular and molecular levels</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="font-size:20px;flex-shrink:0;">⚗️</span>
+                <div><strong style="font-size:14px;">Translational Research</strong><p style="font-size:13px;color:var(--c-muted);margin-top:3px;">Bridging bench science to clinically relevant applications</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="font-size:20px;flex-shrink:0;">🎓</span>
+                <div><strong style="font-size:14px;">Student Development</strong><p style="font-size:13px;color:var(--c-muted);margin-top:3px;">Training world-class interdisciplinary researchers</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="font-size:20px;flex-shrink:0;">🤝</span>
+                <div><strong style="font-size:14px;">Global Collaboration</strong><p style="font-size:13px;color:var(--c-muted);margin-top:3px;">Partnering with leading international research groups</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PUBLICATIONS -->
+  <section class="section" style="background:#fff;">
+    <div class="container">
+      <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+        <div>
+          <p class="section-label">Latest Research</p>
+          <h2 class="section-title">Recent Publications</h2>
+        </div>
+        <button class="btn btn-outline" onclick="navigate('publications')">View All Publications →</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;" id="homePubList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWS & UPDATES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+        <div>
+          <p class="section-label">Stay Updated</p>
+          <h2 class="section-title">News &amp; Updates</h2>
+        </div>
+        <button class="btn btn-outline" onclick="navigate('news')">All News →</button>
+      </div>
+      <div class="grid-3" id="homeNewsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM PREVIEW -->
+  <section class="section" style="background:#fff;">
+    <div class="container">
+      <div class="section-header center">
+        <p class="section-label">Our People</p>
+        <h2 class="section-title">Meet The Team</h2>
+        <p class="section-desc">A talented group of researchers and students driving innovation in biophysics and biomedical engineering.</p>
+      </div>
+      <div class="grid-4" id="homeTeamGrid">
+        <!-- Populated by JS -->
+      </div>
+      <div style="text-align:center;margin-top:40px;">
+        <button class="btn btn-secondary btn-lg" onclick="navigate('people')">Meet All Team Members →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLABORATIONS -->
+  <section class="section" style="background:linear-gradient(135deg,#f0f9ff,#f8fafc);">
+    <div class="container">
+      <div class="section-header center">
+        <p class="section-label">Partnerships</p>
+        <h2 class="section-title">Collaborations &amp; Affiliations</h2>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;" id="collaborationsList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT CTA -->
+  <section class="section" style="background:var(--c-primary);color:#fff;padding:70px 0;">
+    <div class="container" style="text-align:center;">
+      <p class="section-label" style="color:var(--c-accent);">Get In Touch</p>
+      <h2 style="font-family:var(--font-head);font-size:clamp(26px,4vw,40px);font-weight:700;color:#fff;margin-bottom:16px;">Ready to Collaborate or Join Our Lab?</h2>
+      <p style="font-size:17px;color:rgba(255,255,255,0.8);max-width:560px;margin:0 auto 32px;line-height:1.7;">We welcome motivated researchers, students, and industry partners interested in advancing biomedical science and engineering.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn" style="background:#fff;color:var(--c-primary);font-size:16px;padding:14px 32px;border-radius:var(--radius-md);" onclick="navigate('contact')">Contact Us</button>
+        <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.4);font-size:16px;padding:14px 32px;" onclick="navigate('opportunities')">View Opportunities</button>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- END HOME -->
+
+<!-- ==================== RESEARCH PAGE ==================== -->
+<div class="page" id="page-research">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>Research</span></div>
+      <h1 class="page-hero-title">Research Areas</h1>
+      <p class="page-hero-subtitle">Our multidisciplinary research addresses fundamental questions in biophysics and develops novel biomedical engineering solutions.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div id="researchPageContent">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== PEOPLE PAGE ==================== -->
+<div class="page" id="page-people">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>People</span></div>
+      <h1 class="page-hero-title">Our Team</h1>
+      <p class="page-hero-subtitle">Meet the researchers, scholars, and students driving innovation in our laboratory.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container" id="peoplePageContent">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+</div>
+
+<!-- ==================== PUBLICATIONS PAGE ==================== -->
+<div class="page" id="page-publications">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>Publications</span></div>
+      <h1 class="page-hero-title">Publications</h1>
+      <p class="page-hero-subtitle">Peer-reviewed research articles, book chapters, and conference proceedings from our laboratory.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div style="display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:20px;">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-input" id="pubSearch" placeholder="Search publications…" oninput="filterPublications()" style="padding-left:38px;">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="pubYearFilters">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="filter-bar" id="pubTypeFilter">
+        <button class="filter-btn active" onclick="filterByType('all',this)">All</button>
+        <button class="filter-btn" onclick="filterByType('journal',this)">Journal Articles</button>
+        <button class="filter-btn" onclick="filterByType('conference',this)">Conference Papers</button>
+        <button class="filter-btn" onclick="filterByType('review',this)">Reviews</button>
+        <button class="filter-btn" onclick="filterByType('book',this)">Book Chapters</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;" id="pubList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== OPPORTUNITIES PAGE ==================== -->
+<div class="page" id="page-opportunities">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>Opportunities</span></div>
+      <h1 class="page-hero-title">Join Our Lab</h1>
+      <p class="page-hero-subtitle">We are always looking for talented and motivated individuals to join our research group.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:50px;" class="opp-layout">
+        <div>
+          <div class="section-header"><p class="section-label">Open Positions</p><h2 class="section-title">Current Opportunities</h2></div>
+          <div style="display:flex;flex-direction:column;gap:16px;" id="oppList"><!-- Populated by JS --></div>
+          <div style="margin-top:40px;">
+            <div class="card-flat">
+              <h3 style="font-family:var(--font-head);font-size:16px;font-weight:600;margin-bottom:12px;">General Requirements</h3>
+              <ul style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--c-muted);">
+                <li>✅ Strong academic background in relevant fields</li>
+                <li>✅ Passion for research and innovation</li>
+                <li>✅ Good communication and team skills</li>
+                <li>✅ Ability to work independently and in groups</li>
+                <li>✅ Commitment to scientific rigor and integrity</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="card-flat" style="background:linear-gradient(135deg,#f0f9ff,#fff);">
+              <h3 style="font-family:var(--font-head);font-size:16px;font-weight:600;margin-bottom:8px;">PhD Eligibility</h3>
+              <p style="font-size:14px;color:var(--c-muted);line-height:1.7;">Candidates must have valid GATE/NET/CSIR/ICMR scores or equivalent fellowship. M.Tech/M.Sc in Biotechnology, Physics, Chemistry, Biomedical Engineering, or related disciplines with excellent academic record.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="app-form-section" id="appFormSection">
+            <h3 style="font-family:var(--font-head);font-size:22px;font-weight:700;margin-bottom:6px;">Apply Now</h3>
+            <p style="font-size:14px;color:var(--c-muted);margin-bottom:28px;">Submit your application for a position in our research group</p>
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-input" placeholder="Your full name" id="appName">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" class="form-input" placeholder="your@email.com" id="appEmail">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-input" placeholder="+91 XXXXX XXXXX" id="appPhone">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Position Applied For *</label>
+              <select class="form-input" id="appPosition">
+                <option value="">Select position</option>
+                <option>PhD Scholar</option>
+                <option>Research Assistant</option>
+                <option>Project Intern</option>
+                <option>M.Tech / M.Sc Project</option>
+                <option>Postdoctoral Fellow</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Area of Interest</label>
+              <select class="form-input" id="appArea">
+                <option value="">Select area</option>
+                <option>Biophotonics</option>
+                <option>Tissue Engineering</option>
+                <option>Biofabrication</option>
+                <option>Regenerative Medicine</option>
+                <option>Nanobiotechnology</option>
+                <option>Biomedical Devices</option>
+                <option>Biomedical Engineering</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Academic Background *</label>
+              <input type="text" class="form-input" placeholder="e.g. M.Sc Biotechnology, GATE qualified" id="appBackground">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Research Statement (Brief)</label>
+              <textarea class="form-input" rows="4" placeholder="Briefly describe your research interests and motivation..." id="appStatement"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Attach CV (PDF)</label>
+              <div class="upload-area" onclick="document.getElementById('cvFile').click()">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to upload your CV <strong>(.pdf, max 5MB)</strong></div>
+                <input type="file" id="cvFile" accept=".pdf" style="display:none;" onchange="handleFileSelect(this,'cvLabel')">
+                <p id="cvLabel" style="font-size:12px;color:var(--c-secondary);margin-top:6px;"></p>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg" style="width:100%;" onclick="submitApplication()">Submit Application</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== NEWS PAGE ==================== -->
+<div class="page" id="page-news">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>News &amp; Events</span></div>
+      <h1 class="page-hero-title">News &amp; Events</h1>
+      <p class="page-hero-subtitle">Latest updates from our laboratory — research breakthroughs, awards, conferences, and student achievements.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div class="filter-bar" id="newsFilterBar">
+        <button class="filter-btn active" onclick="filterNews('all',this)">All Updates</button>
+        <button class="filter-btn" onclick="filterNews('research',this)">Research</button>
+        <button class="filter-btn" onclick="filterNews('award',this)">Awards</button>
+        <button class="filter-btn" onclick="filterNews('conference',this)">Conferences</button>
+        <button class="filter-btn" onclick="filterNews('publication',this)">Publications</button>
+        <button class="filter-btn" onclick="filterNews('student',this)">Students</button>
+        <button class="filter-btn" onclick="filterNews('event',this)">Events</button>
+      </div>
+      <div class="grid-3" id="newsPageGrid"><!-- Populated by JS --></div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== CONTACT PAGE ==================== -->
+<div class="page" id="page-contact">
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><span onclick="navigate('home')" style="cursor:pointer;">Home</span><span class="breadcrumb-sep">›</span><span>Contact</span></div>
+      <h1 class="page-hero-title">Contact Us</h1>
+      <p class="page-hero-subtitle">Get in touch for research collaborations, inquiries, or to learn more about joining our lab.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:40px;" class="contact-layout">
+        <div>
+          <div class="contact-info-card" id="contactInfoCard">
+            <h3 style="font-family:var(--font-head);font-size:18px;font-weight:600;margin-bottom:20px;">Laboratory Contact</h3>
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div>
+                <p class="contact-item-label">Location</p>
+                <p class="contact-item-value" id="contactAddress">Room No. 212, Academic Building<br>IIT Indore, Simrol Campus<br>Indore, Madhya Pradesh 453552</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">✉️</div>
+              <div>
+                <p class="contact-item-label">Email</p>
+                <p class="contact-item-value" id="contactEmail">bpbme@iiti.ac.in</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div>
+                <p class="contact-item-label">Phone</p>
+                <p class="contact-item-value" id="contactPhone">+91-731-6603XXX</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🌐</div>
+              <div>
+                <p class="contact-item-label">Institute Website</p>
+                <p class="contact-item-value"><a href="https://www.iiti.ac.in" style="color:var(--c-primary);">www.iiti.ac.in</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="map-placeholder" style="margin-top:20px;" id="contactMap">
+            <span style="font-size:40px;">📍</span>
+            <strong>IIT Indore Campus</strong>
+            <span style="font-size:13px;">Simrol, Indore, MP</span>
+            <a href="https://maps.google.com/?q=IIT+Indore+Simrol" target="_blank" class="btn btn-secondary btn-sm" style="margin-top:8px;">Open in Maps</a>
+          </div>
+        </div>
+        <div>
+          <div class="card-flat" style="padding:36px;">
+            <h3 style="font-family:var(--font-head);font-size:20px;font-weight:700;margin-bottom:6px;">Send Us a Message</h3>
+            <p style="font-size:14px;color:var(--c-muted);margin-bottom:24px;">We'll respond within 2–3 business days.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" class="form-input" placeholder="Your name" id="cName">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" class="form-input" placeholder="your@email.com" id="cEmail">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Organization / Institute</label>
+              <input type="text" class="form-input" placeholder="University or company" id="cOrg">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject *</label>
+              <select class="form-input" id="cSubject">
+                <option>Research Collaboration</option>
+                <option>PhD / Student Inquiry</option>
+                <option>Industry Partnership</option>
+                <option>General Inquiry</option>
+                <option>Media / Press</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message *</label>
+              <textarea class="form-input" rows="5" placeholder="Your message..." id="cMessage"></textarea>
+            </div>
+            <button class="btn btn-primary btn-lg" style="width:100%;" onclick="submitContact()">Send Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer" id="footerEl">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div class="nav-logo" style="background:var(--c-accent);">BP</div>
+          <div>
+            <div class="footer-brand-name" id="footerLabName">BPBME Research Group</div>
+            <div class="footer-brand-sub" id="footerInstitute">IIT Indore</div>
+          </div>
+        </div>
+        <p class="footer-about" id="footerAbout">Advancing biophysics and biomedical engineering research through interdisciplinary innovation at the Indian Institute of Technology Indore.</p>
+        <div class="social-links">
+          <a class="social-link" href="#" title="Twitter">𝕏</a>
+          <a class="social-link" href="#" title="LinkedIn">in</a>
+          <a class="social-link" href="#" title="ResearchGate">RG</a>
+          <a class="social-link" href="#" title="Google Scholar">GS</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Quick Links</h4>
+        <div class="footer-links">
+          <span class="footer-link" onclick="navigate('home')">Home</span>
+          <span class="footer-link" onclick="navigate('research')">Research</span>
+          <span class="footer-link" onclick="navigate('people')">People</span>
+          <span class="footer-link" onclick="navigate('publications')">Publications</span>
+          <span class="footer-link" onclick="navigate('opportunities')">Opportunities</span>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Research Areas</h4>
+        <div class="footer-links">
+          <span class="footer-link">Biophotonics</span>
+          <span class="footer-link">Tissue Engineering</span>
+          <span class="footer-link">Biofabrication</span>
+          <span class="footer-link">Regenerative Medicine</span>
+          <span class="footer-link">Nanobiotechnology</span>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-col-title">Contact</h4>
+        <div class="footer-contact-item">📍 <span id="footerAddress">IIT Indore, Simrol, MP 453552</span></div>
+        <div class="footer-contact-item">✉️ <span id="footerEmail">bpbme@iiti.ac.in</span></div>
+        <div class="footer-contact-item">📞 <span id="footerPhone">+91-731-6603XXX</span></div>
+        <div style="margin-top:16px;">
+          <a href="https://www.iiti.ac.in" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.5);">🌐 Indian Institute of Technology Indore</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:rgba(0,0,0,0.2);">
+    <div class="container">
+      <div class="footer-bottom">
+        <span id="footerCopyright">© 2025 Biophysics &amp; Biomedical Engineering Research Group, IIT Indore. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Sitemap</a>
+          <a href="#" onclick="openAdminLogin()">Admin</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<div class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- ADMIN TRIGGER (floating) -->
+<div class="admin-trigger">
+  <button class="btn btn-primary btn-sm" onclick="openAdminLogin()" style="box-shadow:var(--shadow-md);font-size:12px;padding:7px 14px;opacity:0.7;" title="Admin Panel">⚙ Admin</button>
+</div>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div class="login-screen" id="loginScreen" style="display:none;">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-badge">BP</div>
+    </div>
+    <h2 class="login-title">Admin Portal</h2>
+    <p class="login-sub">BPBME Lab — IIT Indore</p>
+    <div id="loginAlert"></div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" id="loginEmail" placeholder="admin@iiti.ac.in" value="admin@iiti.ac.in">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="loginPass" placeholder="••••••••" value="admin123" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary btn-lg" style="width:100%;margin-bottom:12px;" onclick="doLogin()">Sign In</button>
+    <button class="btn btn-outline" style="width:100%;font-size:13px;" onclick="closeAdminLogin()">← Back to Website</button>
+    <p style="font-size:11px;color:var(--c-muted);text-align:center;margin-top:16px;">Demo credentials: admin@iiti.ac.in / admin123</p>
+  </div>
+</div>
+
+<!-- ==================== ADMIN DASHBOARD ==================== -->
+<div class="admin-overlay" id="adminOverlay">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-logo">
+      <div class="admin-logo-badge">BPBME Admin</div>
+      <div class="admin-logo-name" id="adminLabNameSidebar">BPBME Lab</div>
+      <div class="admin-logo-sub">IIT Indore</div>
+    </div>
+    <nav class="admin-nav">
+      <div class="admin-nav-section">Overview</div>
+      <div class="admin-nav-item active" onclick="switchAdminPanel('dashboard',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('analytics',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </div>
+
+      <div class="admin-nav-section">Content</div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('siteSettings',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 3.93M12 2v2M12 20v2M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41"/></svg>
+        Site Settings
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('pagesManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Pages
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('homeEditor',this)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Home Page
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('researchManager',this)">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Research Areas
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('pubManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Publications
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('newsManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a4 4 0 0 1-4 4zm0 0a4 4 0 0 1-4-4V9"/><line x1="10" y1="7" x2="16" y2="7"/><line x1="10" y1="11" x2="16" y2="11"/><line x1="10" y1="15" x2="16" y2="15"/></svg>
+        News &amp; Events
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('teamManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team Members
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('oppManager',this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Opportunities
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('contactManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.35 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91A16 16 0 0 0 13.5 15.5l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+        Contact Info
+      </div>
+
+      <div class="admin-nav-section">Media</div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('mediaManager',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Media Library
+      </div>
+
+      <div class="admin-nav-section">Administration</div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('applicationsInbox',this)">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        Applications Inbox
+        <span style="margin-left:auto;background:var(--c-danger);color:#fff;font-size:10px;padding:2px 6px;border-radius:999px;" id="appBadge">0</span>
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('contactInbox',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+        Contact Inbox
+        <span style="margin-left:auto;background:var(--c-danger);color:#fff;font-size:10px;padding:2px 6px;border-radius:999px;" id="contactBadge">0</span>
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('userManager',this)">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        User Management
+      </div>
+      <div class="admin-nav-item" onclick="switchAdminPanel('activityLog',this)">
+        <svg viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><circle cx="12" cy="12" r="10"/></svg>
+        Activity Log
+      </div>
+    </nav>
+    <div class="admin-user">
+      <div class="admin-user-avatar" id="adminAvatarEl">SA</div>
+      <div style="flex:1;min-width:0;">
+        <div class="admin-user-name" id="adminUserNameEl">Super Admin</div>
+        <div class="admin-user-role" id="adminUserRoleEl">Owner</div>
+      </div>
+      <button onclick="doLogout()" style="color:rgba(255,255,255,0.4);font-size:20px;padding:4px;" title="Logout">⏻</button>
+    </div>
+  </aside>
+
+  <!-- MAIN ADMIN AREA -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button onclick="document.getElementById('adminSidebar').classList.toggle('mobile-open')" style="display:none;padding:6px;border-radius:var(--radius-md);background:var(--c-bg);" id="sidebarToggleBtn">☰</button>
+        <h1 class="admin-page-title" id="adminPanelTitle">Dashboard</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="btn btn-outline btn-sm" onclick="navigate('home');closeAdmin()">← View Website</button>
+        <button class="btn btn-primary btn-sm" onclick="saveAllChanges()">💾 Save Changes</button>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <!-- DASHBOARD PANEL -->
+      <div class="admin-panel active" id="panel-dashboard">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px;">
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-primary);" id="dashPubs">0</div>
+            <div class="admin-stat-label">Publications</div>
+            <div class="admin-stat-change change-up">↑ Active</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-secondary);" id="dashTeam">0</div>
+            <div class="admin-stat-label">Team Members</div>
+            <div class="admin-stat-change change-up">↑ Active</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-success);" id="dashNews">0</div>
+            <div class="admin-stat-label">News Items</div>
+            <div class="admin-stat-change change-up">↑ Published</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-warning);" id="dashApps">0</div>
+            <div class="admin-stat-label">Applications</div>
+            <div class="admin-stat-change">Pending review</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-info);" id="dashContacts">0</div>
+            <div class="admin-stat-label">Messages</div>
+            <div class="admin-stat-change">New inquiries</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:var(--c-danger);" id="dashUsers">0</div>
+            <div class="admin-stat-label">Admin Users</div>
+            <div class="admin-stat-change">Active accounts</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;flex-wrap:wrap;">
+          <div class="table-wrap">
+            <div class="table-head"><span class="table-head-title">Recent Activity</span></div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;" id="recentActivityList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div class="table-wrap">
+            <div class="table-head"><span class="table-head-title">Quick Actions</span></div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('pubManager',null)">📄 Add Publication</button>
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('newsManager',null)">📰 Add News Item</button>
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('teamManager',null)">👤 Add Team Member</button>
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('oppManager',null)">💼 Add Opportunity</button>
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('mediaManager',null)">🖼️ Media Library</button>
+              <button class="btn btn-outline" style="justify-content:flex-start;gap:10px;" onclick="switchAdminPanel('userManager',null)">👥 Manage Users</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS PANEL -->
+      <div class="admin-panel" id="panel-analytics">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px;">
+          <div class="admin-stat-card"><div class="admin-stat-num" style="color:var(--c-primary);">1,247</div><div class="admin-stat-label">Page Views (30d)</div><div class="admin-stat-change change-up">↑ 12% vs last month</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-num" style="color:var(--c-secondary);">342</div><div class="admin-stat-label">Unique Visitors</div><div class="admin-stat-change change-up">↑ 8%</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-num" style="color:var(--c-success);">2:34</div><div class="admin-stat-label">Avg. Session Time</div><div class="admin-stat-change change-up">↑ 0:12</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-num" style="color:var(--c-warning);">18</div><div class="admin-stat-label">Form Submissions</div><div class="admin-stat-change">This month</div></div>
+        </div>
+        <div class="table-wrap" style="margin-bottom:20px;">
+          <div class="table-head"><span class="table-head-title">Page Views by Section (Last 7 Days)</span></div>
+          <div style="padding:20px;">
+            <div class="chart-bar" id="analyticsChart"></div>
+            <div style="display:flex;gap:6px;margin-top:6px;" id="analyticsLabels"></div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head"><span class="table-head-title">Top Pages</span></div>
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Page</th><th>Views</th><th>Avg Time</th><th>Bounce Rate</th></tr></thead>
+              <tbody>
+                <tr><td>Home</td><td>412</td><td>3:12</td><td>34%</td></tr>
+                <tr><td>Research</td><td>287</td><td>4:45</td><td>22%</td></tr>
+                <tr><td>Publications</td><td>198</td><td>5:20</td><td>18%</td></tr>
+                <tr><td>People</td><td>156</td><td>2:30</td><td>41%</td></tr>
+                <tr><td>Opportunities</td><td>134</td><td>3:55</td><td>28%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SITE SETTINGS PANEL -->
+      <div class="admin-panel" id="panel-siteSettings">
+        <div class="card-flat" style="max-width:700px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;margin-bottom:24px;">General Site Settings</h3>
+          <div class="form-group"><label class="form-label">Laboratory Name</label><input type="text" class="form-input" id="set_labName" oninput="previewSetting('labName',this.value)"></div>
+          <div class="form-group"><label class="form-label">Institute / University</label><input type="text" class="form-input" id="set_institute"></div>
+          <div class="form-group"><label class="form-label">Lab Email</label><input type="email" class="form-input" id="set_email"></div>
+          <div class="form-group"><label class="form-label">Lab Phone</label><input type="text" class="form-input" id="set_phone"></div>
+          <div class="form-group"><label class="form-label">Lab Address (Full)</label><textarea class="form-input" rows="3" id="set_address"></textarea></div>
+          <div class="form-group"><label class="form-label">Announcement Banner Text</label><input type="text" class="form-input" id="set_announcement"></div>
+          <div class="form-group"><label class="form-label">Footer Copyright Text</label><input type="text" class="form-input" id="set_copyright"></div>
+          <div class="form-group"><label class="form-label">Footer About Text</label><textarea class="form-input" rows="3" id="set_footerAbout"></textarea></div>
+          <button class="btn btn-primary" onclick="saveSiteSettings()">Save Settings</button>
+        </div>
+      </div>
+
+      <!-- HOME EDITOR PANEL -->
+      <div class="admin-panel" id="panel-homeEditor">
+        <div class="card-flat" style="max-width:700px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;margin-bottom:24px;">Home Page Editor</h3>
+          <div class="form-group"><label class="form-label">Hero Title (Line 1)</label><input type="text" class="form-input" id="set_heroTitle1" placeholder="e.g. Biophysics &amp;"></div>
+          <div class="form-group"><label class="form-label">Hero Title (Highlighted)</label><input type="text" class="form-input" id="set_heroTitle2" placeholder="e.g. Biomedical Engineering"></div>
+          <div class="form-group"><label class="form-label">Hero Description</label><textarea class="form-input" rows="3" id="set_heroDesc"></textarea></div>
+          <div class="form-group"><label class="form-label">About Section Title</label><input type="text" class="form-input" id="set_aboutTitle"></div>
+          <div class="form-group"><label class="form-label">About Description (Paragraph 1)</label><textarea class="form-input" rows="4" id="set_aboutDesc1"></textarea></div>
+          <div class="form-group"><label class="form-label">About Description (Paragraph 2)</label><textarea class="form-input" rows="3" id="set_aboutDesc2"></textarea></div>
+          <div class="divider"></div>
+          <h4 style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:16px;">Statistics Counter</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="form-group"><label class="form-label">Publications Count</label><input type="text" class="form-input" id="set_stat1"></div>
+            <div class="form-group"><label class="form-label">Students Count</label><input type="text" class="form-input" id="set_stat2"></div>
+            <div class="form-group"><label class="form-label">Years</label><input type="text" class="form-input" id="set_stat3"></div>
+            <div class="form-group"><label class="form-label">Projects</label><input type="text" class="form-input" id="set_stat4"></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveHomeSettings()">Save Home Page</button>
+        </div>
+      </div>
+
+      <!-- RESEARCH MANAGER -->
+      <div class="admin-panel" id="panel-researchManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Research Areas</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('researchModal')">+ Add Research Area</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table" id="researchTable">
+              <thead><tr><th>Icon</th><th>Title</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="researchTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PUBLICATIONS MANAGER -->
+      <div class="admin-panel" id="panel-pubManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Publications</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('pubModal')">+ Add Publication</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head" style="justify-content:flex-start;gap:12px;">
+            <input type="text" class="form-input" style="max-width:260px;" placeholder="Search publications…" oninput="adminSearchPubs(this.value)">
+          </div>
+          <div class="table-overflow">
+            <table class="data-table" id="adminPubTable">
+              <thead><tr><th>Year</th><th>Title</th><th>Journal</th><th>Type</th><th>Actions</th></tr></thead>
+              <tbody id="adminPubBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWS MANAGER -->
+      <div class="admin-panel" id="panel-newsManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">News &amp; Events</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('newsModal')">+ Add News</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="adminNewsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM MANAGER -->
+      <div class="admin-panel" id="panel-teamManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Team Members</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('teamModal')">+ Add Member</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Role / Category</th><th>Research Area</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="adminTeamBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPPORTUNITIES MANAGER -->
+      <div class="admin-panel" id="panel-oppManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Opportunities</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('oppModal')">+ Add Opportunity</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
+              <tbody id="adminOppBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT INFO MANAGER -->
+      <div class="admin-panel" id="panel-contactManager">
+        <div class="card-flat" style="max-width:600px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;margin-bottom:24px;">Contact Information</h3>
+          <div class="form-group"><label class="form-label">Lab Address</label><textarea class="form-input" rows="3" id="set_contactAddress"></textarea></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="set_contactEmail"></div>
+          <div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-input" id="set_contactPhone"></div>
+          <div class="form-group"><label class="form-label">Google Maps Link</label><input type="text" class="form-input" id="set_mapsLink" placeholder="https://maps.google.com/..."></div>
+          <button class="btn btn-primary" onclick="saveContactInfo()">Save Contact Info</button>
+        </div>
+      </div>
+
+      <!-- MEDIA MANAGER -->
+      <div class="admin-panel" id="panel-mediaManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Media Library</h3>
+          <div style="display:flex;gap:10px;">
+            <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+              📁 Upload File
+              <input type="file" multiple style="display:none;" onchange="handleMediaUpload(this)">
+            </label>
+          </div>
+        </div>
+        <div class="filter-bar" style="margin-bottom:20px;">
+          <button class="filter-btn active" onclick="filterMedia('all',this)">All Files</button>
+          <button class="filter-btn" onclick="filterMedia('image',this)">Images</button>
+          <button class="filter-btn" onclick="filterMedia('pdf',this)">PDFs</button>
+          <button class="filter-btn" onclick="filterMedia('video',this)">Videos</button>
+        </div>
+        <div class="media-grid" id="mediaGrid"><!-- Populated by JS --></div>
+      </div>
+
+      <!-- APPLICATIONS INBOX -->
+      <div class="admin-panel" id="panel-applicationsInbox">
+        <div class="table-wrap">
+          <div class="table-head"><span class="table-head-title">Application Submissions</span></div>
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Area</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="appInboxBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT INBOX -->
+      <div class="admin-panel" id="panel-contactInbox">
+        <div class="table-wrap">
+          <div class="table-head"><span class="table-head-title">Contact Messages</span></div>
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="contactInboxBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER MANAGER -->
+      <div class="admin-panel" id="panel-userManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">User Management</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('userModal')">+ Create User</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGES MANAGER -->
+      <div class="admin-panel" id="panel-pagesManager">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-family:var(--font-head);font-size:17px;font-weight:600;">Pages</h3>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Custom page creation — coming in next update','info')">+ New Page</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-overflow">
+            <table class="data-table">
+              <thead><tr><th>Page Name</th><th>URL Slug</th><th>Last Updated</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>Home</td><td>/</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('homeEditor',null)">Edit</button></td></tr>
+                <tr><td>Research</td><td>/research</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('researchManager',null)">Edit</button></td></tr>
+                <tr><td>People</td><td>/people</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('teamManager',null)">Edit</button></td></tr>
+                <tr><td>Publications</td><td>/publications</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('pubManager',null)">Edit</button></td></tr>
+                <tr><td>Opportunities</td><td>/opportunities</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('oppManager',null)">Edit</button></td></tr>
+                <tr><td>News &amp; Events</td><td>/news</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('newsManager',null)">Edit</button></td></tr>
+                <tr><td>Contact</td><td>/contact</td><td>Today</td><td><span class="status-active">Live</span></td><td><button class="btn btn-outline btn-sm" onclick="switchAdminPanel('contactManager',null)">Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY LOG -->
+      <div class="admin-panel" id="panel-activityLog">
+        <div class="table-wrap">
+          <div class="table-head"><span class="table-head-title">Activity Log</span><button class="btn btn-outline btn-sm" onclick="clearLog()">Clear Log</button></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:10px;" id="activityLogList"></div>
+        </div>
+      </div>
+
+    </div><!-- end admin-content -->
+  </main>
+</div>
+<!-- END ADMIN OVERLAY -->
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Publication Modal -->
+<div id="pubModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('pubModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('pubModal')">✕</button>
+      <h2 class="modal-title" id="pubModalTitle">Add Publication</h2>
+      <p class="modal-subtitle">Enter publication details below</p>
+      <input type="hidden" id="editPubId">
+      <div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="pubTitle" placeholder="Full publication title"></div>
+      <div class="form-group"><label class="form-label">Authors *</label><input type="text" class="form-input" id="pubAuthors" placeholder="e.g. Sharma R, Gupta M, et al."></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Journal / Conference *</label><input type="text" class="form-input" id="pubJournal"></div>
+        <div class="form-group"><label class="form-label">Year *</label><input type="number" class="form-input" id="pubYear" placeholder="2024"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Volume / Issue</label><input type="text" class="form-input" id="pubVolume"></div>
+        <div class="form-group"><label class="form-label">Pages</label><input type="text" class="form-input" id="pubPages"></div>
+      </div>
+      <div class="form-group"><label class="form-label">DOI / URL</label><input type="text" class="form-input" id="pubDoi" placeholder="https://doi.org/..."></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-input" id="pubType"><option value="journal">Journal Article</option><option value="conference">Conference Paper</option><option value="review">Review</option><option value="book">Book Chapter</option></select></div>
+        <div class="form-group"><label class="form-label">Featured?</label><select class="form-input" id="pubFeatured"><option value="false">No</option><option value="true">Yes</option></select></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('pubModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="savePub()">Save Publication</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- News Modal -->
+<div id="newsModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('newsModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('newsModal')">✕</button>
+      <h2 class="modal-title" id="newsModalTitle">Add News</h2>
+      <p class="modal-subtitle">Add a news item or announcement</p>
+      <input type="hidden" id="editNewsId">
+      <div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="newsTitle"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="newsDate"></div>
+        <div class="form-group"><label class="form-label">Category</label>
+          <select class="form-input" id="newsCategory">
+            <option value="research">Research</option><option value="award">Award</option><option value="conference">Conference</option><option value="publication">Publication</option><option value="student">Student Achievement</option><option value="event">Event</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Excerpt</label><textarea class="form-input" rows="3" id="newsExcerpt"></textarea></div>
+      <div class="form-group"><label class="form-label">Full Content</label><textarea class="form-input" rows="5" id="newsContent"></textarea></div>
+      <div class="form-group"><label class="form-label">Icon / Emoji</label><input type="text" class="form-input" id="newsIcon" placeholder="🔬" style="width:80px;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('newsModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNews()">Save News</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Team Member Modal -->
+<div id="teamModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('teamModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('teamModal')">✕</button>
+      <h2 class="modal-title" id="teamModalTitle">Add Team Member</h2>
+      <input type="hidden" id="editTeamId">
+      <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-input" id="memberName"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Designation / Role *</label><input type="text" class="form-input" id="memberRole" placeholder="e.g. PhD Scholar"></div>
+        <div class="form-group"><label class="form-label">Category *</label>
+          <select class="form-input" id="memberCategory">
+            <option value="pi">Principal Investigator</option><option value="postdoc">Postdoctoral Researcher</option><option value="phd">PhD Scholar</option><option value="mtech">M.Tech Student</option><option value="msc">M.Sc Student</option><option value="ra">Research Assistant</option><option value="alumni">Alumni</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Research Area</label><input type="text" class="form-input" id="memberResearch" placeholder="e.g. Biophotonics, Tissue Engineering"></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="memberEmail"></div>
+      <div class="form-group"><label class="form-label">Bio / Description</label><textarea class="form-input" rows="3" id="memberBio"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">LinkedIn URL</label><input type="text" class="form-input" id="memberLinkedin"></div>
+        <div class="form-group"><label class="form-label">Google Scholar URL</label><input type="text" class="form-input" id="memberScholar"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Photo URL (optional)</label><input type="text" class="form-input" id="memberPhoto" placeholder="https://..."></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('teamModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMember()">Save Member</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Opportunity Modal -->
+<div id="oppModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('oppModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('oppModal')">✕</button>
+      <h2 class="modal-title" id="oppModalTitle">Add Opportunity</h2>
+      <input type="hidden" id="editOppId">
+      <div class="form-group"><label class="form-label">Position Title *</label><input type="text" class="form-input" id="oppTitle"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-input" id="oppType"><option value="phd">PhD Position</option><option value="postdoc">Postdoc</option><option value="ra">Research Assistant</option><option value="intern">Internship</option><option value="project">Project Position</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Deadline</label><input type="date" class="form-input" id="oppDeadline"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description *</label><textarea class="form-input" rows="4" id="oppDesc"></textarea></div>
+      <div class="form-group"><label class="form-label">Requirements</label><textarea class="form-input" rows="3" id="oppReq" placeholder="e.g. GATE qualified, M.Sc in relevant field..."></textarea></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="oppStatus"><option value="open">Open</option><option value="closed">Closed</option></select></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('oppModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveOpp()">Save Opportunity</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Research Modal -->
+<div id="researchModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('researchModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('researchModal')">✕</button>
+      <h2 class="modal-title" id="researchModalTitle">Add Research Area</h2>
+      <input type="hidden" id="editResearchId">
+      <div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-input" id="researchTitle"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Icon / Emoji</label><input type="text" class="form-input" id="researchIcon" placeholder="🔬"></div>
+        <div class="form-group"><label class="form-label">Accent Color</label><input type="color" class="form-input" id="researchColor" value="#0F4C81"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Short Description *</label><textarea class="form-input" rows="3" id="researchDesc"></textarea></div>
+      <div class="form-group"><label class="form-label">Detailed Description</label><textarea class="form-input" rows="5" id="researchLongDesc"></textarea></div>
+      <div class="form-group"><label class="form-label">Applications (comma separated)</label><input type="text" class="form-input" id="researchApps" placeholder="e.g. Cancer diagnostics, Drug delivery"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('researchModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveResearch()">Save Area</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div id="userModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('userModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+      <h2 class="modal-title" id="userModalTitle">Create New User</h2>
+      <p class="modal-subtitle">Set up credentials and role for the new user</p>
+      <input type="hidden" id="editUserId">
+      <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-input" id="newUserName"></div>
+      <div class="form-group"><label class="form-label">Email Address *</label><input type="email" class="form-input" id="newUserEmail"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Role *</label>
+          <select class="form-input" id="newUserRole">
+            <option value="admin">Admin</option><option value="editor">Editor</option><option value="member">Member</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-input" id="newUserStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Temporary Password *</label><input type="password" class="form-input" id="newUserPass" placeholder="Min 8 characters"></div>
+      <div class="form-group"><label class="form-label">Confirm Password *</label><input type="password" class="form-input" id="newUserPass2"></div>
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <span>The user will receive credentials and must change their password on first login.</span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveUser()">Create User</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Application Modal -->
+<div id="viewAppModal" style="display:none;">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('viewAppModal')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('viewAppModal')">✕</button>
+      <h2 class="modal-title">Application Details</h2>
+      <div id="viewAppContent" style="font-size:14px;color:var(--c-text);line-height:1.8;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('viewAppModal')">Close</button>
+        <button class="btn btn-success btn-sm" onclick="updateAppStatus('reviewed')">Mark Reviewed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA STORE ====================
+const STORE_KEY = 'bpbme_data_v2';
+
+function getDefaultData() {
+  return {
+    settings: {
+      labName: 'BPBME Research Group',
+      institute: 'Indian Institute of Technology Indore',
+      email: 'bpbme@iiti.ac.in',
+      phone: '+91-731-6603XXX',
+      address: 'Room No. 212, Academic Building\nIIT Indore, Simrol Campus\nIndore, Madhya Pradesh 453552',
+      announcement: 'We are looking for motivated PhD students and research assistants — Apply Now',
+      copyright: '© 2025 Biophysics & Biomedical Engineering Research Group, IIT Indore. All rights reserved.',
+      footerAbout: 'Advancing biophysics and biomedical engineering research through interdisciplinary innovation at the Indian Institute of Technology Indore.',
+      heroTitle1: 'Biophysics &',
+      heroTitle2: 'Biomedical Engineering',
+      heroDesc: 'Advancing the frontiers of biophotonics, tissue engineering, and regenerative medicine through interdisciplinary research. We develop innovative biomedical solutions to address critical healthcare challenges.',
+      aboutTitle: 'Pioneering Biophysics & Biomedical Engineering Research',
+      aboutDesc1: 'The Biophysics & Biomedical Engineering (BPBME) Research Group at IIT Indore is dedicated to advancing fundamental and applied research at the interface of physics, biology, and engineering. Our work focuses on developing novel diagnostic and therapeutic tools using light-matter interactions, engineered biomaterials, and advanced fabrication techniques.',
+      aboutDesc2: 'We are committed to training the next generation of interdisciplinary scientists and engineers who will drive innovation in biomedical research and healthcare technology.',
+      stat1: '50+', stat2: '20+', stat3: '10+', stat4: '15+'
+    },
+    research: [
+      { id: 1, title: 'Biophotonics', icon: '💡', color: '#0F4C81', desc: 'Developing advanced optical techniques for biological imaging, diagnostics, and therapeutics using light-matter interactions at the cellular and molecular level.', longDesc: 'Our biophotonics research focuses on harnessing the power of light for biological applications. We develop advanced spectroscopic and imaging techniques including Raman spectroscopy, fluorescence microscopy, and optical coherence tomography for disease diagnosis and biological research.', apps: ['Cancer diagnostics', 'Cell imaging', 'Biosensors', 'Optical tweezers'] },
+      { id: 2, title: 'Tissue Engineering', icon: '🧬', color: '#2A7F9E', desc: 'Engineering functional tissue constructs using biocompatible scaffolds, stem cells, and growth factors for regenerative medicine applications.', longDesc: 'We design and fabricate three-dimensional tissue constructs that mimic the structure and function of native tissues. Our research combines biomaterials science, cell biology, and engineering principles to create living substitutes for damaged or diseased tissues.', apps: ['Bone regeneration', 'Skin substitutes', 'Cartilage repair', 'Vascular grafts'] },
+      { id: 3, title: 'Biofabrication', icon: '🖨️', color: '#1D7A5F', desc: '3D bioprinting and additive manufacturing of complex biological constructs with precise spatial control of cells, bioinks, and biomaterials.', longDesc: 'Biofabrication combines 3D bioprinting, electrospinning, and other advanced manufacturing techniques to create complex biological structures with high fidelity. We develop novel bioink formulations and printing strategies for tissue engineering applications.', apps: ['3D bioprinting', 'Organoids', 'Drug testing models', 'Personalized implants'] },
+      { id: 4, title: 'Regenerative Medicine', icon: '🌱', color: '#7C3AED', desc: 'Harnessing stem cells and biomaterials to restore, replace, or regenerate damaged tissues and organs, enabling novel therapeutic strategies.', longDesc: 'Our regenerative medicine research focuses on developing cell-based therapies and biomaterial approaches for tissue repair. We investigate stem cell differentiation, paracrine signaling, and scaffold-guided tissue regeneration.', apps: ['Stem cell therapy', 'Wound healing', 'Organ repair', 'Cell transplantation'] },
+      { id: 5, title: 'Nanobiotechnology', icon: '⚛️', color: '#DC2626', desc: 'Engineering nanoparticles and nanostructured materials for targeted drug delivery, cancer theranostics, and biosensing applications.', longDesc: 'We synthesize and characterize various nanomaterials including gold nanoparticles, quantum dots, and polymeric nanocarriers for biomedical applications. Our focus is on developing multifunctional nanosystems for simultaneous diagnosis and treatment.', apps: ['Drug delivery', 'Cancer theranostics', 'Biosensors', 'Antimicrobials'] },
+      { id: 6, title: 'Biomedical Devices', icon: '🔧', color: '#D97706', desc: 'Design and development of innovative point-of-care diagnostic devices, implants, and wearable sensors for healthcare monitoring applications.', longDesc: 'We develop low-cost, portable diagnostic devices and implantable systems for healthcare applications. Our work encompasses microfluidic platforms, electrochemical sensors, and wearable monitoring devices with real-world clinical translation potential.', apps: ['Point-of-care diagnostics', 'Implants', 'Wearable sensors', 'Microfluidics'] },
+      { id: 7, title: 'Biomedical Engineering', icon: '⚕️', color: '#0891B2', desc: 'Applying engineering principles to solve complex biomedical problems — from computational modeling of biological systems to clinical device translation.', longDesc: 'Our biomedical engineering research integrates computational modeling, signal processing, and systems biology approaches to understand complex biological phenomena and develop engineering solutions for clinical challenges.', apps: ['Computational modeling', 'Signal processing', 'Clinical devices', 'Medical imaging'] }
+    ],
+    publications: [
+      { id: 1, title: 'Label-free detection of oral cancer biomarkers using surface-enhanced Raman spectroscopy', authors: 'Sharma R, Gupta M, Singh A, Verma S', journal: 'Biosensors and Bioelectronics', year: 2024, volume: '220', pages: '114890', doi: 'https://doi.org/10.1016/j.bios.2024.114890', type: 'journal', featured: true },
+      { id: 2, title: '3D Bioprinted Bone Scaffold using Hydroxyapatite-Gelatin Bioink for Bone Tissue Engineering', authors: 'Kumar P, Sharma R, Jain A, Mishra T', journal: 'Biomaterials Science', year: 2024, volume: '12', pages: '1234-1248', doi: 'https://doi.org/10.1039/D3BM01234A', type: 'journal', featured: true },
+      { id: 3, title: 'Gold Nanoparticle-Based Photothermal Therapy for Enhanced Cancer Treatment', authors: 'Singh A, Kumar R, Sharma M', journal: 'ACS Applied Materials & Interfaces', year: 2023, volume: '15', pages: '45678-45690', doi: '', type: 'journal', featured: true },
+      { id: 4, title: 'Optical coherence tomography for real-time monitoring of tissue engineering constructs', authors: 'Verma S, Singh A, Gupta R', journal: 'Acta Biomaterialia', year: 2023, volume: '168', pages: '234-246', doi: '', type: 'journal', featured: false },
+      { id: 5, title: 'Electrospun nanofiber scaffolds for skin tissue engineering: A comprehensive review', authors: 'Jain A, Kumar P, Sharma R', journal: 'Biomaterials', year: 2023, volume: '298', pages: '122143', doi: '', type: 'review', featured: false },
+      { id: 6, title: 'Microfluidic Platform for Point-of-Care Detection of Sepsis Biomarkers', authors: 'Mishra T, Sharma R, Singh V', journal: 'Lab on a Chip', year: 2022, volume: '22', pages: '3456-3470', doi: '', type: 'journal', featured: false },
+      { id: 7, title: 'Raman Spectroscopy-Based Early Detection of Diabetic Retinopathy', authors: 'Sharma R, Gupta M', journal: 'Optics Letters', year: 2022, volume: '47', pages: '5678-5681', doi: '', type: 'journal', featured: false },
+      { id: 8, title: 'Stem Cell-Laden Hydrogel for Cardiac Tissue Engineering', authors: 'Kumar R, Singh A, Verma M', journal: 'Advanced Healthcare Materials', year: 2022, volume: '11', pages: '2101234', doi: '', type: 'journal', featured: false },
+      { id: 9, title: 'Polymeric Nanoparticles for Combinatorial Cancer Therapy', authors: 'Singh V, Kumar P, Jain A', journal: 'International Journal of Pharmaceutics', year: 2021, volume: '612', pages: '121389', doi: '', type: 'journal', featured: false },
+      { id: 10, title: 'Wearable Electrochemical Sensor for Continuous Glucose Monitoring', authors: 'Gupta M, Sharma R, Mishra T', journal: 'Analytical Chemistry', year: 2021, volume: '93', pages: '12345-12356', doi: '', type: 'journal', featured: false }
+    ],
+    team: [
+      { id: 1, name: 'Prof. [Principal Investigator]', role: 'Associate Professor & Lab Head', category: 'pi', research: 'Biophotonics, Biomedical Engineering, Nanobiotechnology', email: 'pi@iiti.ac.in', bio: 'Principal Investigator of the BPBME Lab. Research interests include biophotonics, tissue engineering, and biomedical device development. Over 10 years of experience in interdisciplinary biomedical research.', linkedin: '', scholar: '', photo: '' },
+      { id: 2, name: 'Dr. Research Scholar A', role: 'Postdoctoral Researcher', category: 'postdoc', research: 'Biophotonics, Raman Spectroscopy', email: 'ra@iiti.ac.in', bio: 'Specializes in optical spectroscopy for biological applications.', linkedin: '', scholar: '', photo: '' },
+      { id: 3, name: 'PhD Scholar 1', role: 'PhD Research Scholar', category: 'phd', research: 'Tissue Engineering, Biofabrication', email: '', bio: 'Working on 3D bioprinting of tissue constructs.', linkedin: '', scholar: '', photo: '' },
+      { id: 4, name: 'PhD Scholar 2', role: 'PhD Research Scholar', category: 'phd', research: 'Nanobiotechnology, Drug Delivery', email: '', bio: 'Developing nanoparticle-based drug delivery systems for cancer therapy.', linkedin: '', scholar: '', photo: '' },
+      { id: 5, name: 'PhD Scholar 3', role: 'PhD Research Scholar', category: 'phd', research: 'Regenerative Medicine', email: '', bio: 'Investigating stem cell-based approaches for tissue regeneration.', linkedin: '', scholar: '', photo: '' },
+      { id: 6, name: 'M.Tech Student 1', role: 'M.Tech Research Student', category: 'mtech', research: 'Biomedical Devices', email: '', bio: 'Project work on wearable biosensors.', linkedin: '', scholar: '', photo: '' },
+      { id: 7, name: 'M.Sc Student 1', role: 'M.Sc Research Student', category: 'msc', research: 'Biophotonics', email: '', bio: 'Dissertation project on optical biosensing.', linkedin: '', scholar: '', photo: '' },
+      { id: 8, name: 'Research Assistant 1', role: 'Junior Research Fellow', category: 'ra', research: 'Biofabrication', email: '', bio: 'Supporting laboratory research and experimental work.', linkedin: '', scholar: '', photo: '' }
+    ],
+    news: [
+      { id: 1, title: 'Lab receives DST-SERB grant for Biophotonics research', date: '2024-11-15', category: 'research', excerpt: 'Our laboratory has been awarded a prestigious DST-SERB Core Research Grant for developing novel biophotonic tools for early cancer detection.', content: 'We are thrilled to announce that our lab has received a major research grant from DST-SERB to advance our work in biophotonics-based cancer diagnostics. The project will run for 3 years and support multiple research scholars.', icon: '🏆' },
+      { id: 2, title: 'PhD Scholar receives Best Poster Award at National Conference', date: '2024-10-20', category: 'award', excerpt: 'Our PhD scholar won the Best Poster Award at the National Conference on Biomaterials and Tissue Engineering held at IIT Bombay.', content: 'Congratulations to our PhD scholar on winning the Best Poster Award for their work on 3D bioprinted scaffolds for bone tissue engineering.', icon: '🥇' },
+      { id: 3, title: 'New publication in Biosensors and Bioelectronics', date: '2024-09-10', category: 'publication', excerpt: 'Our latest research on SERS-based oral cancer detection has been published in the prestigious journal Biosensors and Bioelectronics.', content: 'We are pleased to announce the publication of our research article on label-free detection of oral cancer biomarkers using surface-enhanced Raman spectroscopy.', icon: '📄' },
+      { id: 4, title: 'Lab hosts International Workshop on Biofabrication', date: '2024-08-05', category: 'event', excerpt: 'IIT Indore hosted a two-day international workshop on advances in biofabrication technologies, attracting participants from across India and abroad.', content: 'The workshop covered latest developments in 3D bioprinting, electrospinning, and biomaterial design, with expert speakers from leading institutions.', icon: '🎓' },
+      { id: 5, title: 'Collaboration established with AIIMS for translational research', date: '2024-07-12', category: 'research', excerpt: 'A new MoU has been signed between BPBME Lab and AIIMS Bhopal for collaborative translational biomedical research projects.', content: 'This collaboration will accelerate the translation of our lab-developed technologies into clinical applications, with joint research projects in diagnostics and therapeutics.', icon: '🤝' },
+      { id: 6, title: 'Student achieves first rank in IIT Indore M.Tech program', date: '2024-06-30', category: 'student', excerpt: 'Our M.Tech research student has achieved the first rank in the Biomedical Engineering program at IIT Indore convocation 2024.', content: 'Heartiest congratulations to our student on this outstanding academic achievement. Their research work on wearable biosensors received special recognition.', icon: '🎖️' }
+    ],
+    opportunities: [
+      { id: 1, title: 'PhD Position in Biophotonics', type: 'phd', desc: 'We are seeking a highly motivated PhD student to work on advanced biophotonic techniques for cancer diagnosis. The candidate will develop novel spectroscopic and imaging methods for label-free biological analysis.', req: 'GATE/NET/CSIR qualified. M.Sc/M.Tech in Physics, Optics, Biotechnology or related field. Strong background in optics or spectroscopy preferred.', deadline: '2025-03-31', status: 'open' },
+      { id: 2, title: 'PhD Position in Tissue Engineering & Biofabrication', type: 'phd', desc: 'Exciting opportunity to develop next-generation 3D bioprinted tissue constructs for regenerative medicine applications using novel bioink formulations.', req: 'GATE/NET qualified. M.Sc/M.Tech in Biotechnology, Biomedical Engineering, Materials Science or related field.', deadline: '2025-03-31', status: 'open' },
+      { id: 3, title: 'Junior Research Fellow (JRF) — Nanobiotechnology', type: 'ra', desc: 'Funded JRF position for DST-SERB project on nanoparticle-mediated cancer theranostics. Candidate will synthesize and characterize nanomaterials for biomedical applications.', req: 'NET/CSIR/GATE qualified. M.Sc in Chemistry, Biochemistry, Biotechnology or related field. Stipend as per DST norms.', deadline: '2025-02-28', status: 'open' },
+      { id: 4, title: 'Project Intern — Biomedical Devices', type: 'intern', desc: 'Summer/winter internship opportunity for undergraduate/postgraduate students interested in developing wearable biosensors and microfluidic point-of-care devices.', req: 'B.Tech/M.Sc students in relevant disciplines. Good programming skills (Python/MATLAB). Minimum 2 months commitment.', deadline: '2025-05-31', status: 'open' },
+      { id: 5, title: 'M.Tech/M.Sc Thesis Project', type: 'project', desc: 'Thesis project positions available in multiple research areas for students enrolled in relevant postgraduate programs at IIT Indore or other institutions.', req: 'Currently enrolled in M.Tech/M.Sc program. Must complete institute formalities. Project topics available in all research areas of the lab.', deadline: '2025-06-30', status: 'open' }
+    ],
+    collaborations: [
+      'IIT Bombay', 'IIT Delhi', 'AIIMS Bhopal', 'CSIR-IMTECH', 'TIFR Mumbai', 'University of Calgary', 'ETH Zurich', 'NUS Singapore', 'DST-SERB', 'DBT India'
+    ],
+    users: [
+      { id: 1, name: 'Super Admin', email: 'admin@iiti.ac.in', role: 'owner', status: 'active', pass: 'admin123', lastLogin: 'Today' }
+    ],
+    applications: [],
+    contacts: [],
+    mediaFiles: [
+      { id: 1, name: 'lab-equipment.jpg', type: 'image', size: '1.2 MB', date: '2024-01-10' },
+      { id: 2, name: 'team-photo-2024.jpg', type: 'image', size: '2.1 MB', date: '2024-02-14' },
+      { id: 3, name: 'annual-report-2024.pdf', type: 'pdf', size: '3.4 MB', date: '2024-03-01' }
+    ],
+    activityLog: [
+      { id: 1, user: 'Super Admin', action: 'Website initialized', time: new Date().toLocaleString() }
+    ]
+  };
+}
+
+let DATA = {};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORE_KEY);
+    DATA = saved ? JSON.parse(saved) : getDefaultData();
+  } catch(e) { DATA = getDefaultData(); }
+}
+
+function saveData() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); } catch(e) {}
+}
+
+function logActivity(action) {
+  const user = currentUser ? currentUser.name : 'System';
+  DATA.activityLog.unshift({ id: Date.now(), user, action, time: new Date().toLocaleString() });
+  if (DATA.activityLog.length > 100) DATA.activityLog = DATA.activityLog.slice(0, 100);
+  saveData();
+}
+
+// ==================== AUTH ====================
+let currentUser = null;
+let adminOpen = false;
+
+function openAdminLogin() { document.getElementById('loginScreen').style.display = 'flex'; }
+function closeAdminLogin() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('loginAlert').innerHTML = ''; }
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const user = DATA.users.find(u => u.email === email && u.pass === pass && u.status === 'active');
+  if (user) {
+    currentUser = user;
+    closeAdminLogin();
+    openAdmin();
+  } else {
+    document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">❌ Invalid credentials or account inactive.</div>';
+  }
+}
+
+function openAdmin() {
+  adminOpen = true;
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminAvatarEl').textContent = (currentUser.name.split(' ').map(w=>w[0]).join('').slice(0,2)).toUpperCase();
+  document.getElementById('adminUserNameEl').textContent = currentUser.name;
+  document.getElementById('adminUserRoleEl').textContent = currentUser.role;
+  loadAdminData();
+  switchAdminPanel('dashboard', null);
+  // Mobile
+  const sBtn = document.getElementById('sidebarToggleBtn');
+  if (window.innerWidth < 768) sBtn.style.display = 'flex';
+}
+
+function closeAdmin() {
+  adminOpen = false;
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+function doLogout() {
+  logActivity('User logged out');
+  currentUser = null;
+  closeAdmin();
+  showToast('Logged out successfully', 'success');
+}
+
+// ==================== NAVIGATION ====================
+let currentPage = 'home';
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) { pageEl.classList.add('active'); currentPage = page; }
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  renderPage(page);
+}
+
+function renderPage(page) {
+  if (page === 'home') renderHome();
+  else if (page === 'research') renderResearchPage();
+  else if (page === 'people') renderPeoplePage();
+  else if (page === 'publications') renderPublications();
+  else if (page === 'opportunities') renderOpportunities();
+  else if (page === 'news') renderNews();
+}
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  nav.classList.toggle('open');
+}
+
+// ==================== RENDER HOME ====================
+function renderHome() {
+  const s = DATA.settings;
+  // Apply settings
+  document.getElementById('heroTitle').innerHTML = s.heroTitle1 + '<br><span>' + s.heroTitle2 + '</span><br>Research Group';
+  document.getElementById('heroDesc').textContent = s.heroDesc;
+  document.getElementById('aboutTitle').textContent = s.aboutTitle;
+  document.getElementById('aboutDesc').textContent = s.aboutDesc1;
+  document.getElementById('aboutDesc2').textContent = s.aboutDesc2;
+  document.getElementById('navLabName').textContent = s.labName.replace(' Research Group','').replace('Biophysics & Biomedical Engineering','BPBME Lab');
+  document.getElementById('footerLabName').textContent = s.labName;
+  document.getElementById('announcementText').innerHTML = s.announcement + ' — <a href="#" onclick="navigate(\'opportunities\')">Apply Now →</a>';
+  document.getElementById('footerAbout').textContent = s.footerAbout;
+  document.getElementById('footerCopyright').textContent = s.copyright;
+  // Stats hero
+  document.getElementById('statPublications').textContent = s.stat1;
+  document.getElementById('statStudents').textContent = s.stat2;
+  document.getElementById('statYears').textContent = s.stat3;
+  document.getElementById('statProjects').textContent = s.stat4;
+  // Stats section
+  document.getElementById('statNum1').textContent = s.stat1;
+  document.getElementById('statNum2').textContent = s.stat2;
+
+  // Research cards
+  const rGrid = document.getElementById('homeResearchGrid');
+  rGrid.innerHTML = DATA.research.slice(0,6).map(r => `
+    <div class="research-card" style="--card-color:${r.color};" onclick="navigate('research')">
+      <div class="research-icon" style="background:${r.color}22;">${r.icon}</div>
+      <h3 class="research-card-title">${r.title}</h3>
+      <p class="research-card-desc">${r.desc}</p>
+      <span class="research-card-link">Learn more →</span>
+    </div>`).join('');
+
+  // Featured publications
+  const pList = document.getElementById('homePubList');
+  const featured = DATA.publications.filter(p => p.featured).slice(0, 3);
+  pList.innerHTML = featured.map(p => renderPubCard(p)).join('');
+
+  // News
+  const nList = document.getElementById('homeNewsList');
+  nList.innerHTML = DATA.news.slice(0,3).map(n => renderNewsCard(n)).join('');
+
+  // Team preview
+  const tGrid = document.getElementById('homeTeamGrid');
+  tGrid.innerHTML = DATA.team.slice(0,4).map(m => renderTeamCard(m)).join('');
+
+  // Collaborations
+  const cList = document.getElementById('collaborationsList');
+  cList.innerHTML = DATA.collaborations.map(c => `<div class="card-flat" style="padding:16px 24px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:var(--c-muted);border-radius:var(--radius-md);">🏛️ ${c}</div>`).join('');
+}
+
+function renderPubCard(p) {
+  return `<div class="pub-card">
+    <div class="pub-year-badge">${p.year}</div>
+    <div class="pub-content">
+      <h4 class="pub-title">${p.title}</h4>
+      <p class="pub-authors">${p.authors}</p>
+      <p class="pub-journal">${p.journal}${p.volume ? `, ${p.volume}` : ''}${p.pages ? `, pp. ${p.pages}` : ''}</p>
+      <div class="pub-meta">
+        <span class="badge ${p.type==='journal'?'badge-blue':p.type==='review'?'badge-green':p.type==='conference'?'badge-amber':'badge-gray'}">${p.type}</span>
+        ${p.doi ? `<a href="${p.doi}" target="_blank" style="font-size:13px;color:var(--c-primary);font-weight:500;">🔗 DOI</a>` : ''}
+        ${p.featured ? '<span class="badge badge-green">⭐ Featured</span>' : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderNewsCard(n) {
+  const catColors = { research:'badge-blue', award:'badge-amber', conference:'badge-gray', publication:'badge-green', student:'badge-blue', event:'badge-gray' };
+  return `<div class="news-card">
+    <div class="news-img">${n.icon || '📰'}</div>
+    <div class="news-body">
+      <div class="news-meta">
+        <span class="badge ${catColors[n.category]||'badge-gray'}">${n.category}</span>
+        <span class="news-date">${formatDate(n.date)}</span>
+      </div>
+      <h3 class="news-title">${n.title}</h3>
+      <p class="news-excerpt">${n.excerpt}</p>
+      <span class="news-readmore">Read more →</span>
+    </div>
+  </div>`;
+}
+
+function renderTeamCard(m) {
+  const initials = m.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="team-card">
+    <div class="team-avatar">${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : initials}</div>
+    <h4 class="team-name">${m.name}</h4>
+    <p class="team-role">${m.role}</p>
+    <p class="team-research">${m.research}</p>
+    <div class="team-links">
+      ${m.email ? `<a class="team-link" href="mailto:${m.email}" title="Email">✉</a>` : ''}
+      ${m.linkedin ? `<a class="team-link" href="${m.linkedin}" target="_blank" title="LinkedIn">in</a>` : ''}
+      ${m.scholar ? `<a class="team-link" href="${m.scholar}" target="_blank" title="Google Scholar">GS</a>` : ''}
+    </div>
+  </div>`;
+}
+
+// ==================== RENDER RESEARCH PAGE ====================
+function renderResearchPage() {
+  const el = document.getElementById('researchPageContent');
+  el.innerHTML = DATA.research.map(r => `
+    <div style="background:#fff;border-radius:var(--radius-xl);border:1px solid var(--c-border);padding:40px;margin-bottom:30px;display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;">
+      <div style="width:80px;height:80px;border-radius:var(--radius-lg);background:${r.color}18;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;border:2px solid ${r.color}30;">${r.icon}</div>
+      <div>
+        <h2 style="font-family:var(--font-head);font-size:24px;font-weight:700;margin-bottom:12px;">${r.title}</h2>
+        <p style="font-size:15px;color:var(--c-muted);line-height:1.8;margin-bottom:16px;">${r.longDesc || r.desc}</p>
+        ${r.apps && r.apps.length ? `<div style="margin-bottom:16px;"><strong style="font-size:13px;color:var(--c-text);">Applications:</strong><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">${r.apps.map(a=>`<span class="chip">${a}</span>`).join('')}</div></div>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="navigate('publications')">View Publications →</button>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== RENDER PEOPLE PAGE ====================
+function renderPeoplePage() {
+  const el = document.getElementById('peoplePageContent');
+  const categories = [
+    { key: 'pi', label: 'Principal Investigator' },
+    { key: 'postdoc', label: 'Postdoctoral Researchers' },
+    { key: 'phd', label: 'PhD Research Scholars' },
+    { key: 'mtech', label: 'M.Tech Students' },
+    { key: 'msc', label: 'M.Sc Students' },
+    { key: 'ra', label: 'Research Assistants / JRF' },
+    { key: 'alumni', label: 'Alumni' }
+  ];
+  let html = '';
+  categories.forEach(cat => {
+    const members = DATA.team.filter(m => m.category === cat.key);
+    if (!members.length) return;
+    if (cat.key === 'pi') {
+      html += `<div style="margin-bottom:50px;"><div class="section-header"><p class="section-label">Lab Head</p><h2 class="section-title">${cat.label}</h2></div>`;
+      members.forEach(m => {
+        const initials = m.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        html += `<div class="pi-card">
+          <div class="pi-photo">${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : initials}</div>
+          <div>
+            <h2 class="pi-name">${m.name}</h2>
+            <p class="pi-designation">${m.role}</p>
+            <p class="pi-institute">School of Biosciences and Biomedical Engineering, IIT Indore</p>
+            <p class="pi-bio">${m.bio}</p>
+            <div class="pi-tags">
+              ${m.research.split(',').map(r => `<span class="chip">${r.trim()}</span>`).join('')}
+            </div>
+            <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+              ${m.email ? `<a href="mailto:${m.email}" class="btn btn-secondary btn-sm">✉ Email</a>` : ''}
+              ${m.linkedin ? `<a href="${m.linkedin}" target="_blank" class="btn btn-outline btn-sm">LinkedIn</a>` : ''}
+              ${m.scholar ? `<a href="${m.scholar}" target="_blank" class="btn btn-outline btn-sm">Google Scholar</a>` : ''}
+            </div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    } else {
+      html += `<div style="margin-bottom:50px;"><div class="section-header"><h2 class="section-title" style="font-size:22px;">${cat.label}</h2></div><div class="grid-4">`;
+      members.forEach(m => { html += renderTeamCard(m); });
+      html += '</div></div>';
+    }
+  });
+  el.innerHTML = html || '<p style="color:var(--c-muted);text-align:center;padding:40px;">No team members added yet.</p>';
+}
+
+// ==================== RENDER PUBLICATIONS ====================
+let pubFilter = { type: 'all', year: 'all', search: '' };
+
+function renderPublications() {
+  // Year filters
+  const years = [...new Set(DATA.publications.map(p => p.year))].sort((a,b) => b-a);
+  const yearFilters = document.getElementById('pubYearFilters');
+  yearFilters.innerHTML = `<button class="filter-btn active" onclick="filterByYear('all',this)">All Years</button>` +
+    years.map(y => `<button class="filter-btn" onclick="filterByYear('${y}',this)">${y}</button>`).join('');
+
+  renderPubList();
+}
+
+function renderPubList() {
+  let filtered = DATA.publications;
+  if (pubFilter.type !== 'all') filtered = filtered.filter(p => p.type === pubFilter.type);
+  if (pubFilter.year !== 'all') filtered = filtered.filter(p => p.year == pubFilter.year);
+  if (pubFilter.search) {
+    const q = pubFilter.search.toLowerCase();
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.authors.toLowerCase().includes(q) || p.journal.toLowerCase().includes(q));
+  }
+  filtered = filtered.sort((a,b) => b.year - a.year);
+  const el = document.getElementById('pubList');
+  el.innerHTML = filtered.length ? filtered.map(p => renderPubCard(p)).join('') : '<p style="text-align:center;color:var(--c-muted);padding:40px;">No publications found.</p>';
+}
+
+function filterByType(type, btn) {
+  pubFilter.type = type;
+  document.querySelectorAll('#pubTypeFilter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPubList();
+}
+
+function filterByYear(year, btn) {
+  pubFilter.year = year;
+  document.querySelectorAll('#pubYearFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPubList();
+}
+
+function filterPublications() {
+  pubFilter.search = document.getElementById('pubSearch').value;
+  renderPubList();
+}
+
+// ==================== RENDER OPPORTUNITIES ====================
+function renderOpportunities() {
+  const el = document.getElementById('oppList');
+  el.innerHTML = DATA.opportunities.map(o => `
+    <div class="opp-card">
+      <div>
+        <h3 class="opp-title">${o.title}</h3>
+        <p class="opp-desc">${o.desc}</p>
+        <div class="opp-meta">
+          <span class="badge ${o.status==='open'?'badge-green':'badge-red'}">${o.status==='open'?'✅ Open':'❌ Closed'}</span>
+          <span class="badge badge-blue">${typeLabel(o.type)}</span>
+          ${o.deadline ? `<span class="badge badge-gray">📅 ${formatDate(o.deadline)}</span>` : ''}
+        </div>
+        ${o.req ? `<p style="font-size:13px;color:var(--c-muted);margin-top:10px;"><strong>Requirements:</strong> ${o.req}</p>` : ''}
+      </div>
+      ${o.status==='open' ? `<button class="btn btn-primary btn-sm" style="white-space:nowrap;" onclick="document.getElementById('appPosition').value='${o.title}';document.getElementById('appFormSection').scrollIntoView({behavior:'smooth'})">Apply →</button>` : ''}
+    </div>`).join('');
+}
+
+function typeLabel(t) {
+  const map = { phd:'PhD', postdoc:'Postdoc', ra:'JRF/RA', intern:'Internship', project:'Project' };
+  return map[t] || t;
+}
+
+// ==================== RENDER NEWS ====================
+let newsFilter = 'all';
+
+function renderNews() {
+  filterNews(newsFilter, null);
+}
+
+function filterNews(cat, btn) {
+  newsFilter = cat;
+  if (btn) {
+    document.querySelectorAll('#newsFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  let items = DATA.news;
+  if (cat !== 'all') items = items.filter(n => n.category === cat);
+  const el = document.getElementById('newsPageGrid');
+  el.innerHTML = items.length ? items.map(n => renderNewsCard(n)).join('') : '<p style="color:var(--c-muted);text-align:center;padding:40px;grid-column:1/-1;">No news in this category.</p>';
+}
+
+// ==================== ADMIN PANEL MANAGEMENT ====================
+function switchAdminPanel(panel, navItem) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('panel-' + panel);
+  if (el) el.classList.add('active');
+  if (navItem) navItem.classList.add('active');
+  else {
+    const items = document.querySelectorAll('.admin-nav-item');
+    items.forEach(item => { if (item.getAttribute('onclick')?.includes(panel)) item.classList.add('active'); });
+  }
+  const titles = {
+    dashboard:'Dashboard', analytics:'Analytics', siteSettings:'Site Settings',
+    pagesManager:'Pages Manager', homeEditor:'Home Page Editor', researchManager:'Research Areas',
+    pubManager:'Publications', newsManager:'News & Events', teamManager:'Team Members',
+    oppManager:'Opportunities', contactManager:'Contact Information', mediaManager:'Media Library',
+    applicationsInbox:'Applications Inbox', contactInbox:'Contact Inbox', userManager:'User Management',
+    activityLog:'Activity Log'
+  };
+  document.getElementById('adminPanelTitle').textContent = titles[panel] || panel;
+  loadPanelData(panel);
+}
+
+function loadPanelData(panel) {
+  if (panel === 'dashboard') loadDashboard();
+  else if (panel === 'siteSettings') loadSiteSettings();
+  else if (panel === 'homeEditor') loadHomeEditor();
+  else if (panel === 'researchManager') loadResearchTable();
+  else if (panel === 'pubManager') loadPubTable();
+  else if (panel === 'newsManager') loadNewsTable();
+  else if (panel === 'teamManager') loadTeamTable();
+  else if (panel === 'oppManager') loadOppTable();
+  else if (panel === 'contactManager') loadContactManager();
+  else if (panel === 'userManager') loadUserTable();
+  else if (panel === 'applicationsInbox') loadApplicationsInbox();
+  else if (panel === 'contactInbox') loadContactInbox();
+  else if (panel === 'activityLog') loadActivityLog();
+  else if (panel === 'analytics') loadAnalytics();
+  else if (panel === 'mediaManager') loadMediaManager();
+}
+
+function loadAdminData() {
+  updateBadges();
+}
+
+function updateBadges() {
+  const pendingApps = DATA.applications.filter(a => a.status === 'pending').length;
+  const pendingContacts = DATA.contacts.filter(c => c.status === 'new').length;
+  document.getElementById('appBadge').textContent = pendingApps;
+  document.getElementById('contactBadge').textContent = pendingContacts;
+}
+
+function loadDashboard() {
+  document.getElementById('dashPubs').textContent = DATA.publications.length;
+  document.getElementById('dashTeam').textContent = DATA.team.length;
+  document.getElementById('dashNews').textContent = DATA.news.length;
+  document.getElementById('dashApps').textContent = DATA.applications.length;
+  document.getElementById('dashContacts').textContent = DATA.contacts.length;
+  document.getElementById('dashUsers').textContent = DATA.users.length;
+  // Recent activity
+  const al = document.getElementById('recentActivityList');
+  al.innerHTML = DATA.activityLog.slice(0,8).map(a => `
+    <div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--c-border-light);">
+      <span style="font-size:18px;">📝</span>
+      <div><p style="font-size:13px;font-weight:500;">${a.action}</p><p style="font-size:11px;color:var(--c-muted);">${a.user} · ${a.time}</p></div>
+    </div>`).join('');
+}
+
+function loadSiteSettings() {
+  const s = DATA.settings;
+  document.getElementById('set_labName').value = s.labName;
+  document.getElementById('set_institute').value = s.institute;
+  document.getElementById('set_email').value = s.email;
+  document.getElementById('set_phone').value = s.phone;
+  document.getElementById('set_address').value = s.address;
+  document.getElementById('set_announcement').value = s.announcement;
+  document.getElementById('set_copyright').value = s.copyright;
+  document.getElementById('set_footerAbout').value = s.footerAbout;
+}
+
+function saveSiteSettings() {
+  DATA.settings.labName = document.getElementById('set_labName').value;
+  DATA.settings.institute = document.getElementById('set_institute').value;
+  DATA.settings.email = document.getElementById('set_email').value;
+  DATA.settings.phone = document.getElementById('set_phone').value;
+  DATA.settings.address = document.getElementById('set_address').value;
+  DATA.settings.announcement = document.getElementById('set_announcement').value;
+  DATA.settings.copyright = document.getElementById('set_copyright').value;
+  DATA.settings.footerAbout = document.getElementById('set_footerAbout').value;
+  saveData();
+  logActivity('Site settings updated');
+  showToast('Site settings saved!', 'success');
+  applySettings();
+}
+
+function applySettings() {
+  const s = DATA.settings;
+  document.getElementById('navLabName').textContent = s.labName.replace(' Research Group','').replace('Biophysics & Biomedical Engineering','BPBME Lab');
+  document.getElementById('footerLabName').textContent = s.labName;
+  document.getElementById('footerEmail').textContent = s.email;
+  document.getElementById('footerPhone').textContent = s.phone;
+  document.getElementById('footerAddress').textContent = s.address.replace(/\n/g,' · ');
+  document.getElementById('footerAbout').textContent = s.footerAbout;
+  document.getElementById('footerCopyright').textContent = s.copyright;
+  document.getElementById('tbEmail').textContent = s.email;
+  document.getElementById('contactEmail').textContent = s.email;
+  document.getElementById('contactPhone').textContent = s.phone;
+  document.getElementById('contactAddress').innerHTML = s.address.replace(/\n/g,'<br>');
+  document.getElementById('footerInstitute').textContent = s.institute;
+  document.getElementById('adminLabNameSidebar').textContent = s.labName;
+  document.getElementById('announcementText').innerHTML = s.announcement + ' — <a href="#" onclick="navigate(\'opportunities\')">Apply Now →</a>';
+}
+
+function loadHomeEditor() {
+  const s = DATA.settings;
+  document.getElementById('set_heroTitle1').value = s.heroTitle1;
+  document.getElementById('set_heroTitle2').value = s.heroTitle2;
+  document.getElementById('set_heroDesc').value = s.heroDesc;
+  document.getElementById('set_aboutTitle').value = s.aboutTitle;
+  document.getElementById('set_aboutDesc1').value = s.aboutDesc1;
+  document.getElementById('set_aboutDesc2').value = s.aboutDesc2;
+  document.getElementById('set_stat1').value = s.stat1;
+  document.getElementById('set_stat2').value = s.stat2;
+  document.getElementById('set_stat3').value = s.stat3;
+  document.getElementById('set_stat4').value = s.stat4;
+}
+
+function saveHomeSettings() {
+  const s = DATA.settings;
+  s.heroTitle1 = document.getElementById('set_heroTitle1').value;
+  s.heroTitle2 = document.getElementById('set_heroTitle2').value;
+  s.heroDesc = document.getElementById('set_heroDesc').value;
+  s.aboutTitle = document.getElementById('set_aboutTitle').value;
+  s.aboutDesc1 = document.getElementById('set_aboutDesc1').value;
+  s.aboutDesc2 = document.getElementById('set_aboutDesc2').value;
+  s.stat1 = document.getElementById('set_stat1').value;
+  s.stat2 = document.getElementById('set_stat2').value;
+  s.stat3 = document.getElementById('set_stat3').value;
+  s.stat4 = document.getElementById('set_stat4').value;
+  saveData(); logActivity('Home page settings updated');
+  showToast('Home page saved!', 'success');
+}
+
+function saveAllChanges() { saveData(); showToast('All changes saved!', 'success'); logActivity('Manual save performed'); }
+
+function previewSetting(key, val) {
+  if (key === 'labName') document.getElementById('navLabName').textContent = val;
+}
+
+// Research Table
+function loadResearchTable() {
+  document.getElementById('researchTableBody').innerHTML = DATA.research.map(r => `
+    <tr>
+      <td style="font-size:24px;">${r.icon}</td>
+      <td><strong>${r.title}</strong></td>
+      <td><span class="status-active">Active</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="editResearch(${r.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('research',${r.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function editResearch(id) {
+  const r = DATA.research.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('researchModalTitle').textContent = 'Edit Research Area';
+  document.getElementById('editResearchId').value = id;
+  document.getElementById('researchTitle').value = r.title;
+  document.getElementById('researchIcon').value = r.icon;
+  document.getElementById('researchColor').value = r.color;
+  document.getElementById('researchDesc').value = r.desc;
+  document.getElementById('researchLongDesc').value = r.longDesc || '';
+  document.getElementById('researchApps').value = (r.apps || []).join(', ');
+  openModal('researchModal');
+}
+
+function saveResearch() {
+  const id = document.getElementById('editResearchId').value;
+  const obj = {
+    title: document.getElementById('researchTitle').value,
+    icon: document.getElementById('researchIcon').value,
+    color: document.getElementById('researchColor').value,
+    desc: document.getElementById('researchDesc').value,
+    longDesc: document.getElementById('researchLongDesc').value,
+    apps: document.getElementById('researchApps').value.split(',').map(s=>s.trim()).filter(Boolean)
+  };
+  if (id) {
+    const idx = DATA.research.findIndex(x => x.id == id);
+    if (idx >= 0) DATA.research[idx] = { ...DATA.research[idx], ...obj };
+    logActivity(`Research area updated: ${obj.title}`);
+  } else {
+    obj.id = Date.now();
+    DATA.research.push(obj);
+    logActivity(`Research area added: ${obj.title}`);
+  }
+  saveData(); closeModal('researchModal'); loadResearchTable();
+  document.getElementById('editResearchId').value = '';
+  showToast('Research area saved!', 'success');
+}
+
+// Publications Table
+function loadPubTable(query='') {
+  let pubs = DATA.publications;
+  if (query) { const q = query.toLowerCase(); pubs = pubs.filter(p => p.title.toLowerCase().includes(q) || p.authors.toLowerCase().includes(q)); }
+  pubs = pubs.sort((a,b) => b.year - a.year);
+  document.getElementById('adminPubBody').innerHTML = pubs.map(p => `
+    <tr>
+      <td>${p.year}</td>
+      <td style="max-width:300px;"><span title="${p.title}" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</span></td>
+      <td style="max-width:160px;"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:italic;font-size:13px;">${p.journal}</span></td>
+      <td><span class="badge ${p.type==='journal'?'badge-blue':p.type==='review'?'badge-green':'badge-gray'}">${p.type}</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editPub(${p.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('publications',${p.id})">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+function adminSearchPubs(q) { loadPubTable(q); }
+
+function editPub(id) {
+  const p = DATA.publications.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('pubModalTitle').textContent = 'Edit Publication';
+  document.getElementById('editPubId').value = id;
+  document.getElementById('pubTitle').value = p.title;
+  document.getElementById('pubAuthors').value = p.authors;
+  document.getElementById('pubJournal').value = p.journal;
+  document.getElementById('pubYear').value = p.year;
+  document.getElementById('pubVolume').value = p.volume || '';
+  document.getElementById('pubPages').value = p.pages || '';
+  document.getElementById('pubDoi').value = p.doi || '';
+  document.getElementById('pubType').value = p.type;
+  document.getElementById('pubFeatured').value = p.featured ? 'true' : 'false';
+  openModal('pubModal');
+}
+
+function savePub() {
+  const id = document.getElementById('editPubId').value;
+  const obj = {
+    title: document.getElementById('pubTitle').value,
+    authors: document.getElementById('pubAuthors').value,
+    journal: document.getElementById('pubJournal').value,
+    year: parseInt(document.getElementById('pubYear').value),
+    volume: document.getElementById('pubVolume').value,
+    pages: document.getElementById('pubPages').value,
+    doi: document.getElementById('pubDoi').value,
+    type: document.getElementById('pubType').value,
+    featured: document.getElementById('pubFeatured').value === 'true'
+  };
+  if (!obj.title || !obj.authors || !obj.journal || !obj.year) { showToast('Please fill required fields', 'error'); return; }
+  if (id) {
+    const idx = DATA.publications.findIndex(x => x.id == id);
+    if (idx >= 0) DATA.publications[idx] = { ...DATA.publications[idx], ...obj };
+    logActivity(`Publication updated: ${obj.title.slice(0,50)}`);
+  } else {
+    obj.id = Date.now();
+    DATA.publications.push(obj);
+    logActivity(`Publication added: ${obj.title.slice(0,50)}`);
+  }
+  saveData(); closeModal('pubModal'); loadPubTable();
+  document.getElementById('editPubId').value = '';
+  showToast('Publication saved!', 'success');
+}
+
+// News Table
+function loadNewsTable() {
+  document.getElementById('adminNewsBody').innerHTML = DATA.news.map(n => `
+    <tr>
+      <td>${formatDate(n.date)}</td>
+      <td>${n.title}</td>
+      <td><span class="badge badge-gray">${n.category}</span></td>
+      <td><span class="status-active">Published</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editNews(${n.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('news',${n.id})">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+function editNews(id) {
+  const n = DATA.news.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('newsModalTitle').textContent = 'Edit News';
+  document.getElementById('editNewsId').value = id;
+  document.getElementById('newsTitle').value = n.title;
+  document.getElementById('newsDate').value = n.date;
+  document.getElementById('newsCategory').value = n.category;
+  document.getElementById('newsExcerpt').value = n.excerpt;
+  document.getElementById('newsContent').value = n.content;
+  document.getElementById('newsIcon').value = n.icon || '📰';
+  openModal('newsModal');
+}
+
+function saveNews() {
+  const id = document.getElementById('editNewsId').value;
+  const obj = {
+    title: document.getElementById('newsTitle').value,
+    date: document.getElementById('newsDate').value,
+    category: document.getElementById('newsCategory').value,
+    excerpt: document.getElementById('newsExcerpt').value,
+    content: document.getElementById('newsContent').value,
+    icon: document.getElementById('newsIcon').value || '📰'
+  };
+  if (!obj.title) { showToast('Title is required', 'error'); return; }
+  if (id) {
+    const idx = DATA.news.findIndex(x => x.id == id);
+    if (idx >= 0) DATA.news[idx] = { ...DATA.news[idx], ...obj };
+    logActivity(`News updated: ${obj.title}`);
+  } else {
+    obj.id = Date.now();
+    DATA.news.push(obj);
+    logActivity(`News added: ${obj.title}`);
+  }
+  saveData(); closeModal('newsModal'); loadNewsTable();
+  document.getElementById('editNewsId').value = '';
+  showToast('News item saved!', 'success');
+}
+
+// Team Table
+function loadTeamTable() {
+  document.getElementById('adminTeamBody').innerHTML = DATA.team.map(m => `
+    <tr>
+      <td><strong>${m.name}</strong></td>
+      <td>${m.role}<br><span class="badge badge-gray" style="margin-top:3px;">${catLabel(m.category)}</span></td>
+      <td style="font-size:13px;color:var(--c-muted);">${m.research}</td>
+      <td><span class="status-active">Active</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editMember(${m.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('team',${m.id})">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+function catLabel(c) {
+  const map = { pi:'PI', postdoc:'Postdoc', phd:'PhD', mtech:'M.Tech', msc:'M.Sc', ra:'RA/JRF', alumni:'Alumni' };
+  return map[c] || c;
+}
+
+function editMember(id) {
+  const m = DATA.team.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
+  document.getElementById('editTeamId').value = id;
+  document.getElementById('memberName').value = m.name;
+  document.getElementById('memberRole').value = m.role;
+  document.getElementById('memberCategory').value = m.category;
+  document.getElementById('memberResearch').value = m.research;
+  document.getElementById('memberEmail').value = m.email || '';
+  document.getElementById('memberBio').value = m.bio || '';
+  document.getElementById('memberLinkedin').value = m.linkedin || '';
+  document.getElementById('memberScholar').value = m.scholar || '';
+  document.getElementById('memberPhoto').value = m.photo || '';
+  openModal('teamModal');
+}
+
+function saveMember() {
+  const id = document.getElementById('editTeamId').value;
+  const obj = {
+    name: document.getElementById('memberName').value,
+    role: document.getElementById('memberRole').value,
+    category: document.getElementById('memberCategory').value,
+    research: document.getElementById('memberResearch').value,
+    email: document.getElementById('memberEmail').value,
+    bio: document.getElementById('memberBio').value,
+    linkedin: document.getElementById('memberLinkedin').value,
+    scholar: document.getElementById('memberScholar').value,
+    photo: document.getElementById('memberPhoto').value
+  };
+  if (!obj.name || !obj.role) { showToast('Name and role are required', 'error'); return; }
+  if (id) {
+    const idx = DATA.team.findIndex(x => x.id == id);
+    if (idx >= 0) DATA.team[idx] = { ...DATA.team[idx], ...obj };
+    logActivity(`Team member updated: ${obj.name}`);
+  } else {
+    obj.id = Date.now();
+    DATA.team.push(obj);
+    logActivity(`Team member added: ${obj.name}`);
+  }
+  saveData(); closeModal('teamModal'); loadTeamTable();
+  document.getElementById('editTeamId').value = '';
+  showToast('Team member saved!', 'success');
+}
+
+// Opp Table
+function loadOppTable() {
+  document.getElementById('adminOppBody').innerHTML = DATA.opportunities.map(o => `
+    <tr>
+      <td><strong>${o.title}</strong></td>
+      <td><span class="badge badge-blue">${typeLabel(o.type)}</span></td>
+      <td><span class="${o.status==='open'?'status-active':'status-inactive'}">${o.status}</span></td>
+      <td>${o.deadline ? formatDate(o.deadline) : '—'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editOpp(${o.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('opportunities',${o.id})">Del</button>
+      </td>
+    </tr>`).join('');
+}
+
+function editOpp(id) {
+  const o = DATA.opportunities.find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('oppModalTitle').textContent = 'Edit Opportunity';
+  document.getElementById('editOppId').value = id;
+  document.getElementById('oppTitle').value = o.title;
+  document.getElementById('oppType').value = o.type;
+  document.getElementById('oppDeadline').value = o.deadline || '';
+  document.getElementById('oppDesc').value = o.desc;
+  document.getElementById('oppReq').value = o.req || '';
+  document.getElementById('oppStatus').value = o.status;
+  openModal('oppModal');
+}
+
+function saveOpp() {
+  const id = document.getElementById('editOppId').value;
+  const obj = {
+    title: document.getElementById('oppTitle').value,
+    type: document.getElementById('oppType').value,
+    deadline: document.getElementById('oppDeadline').value,
+    desc: document.getElementById('oppDesc').value,
+    req: document.getElementById('oppReq').value,
+    status: document.getElementById('oppStatus').value
+  };
+  if (!obj.title || !obj.desc) { showToast('Title and description required', 'error'); return; }
+  if (id) {
+    const idx = DATA.opportunities.findIndex(x => x.id == id);
+    if (idx >= 0) DATA.opportunities[idx] = { ...DATA.opportunities[idx], ...obj };
+    logActivity(`Opportunity updated: ${obj.title}`);
+  } else {
+    obj.id = Date.now();
+    DATA.opportunities.push(obj);
+    logActivity(`Opportunity added: ${obj.title}`);
+  }
+  saveData(); closeModal('oppModal'); loadOppTable();
+  document.getElementById('editOppId').value = '';
+  showToast('Opportunity saved!', 'success');
+}
+
+// Contact Manager
+function loadContactManager() {
+  const s = DATA.settings;
+  document.getElementById('set_contactAddress').value = s.address;
+  document.getElementById('set_contactEmail').value = s.email;
+  document.getElementById('set_contactPhone').value = s.phone;
+}
+
+function saveContactInfo() {
+  DATA.settings.address = document.getElementById('set_contactAddress').value;
+  DATA.settings.email = document.getElementById('set_contactEmail').value;
+  DATA.settings.phone = document.getElementById('set_contactPhone').value;
+  saveData(); applySettings(); logActivity('Contact info updated');
+  showToast('Contact information saved!', 'success');
+}
+
+// User Table
+function loadUserTable() {
+  const isOwner = currentUser && currentUser.role === 'owner';
+  document.getElementById('userTableBody').innerHTML = DATA.users.map(u => `
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td style="font-size:13px;">${u.email}</td>
+      <td><span class="role-badge role-${u.role}">${u.role.charAt(0).toUpperCase()+u.role.slice(1)}</span></td>
+      <td><span class="${u.status==='active'?'status-active':'status-inactive'}">${u.status}</span></td>
+      <td>${u.lastLogin || 'Never'}</td>
+      <td style="white-space:nowrap;">
+        ${u.role !== 'owner' ? `
+          <button class="btn btn-outline btn-sm" onclick="editUser(${u.id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="${isOwner ? `deleteItem('users',${u.id})` : 'showToast(\'Only owner can delete users\',\'error\')'}">Del</button>
+        ` : '<span style="font-size:12px;color:var(--c-muted);">Protected</span>'}
+      </td>
+    </tr>`).join('');
+}
+
+function editUser(id) {
+  const u = DATA.users.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('userModalTitle').textContent = 'Edit User';
+  document.getElementById('editUserId').value = id;
+  document.getElementById('newUserName').value = u.name;
+  document.getElementById('newUserEmail').value = u.email;
+  document.getElementById('newUserRole').value = u.role === 'owner' ? 'admin' : u.role;
+  document.getElementById('newUserStatus').value = u.status;
+  document.getElementById('newUserPass').value = '';
+  document.getElementById('newUserPass2').value = '';
+  openModal('userModal');
+}
+
+function saveUser() {
+  const id = document.getElementById('editUserId').value;
+  const name = document.getElementById('newUserName').value.trim();
+  const email = document.getElementById('newUserEmail').value.trim();
+  const role = document.getElementById('newUserRole').value;
+  const status = document.getElementById('newUserStatus').value;
+  const pass = document.getElementById('newUserPass').value;
+  const pass2 = document.getElementById('newUserPass2').value;
+  if (!name || !email) { showToast('Name and email required', 'error'); return; }
+  if (!id && !pass) { showToast('Password required for new user', 'error'); return; }
+  if (pass && pass !== pass2) { showToast('Passwords do not match', 'error'); return; }
+  if (pass && pass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+  if (id) {
+    const idx = DATA.users.findIndex(x => x.id == id);
+    if (idx >= 0) {
+      DATA.users[idx] = { ...DATA.users[idx], name, email, role, status };
+      if (pass) DATA.users[idx].pass = pass;
+    }
+    logActivity(`User updated: ${name}`);
+  } else {
+    if (DATA.users.find(u => u.email === email)) { showToast('Email already exists', 'error'); return; }
+    DATA.users.push({ id: Date.now(), name, email, role, status, pass, lastLogin: 'Never' });
+    logActivity(`New user created: ${name} (${role})`);
+  }
+  saveData(); closeModal('userModal'); loadUserTable();
+  document.getElementById('editUserId').value = '';
+  showToast('User saved!', 'success');
+}
+
+// Inboxes
+function loadApplicationsInbox() {
+  const el = document.getElementById('appInboxBody');
+  el.innerHTML = DATA.applications.length ? DATA.applications.map(a => `
+    <tr>
+      <td><strong>${a.name}</strong></td>
+      <td style="font-size:13px;">${a.email}</td>
+      <td>${a.position}</td>
+      <td>${a.area || '—'}</td>
+      <td style="font-size:12px;">${a.date}</td>
+      <td><span class="${a.status==='pending'?'badge badge-amber':'status-active'}">${a.status}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="viewApplication(${a.id})">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('applications',${a.id})">Del</button>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--c-muted);">No applications yet</td></tr>';
+  updateBadges();
+}
+
+let viewingAppId = null;
+function viewApplication(id) {
+  viewingAppId = id;
+  const a = DATA.applications.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('viewAppContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><strong>Name:</strong> ${a.name}</div>
+      <div><strong>Email:</strong> ${a.email}</div>
+      <div><strong>Phone:</strong> ${a.phone || '—'}</div>
+      <div><strong>Position:</strong> ${a.position}</div>
+      <div><strong>Area:</strong> ${a.area || '—'}</div>
+      <div><strong>Background:</strong> ${a.background || '—'}</div>
+      <div><strong>Date:</strong> ${a.date}</div>
+      <div><strong>Status:</strong> ${a.status}</div>
+    </div>
+    ${a.statement ? `<div style="margin-top:16px;"><strong>Research Statement:</strong><p style="margin-top:6px;color:var(--c-muted);">${a.statement}</p></div>` : ''}`;
+  openModal('viewAppModal');
+}
+
+function updateAppStatus(status) {
+  if (!viewingAppId) return;
+  const idx = DATA.applications.findIndex(x => x.id === viewingAppId);
+  if (idx >= 0) { DATA.applications[idx].status = status; saveData(); loadApplicationsInbox(); updateBadges(); showToast('Status updated', 'success'); }
+  closeModal('viewAppModal');
+}
+
+function loadContactInbox() {
+  const el = document.getElementById('contactInboxBody');
+  el.innerHTML = DATA.contacts.length ? DATA.contacts.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.email}</td>
+      <td>${c.subject}</td>
+      <td style="font-size:12px;">${c.date}</td>
+      <td><span class="${c.status==='new'?'badge badge-amber':'status-active'}">${c.status}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="viewContactMsg(${c.id})">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('contacts',${c.id})">Del</button>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--c-muted);">No messages yet</td></tr>';
+  updateBadges();
+}
+
+function viewContactMsg(id) {
+  const c = DATA.contacts.find(x => x.id === id);
+  if (!c) return;
+  c.status = 'read';
+  saveData(); loadContactInbox(); updateBadges();
+  alert(`From: ${c.name} (${c.email})\nSubject: ${c.subject}\n\n${c.message}`);
+}
+
+function loadActivityLog() {
+  document.getElementById('activityLogList').innerHTML = DATA.activityLog.map(a => `
+    <div style="display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--c-border-light);">
+      <span style="font-size:16px;">📝</span>
+      <div style="flex:1;"><p style="font-size:13px;">${a.action}</p><p style="font-size:11px;color:var(--c-muted);">${a.user} · ${a.time}</p></div>
+    </div>`).join('');
+}
+
+function clearLog() {
+  if (confirm('Clear activity log?')) { DATA.activityLog = []; saveData(); loadActivityLog(); showToast('Log cleared', 'success'); }
+}
+
+function loadAnalytics() {
+  const chart = document.getElementById('analyticsChart');
+  const labels = document.getElementById('analyticsLabels');
+  const pages = ['Home','Research','People','Pubs','Opps','News','Contact'];
+  const values = [412, 287, 156, 198, 134, 89, 71];
+  const max = Math.max(...values);
+  chart.innerHTML = values.map((v,i) => `<div class="bar" style="height:${Math.round(v/max*100)}%;background:${i===0?'var(--c-primary)':'var(--c-accent-light)'};" title="${pages[i]}: ${v} views"></div>`).join('');
+  labels.innerHTML = pages.map(p => `<div class="bar-label" style="flex:1;font-size:10px;">${p}</div>`).join('');
+}
+
+function loadMediaManager() {
+  const el = document.getElementById('mediaGrid');
+  const icons = { image:'🖼️', pdf:'📄', video:'🎥' };
+  el.innerHTML = DATA.mediaFiles.map(f => `
+    <div class="media-item">
+      <div class="media-thumb">${icons[f.type]||'📁'}</div>
+      <div class="media-name">${f.name}</div>
+      <div class="media-size">${f.size} · ${f.date}</div>
+    </div>`).join('') + `
+    <div class="media-item" style="border-style:dashed;cursor:pointer;" onclick="document.querySelector('[onchange=handleMediaUpload\\\\(this\\\\)]').click()">
+      <div class="media-thumb" style="border:none;background:transparent;">➕</div>
+      <div class="media-name" style="color:var(--c-primary);font-weight:500;">Upload File</div>
+    </div>`;
+}
+
+function handleMediaUpload(input) {
+  Array.from(input.files).forEach(file => {
+    const type = file.type.startsWith('image') ? 'image' : file.type === 'application/pdf' ? 'pdf' : 'other';
+    DATA.mediaFiles.push({ id: Date.now(), name: file.name, type, size: (file.size/1024/1024).toFixed(1)+' MB', date: new Date().toLocaleDateString() });
+  });
+  saveData(); loadMediaManager(); logActivity(`${input.files.length} file(s) uploaded`);
+  showToast(`${input.files.length} file(s) uploaded to media library`, 'success');
+}
+
+function filterMedia(type, btn) {
+  document.querySelectorAll('#panel-mediaManager .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const el = document.getElementById('mediaGrid');
+  const icons = { image:'🖼️', pdf:'📄', video:'🎥' };
+  let items = DATA.mediaFiles;
+  if (type !== 'all') items = items.filter(f => f.type === type);
+  el.innerHTML = items.map(f => `
+    <div class="media-item">
+      <div class="media-thumb">${icons[f.type]||'📁'}</div>
+      <div class="media-name">${f.name}</div>
+      <div class="media-size">${f.size}</div>
+    </div>`).join('');
+}
+
+// Generic delete
+function deleteItem(collection, id) {
+  if (!confirm('Are you sure you want to delete this item?')) return;
+  DATA[collection] = DATA[collection].filter(x => x.id !== id);
+  saveData(); logActivity(`Item deleted from ${collection}`);
+  showToast('Item deleted', 'success');
+  const refreshMap = { research: loadResearchTable, publications: loadPubTable, news: loadNewsTable, team: loadTeamTable, opportunities: loadOppTable, users: loadUserTable, applications: loadApplicationsInbox, contacts: loadContactInbox };
+  if (refreshMap[collection]) refreshMap[collection]();
+}
+
+// ==================== FORMS ====================
+function submitApplication() {
+  const name = document.getElementById('appName').value.trim();
+  const email = document.getElementById('appEmail').value.trim();
+  const position = document.getElementById('appPosition').value;
+  if (!name || !email || !position) { showToast('Please fill in required fields', 'error'); return; }
+  DATA.applications.push({
+    id: Date.now(),
+    name, email,
+    phone: document.getElementById('appPhone').value,
+    position,
+    area: document.getElementById('appArea').value,
+    background: document.getElementById('appBackground').value,
+    statement: document.getElementById('appStatement').value,
+    date: new Date().toLocaleDateString(),
+    status: 'pending'
+  });
+  saveData(); updateBadges(); logActivity(`New application received from ${name}`);
+  // Reset form
+  ['appName','appEmail','appPhone','appBackground','appStatement'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('appPosition').value = ''; document.getElementById('appArea').value = '';
+  document.getElementById('cvLabel').textContent = '';
+  showToast('✅ Application submitted successfully! We will contact you soon.', 'success');
+}
+
+function submitContact() {
+  const name = document.getElementById('cName').value.trim();
+  const email = document.getElementById('cEmail').value.trim();
+  const msg = document.getElementById('cMessage').value.trim();
+  if (!name || !email || !msg) { showToast('Please fill in required fields', 'error'); return; }
+  DATA.contacts.push({
+    id: Date.now(),
+    name, email,
+    org: document.getElementById('cOrg').value,
+    subject: document.getElementById('cSubject').value,
+    message: msg,
+    date: new Date().toLocaleDateString(),
+    status: 'new'
+  });
+  saveData(); updateBadges(); logActivity(`New contact message from ${name}`);
+  ['cName','cEmail','cOrg','cMessage'].forEach(id => document.getElementById(id).value = '');
+  showToast('✅ Message sent! We will respond within 2–3 business days.', 'success');
+}
+
+function handleFileSelect(input, labelId) {
+  const file = input.files[0];
+  if (file) document.getElementById(labelId).textContent = '✅ ' + file.name;
+}
+
+// ==================== MODALS ====================
+function openModal(id) { document.getElementById(id).style.display = 'block'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+// ==================== TOAST ====================
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast-item ${type==='success'?'toast-success':type==='error'?'toast-error':''}`;
+  toast.innerHTML = `<span>${type==='success'?'✅':type==='error'?'❌':'ℹ️'}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(()=>toast.remove(),300); }, 3500);
+}
+
+// ==================== UTILS ====================
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+  } catch { return dateStr; }
+}
+
+// ==================== SCROLL ====================
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  if (window.scrollY > 300) btn.classList.add('visible'); else btn.classList.remove('visible');
+});
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  applySettings();
+  renderHome();
+  // Mobile sidebar toggle
+  const sBtn = document.getElementById('sidebarToggleBtn');
+  if (window.innerWidth < 768) sBtn.style.display = 'flex';
+});
+
+// Responsive about grid fix
+const style = document.createElement('style');
+style.textContent = '@media(max-width:768px){.about-grid{grid-template-columns:1fr !important}.opp-layout{grid-template-columns:1fr !important}.contact-layout{grid-template-columns:1fr !important}}';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
