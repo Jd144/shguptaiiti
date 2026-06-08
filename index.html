@@ -113,6 +113,17 @@
         .status-pub { background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
         .status-dr  { background: #fef9c3; color: #854d0e; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
         .status-pe  { background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+        .rich-toolbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: 0; border-radius: 8px 8px 0 0; }
+        .rich-toolbar button { min-width: 32px; height: 30px; padding: 0 9px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .rich-toolbar button:hover { border-color: #0F4C81; color: #0F4C81; }
+        .rich-editor { min-height: 120px; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 0 0 8px 8px; background: #fff; color: #1f2937; font-size: 13px; line-height: 1.7; outline: none; }
+        .rich-editor:focus { border-color: #4DA8DA; box-shadow: 0 0 0 3px rgba(77,168,218,.1); }
+        .rich-content ul { list-style: disc; padding-left: 1.25rem; }
+        .rich-content ol { list-style: decimal; padding-left: 1.25rem; }
+        .rich-content a { color: #0F4C81; text-decoration: underline; }
+        .gallery-slide { position: relative; height: 330px; border-radius: 16px; overflow: hidden; background: #e2e8f0; }
+        .gallery-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-slide-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; color: #fff; background: linear-gradient(to top, rgba(0,0,0,.78), transparent); font-weight: 700; }
 
         /* Toast */
         #toast { position: fixed; bottom: 22px; right: 22px; background: #1a1a2e; color: #fff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 28px rgba(0,0,0,.3); z-index: 9999; display: none; align-items: center; gap: 8px; max-width: 320px; }
@@ -125,6 +136,43 @@
         .ann-scroll span { font-size: 13px; font-weight: 500; }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         #ann-bar.off { display: none; }
+        [x-cloak] { display: none !important; }
+
+        @media (max-width: 767px) {
+            .mobile-text-fit h1 { font-size: 1rem; line-height: 1.2; }
+            .mobile-text-fit p { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .admin-shell { flex-direction: column; min-height: auto !important; }
+            #adm-sidebar {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                min-height: auto;
+                border-right: 0;
+                border-bottom: 1px solid #21262d;
+            }
+            .adm-nav {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+                max-height: 320px;
+            }
+            .adm-sec-label { grid-column: 1 / -1; }
+            .adm-footer { display: none; }
+            #adm-main-panel {
+                max-height: none !important;
+                padding: 16px !important;
+                overflow-x: hidden;
+            }
+            .adm-card-hd {
+                align-items: flex-start;
+                gap: 10px;
+                flex-direction: column;
+            }
+            .adm-table { min-width: 640px; }
+            .adm-card { overflow-x: auto; }
+            #toast { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+            .gallery-slide { height: 220px; }
+        }
     </style>
 </head>
 <body
@@ -135,8 +183,8 @@
 <!-- ══════════════════════════════════════════
      ANNOUNCEMENT SCROLLING BAR
 ══════════════════════════════════════════ -->
-<div id="ann-bar" x-show="showAnnBar">
-    <div class="ann-scroll" id="ann-scroll-el">
+<div id="ann-bar" x-show="showAnnBar" :style="{ background: announcementBarStyle(), color: siteSettings.annTextColor }">
+    <div class="ann-scroll" id="ann-scroll-el" :style="{ animationDuration: siteSettings.annSpeedSeconds + 's' }">
         <template x-for="(a, i) in announcements" :key="i">
             <span x-text="a"></span>
         </template>
@@ -153,7 +201,7 @@
 <nav class="text-white shadow-md sticky top-0 z-50 transition-all duration-300" :style="{ backgroundColor: themeColors.navy }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
-            <div class="flex items-center gap-3 cursor-pointer" @click="activePage = 'home'">
+            <div class="flex items-center gap-3 cursor-pointer mobile-text-fit" @click="activePage = 'home'; mobileMenuOpen = false">
                 <template x-if="labLogo">
                     <img :src="labLogo" alt="Brand Logo" class="h-12 w-12 object-contain rounded-md bg-white p-1">
                 </template>
@@ -187,6 +235,32 @@
                     </button>
                 </template>
             </div>
+
+            <button @click="mobileMenuOpen = !mobileMenuOpen"
+                    class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 transition"
+                    aria-label="Toggle menu">
+                <i :data-lucide="mobileMenuOpen ? 'x' : 'menu'" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div x-cloak x-show="mobileMenuOpen" x-transition class="md:hidden pb-4 space-y-2">
+            <template x-for="(menuItem, index) in menuOrder" :key="'mobile-' + index">
+                <button @click="activePage = menuItem.toLowerCase(); mobileMenuOpen = false"
+                        class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold capitalize transition"
+                        :class="activePage === menuItem.toLowerCase() ? 'bg-black/25' : 'bg-white/10 hover:bg-white/15'"
+                        x-text="pageNames[menuItem.toLowerCase()] || menuItem">
+                </button>
+            </template>
+            <template x-if="!isLoggedIn">
+                <button @click="activePage = 'login-gateway'; mobileMenuOpen = false" class="w-full px-4 py-3 rounded-lg text-sm font-bold bg-amber-400 text-slate-900 flex items-center justify-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Admin Login
+                </button>
+            </template>
+            <template x-if="isLoggedIn">
+                <button @click="activePage = 'admin'; mobileMenuOpen = false" class="w-full px-4 py-3 rounded-lg text-sm font-bold bg-emerald-400 text-slate-900 flex items-center justify-center gap-2">
+                    <i data-lucide="shield" class="w-4 h-4"></i> Admin Panel
+                </button>
+            </template>
         </div>
     </div>
 </nav>
@@ -228,10 +302,10 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
     <!-- HOME PAGE (original) -->
     <div x-show="activePage === 'home'" x-transition>
         <header class="text-white py-20 px-4 text-center transition-all duration-500"
-                :style="{ background: `linear-gradient(135deg, ${themeColors.navy} 0%, #1e3a8a 100%)` }">
+                :style="heroStyle()">
             <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 font-poppins tracking-tight" x-text="homeData.headline"></h2>
-                <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto font-light" x-text="homeData.subheadline"></p>
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 font-poppins tracking-tight" :style="{ color: siteSettings.heroTitleColor }" x-text="homeData.headline"></h2>
+                <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto font-light rich-content" :style="{ color: siteSettings.heroSubtitleColor }" x-html="homeData.subheadline"></p>
             </div>
         </header>
 
@@ -264,10 +338,16 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <template x-if="media.type === 'image'">
                                             <img :src="media.url" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
                                         </template>
+                                        <template x-if="media.type === 'document'">
+                                            <a :href="media.url" :download="media.fileName || media.title" class="w-full h-full flex flex-col items-center justify-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition">
+                                                <i data-lucide="file-text" class="w-10 h-10"></i>
+                                                <span class="text-xs font-bold px-4 text-center">Open Document</span>
+                                            </a>
+                                        </template>
                                     </div>
                                     <div class="p-4 space-y-1">
                                         <h4 class="font-bold text-slate-900 text-sm" x-text="media.title"></h4>
-                                        <p class="text-xs text-slate-600 leading-relaxed" x-text="media.desc"></p>
+                                        <p class="text-xs text-slate-600 leading-relaxed rich-content" x-html="media.desc"></p>
                                     </div>
                                 </div>
                             </template>
@@ -276,17 +356,25 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
                     <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
                         <h3 class="text-xl font-bold mb-6 font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
-                            <i data-lucide="image" class="w-5 h-5"></i> Lab Gallery Layout
+                            <i data-lucide="image" class="w-5 h-5"></i> Lab Gallery Slideshow
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <template x-for="img in gallery" :key="img.id">
-                                <div class="group relative rounded-xl overflow-hidden shadow-xs h-40">
-                                    <img :src="img.url" class="w-full h-full object-contain bg-gray-100 group-hover:scale-105 transition duration-300" />
-                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
-                                        <p class="text-white text-xs font-medium" x-text="img.title"></p>
-                                    </div>
-                                </div>
-                            </template>
+                        <div x-show="gallery.length" class="space-y-4">
+                            <div class="gallery-slide">
+                                <img :src="currentGalleryImage().url" :alt="currentGalleryImage().title">
+                                <div class="gallery-slide-caption" x-text="currentGalleryImage().title"></div>
+                                <button @click="previousSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 text-white text-xl leading-none">‹</button>
+                                <button @click="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 text-white text-xl leading-none">›</button>
+                            </div>
+                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                                <template x-for="(img, idx) in gallery" :key="img.id">
+                                    <button @click="currentGalleryIndex = idx; restartSlideshow()" class="h-16 rounded-lg overflow-hidden border-2 transition" :style="{ borderColor: currentGalleryIndex === idx ? themeColors.sky : '#e2e8f0' }">
+                                        <img :src="img.url" class="w-full h-full object-cover" :alt="img.title">
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        <div x-show="!gallery.length" class="text-sm text-slate-500 bg-slate-50 rounded-xl p-4">
+                            Upload photos from Admin Panel to start the slideshow.
                         </div>
                     </section>
                 </div>
@@ -301,7 +389,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                 <div class="flex gap-3 border-l-2 pl-3" :style="{ borderLeftColor: themeColors.sky }">
                                     <div>
                                         <span class="text-[10px] font-bold tracking-wider text-slate-400 block" x-text="item.date"></span>
-                                        <p class="text-sm text-slate-700 mt-0.5" x-text="item.text"></p>
+                                        <p class="text-sm text-slate-700 mt-0.5 rich-content" x-html="item.text"></p>
                                     </div>
                                 </div>
                             </template>
@@ -319,7 +407,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
             <template x-for="r in researchAreas" :key="r.id">
                 <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-100">
                     <h3 class="text-xl font-bold mb-2 text-slate-900" x-text="r.title"></h3>
-                    <p class="text-slate-600 text-sm leading-relaxed" x-text="r.desc"></p>
+                    <p class="text-slate-600 text-sm leading-relaxed rich-content" x-html="r.desc"></p>
                 </div>
             </template>
         </div>
@@ -348,7 +436,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                             <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
                         </template>
                         <template x-if="person.bio">
-                            <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2" x-text="person.bio"></p>
+                            <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2 rich-content" x-html="person.bio"></p>
                         </template>
                     </div>
                     <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
@@ -394,7 +482,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                         </div>
                         <h3 class="font-bold text-slate-900 text-base" x-text="opp.position"></h3>
                         <p class="text-xs font-semibold text-blue-600 mb-2" x-text="opp.type"></p>
-                        <p class="text-xs text-slate-600 leading-relaxed" x-text="opp.desc"></p>
+                        <p class="text-xs text-slate-600 leading-relaxed rich-content" x-html="opp.desc"></p>
                     </div>
                     <button class="mt-4 w-full bg-slate-900 text-white text-xs font-semibold py-2 rounded-xl">Apply Now</button>
                 </div>
@@ -459,7 +547,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                 </div>
 
                 <!-- Admin grid: sidebar + content -->
-                <div class="flex gap-0 rounded-2xl overflow-hidden border border-slate-200 shadow-xl min-h-[680px]">
+                <div class="admin-shell flex gap-0 rounded-2xl overflow-hidden border border-slate-200 shadow-xl min-h-[680px]">
                     <!-- SIDEBAR -->
                     <div id="adm-sidebar" style="min-width:260px;max-width:260px">
                         <div class="adm-logo-box">
@@ -647,6 +735,33 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <label class="adm-label">Hero Subheadline</label>
                                         <textarea rows="2" x-model="homeData.subheadline" class="adm-input" style="min-height:60px;resize:vertical"></textarea>
                                     </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Hero Background Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" x-model="siteSettings.heroBgColor" style="width:50px;height:40px;border:none;cursor:pointer;">
+                                                <input type="text" x-model="siteSettings.heroBgColor" class="adm-input" placeholder="#0F4C81">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Hero Background Image URL</label>
+                                            <input type="text" x-model="siteSettings.heroBgImage" class="adm-input" placeholder="Optional image URL">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Hero Main Text Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" x-model="siteSettings.heroTitleColor" style="width:50px;height:40px;border:none;cursor:pointer;">
+                                                <input type="text" x-model="siteSettings.heroTitleColor" class="adm-input" placeholder="#ffffff">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Hero Subtitle Color</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="color" x-model="siteSettings.heroSubtitleColor" style="width:50px;height:40px;border:none;cursor:pointer;">
+                                                <input type="text" x-model="siteSettings.heroSubtitleColor" class="adm-input" placeholder="#e0f2fe">
+                                            </div>
+                                        </div>
+                                    </div>
                                     <hr class="border-slate-100">
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
@@ -671,8 +786,17 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="adm-label">PI Biography (HTML allowed)</label>
-                                        <textarea rows="4" x-model="homeData.piBio" class="adm-input" style="min-height:90px;resize:vertical;font-family:monospace"></textarea>
+                                        <label class="adm-label">PI Biography Rich Text</label>
+                                        <div class="rich-toolbar">
+                                            <button type="button" @click="formatRichText('bold')">B</button>
+                                            <button type="button" @click="formatRichText('italic')"><em>I</em></button>
+                                            <button type="button" @click="formatRichText('underline')"><u>U</u></button>
+                                            <button type="button" @click="formatRichText('insertUnorderedList')">List</button>
+                                            <button type="button" @click="formatRichText('insertOrderedList')">1.</button>
+                                            <button type="button" @click="formatRichText('createLink', prompt('Enter link URL:') || '')">Link</button>
+                                            <button type="button" @click="formatRichText('removeFormat')">Clear</button>
+                                        </div>
+                                        <div class="rich-editor rich-content" contenteditable="true" x-html="homeData.piBio" @input="homeData.piBio = $event.target.innerHTML"></div>
                                     </div>
                                     <button class="btn-pri" @click="showToast('✅ Content updated live on site!')">💾 Apply Changes</button>
                                 </div>
@@ -742,6 +866,24 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                     </div>
                                 </div>
                                 <div class="p-4 space-y-2">
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                                        <div>
+                                            <label class="adm-label">Scroll Speed (seconds)</label>
+                                            <input type="number" min="8" max="120" x-model.number="siteSettings.annSpeedSeconds" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Start Color</label>
+                                            <input type="color" x-model="siteSettings.annBgStart" class="adm-input" style="height:40px;padding:3px">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">End Color</label>
+                                            <input type="color" x-model="siteSettings.annBgEnd" class="adm-input" style="height:40px;padding:3px">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Text Color</label>
+                                            <input type="color" x-model="siteSettings.annTextColor" class="adm-input" style="height:40px;padding:3px">
+                                        </div>
+                                    </div>
                                     <template x-for="(ann, i) in announcements" :key="i">
                                         <div class="flex items-center gap-2 bg-slate-50 border rounded-lg p-2.5">
                                             <span style="font-size:13px;flex:1;color:#374151" x-text="ann"></span>
@@ -1166,6 +1308,14 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                     <div class="adm-card-title">🖼️ Gallery Manager</div>
                                     <button class="btn-pri text-xs" @click="showGalleryForm=!showGalleryForm">+ Add Photo</button>
                                 </div>
+                                <div class="p-4 border-b bg-slate-50">
+                                    <label class="adm-label">Slideshow Image Change Time (seconds)</label>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+                                        <input type="range" min="2" max="20" x-model.number="siteSettings.slideshowSeconds" class="w-full">
+                                        <input type="number" min="2" max="20" x-model.number="siteSettings.slideshowSeconds" class="adm-input" style="max-width:110px">
+                                        <span class="text-xs text-slate-500">Each photo changes after <strong x-text="siteSettings.slideshowSeconds"></strong> seconds.</span>
+                                    </div>
+                                </div>
                                 <div x-show="showGalleryForm" class="p-5 border-b bg-slate-50 space-y-3">
                                     <div>
                                         <label class="adm-label">Photo Title *</label>
@@ -1321,7 +1471,10 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.sky}"></div>
                                         <div style="font-size:12px;color:#6b7280">Live preview — changes apply to navbar, buttons, and headings instantly.</div>
                                     </div>
-                                    <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
+                                        <button class="btn-sm btn-del" @click="resetSavedState()">Reset Saved Browser Data</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1348,7 +1501,9 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 <script>
 function labCMS() {
     return {
+        storageKey: 'bpmeLabCMSStateV1',
         activePage: 'home',
+        mobileMenuOpen: false,
         peopleFilter: 'All',
         adminSubTab: 'dashboard',
         adminPanelTitle: 'Dashboard',
@@ -1376,12 +1531,25 @@ function labCMS() {
         loginEmail: '',
         loginPassword: '',
         labLogo: '',
+        currentGalleryIndex: 0,
+        galleryTimer: null,
 
         usersRegistry: [
             { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
         ],
 
-        themeColors: { navy: '#0F4C81', sky: '#4DA8DA' },
+        themeColors: { navy: '#0F4C81', sky: '#4DA8DA', background: '#f8fafc' },
+        siteSettings: {
+            slideshowSeconds: 5,
+            annSpeedSeconds: 50,
+            annBgStart: '#0F4C81',
+            annBgEnd: '#2A7F9E',
+            annTextColor: '#ffffff',
+            heroBgColor: '#0F4C81',
+            heroBgImage: '',
+            heroTitleColor: '#ffffff',
+            heroSubtitleColor: '#e0f2fe'
+        },
 
         // PAGE NAMES — editable in admin
         pageNames: {
@@ -1456,9 +1624,120 @@ function labCMS() {
         userForm: { name: '', email: '', password: '', role: 'Admin' },
         galleryForm: { title: '', url: '', fileName: '' },
 
+        persistKeys: [
+            'showAnnBar', 'labLogo', 'usersRegistry', 'themeColors', 'siteSettings', 'pageNames',
+            'menuOrder', 'homeData', 'labMediaList', 'news', 'gallery',
+            'researchAreas', 'people', 'publications', 'opportunities',
+            'announcements'
+        ],
+
+        loadSavedState() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
+                this.persistKeys.forEach(key => {
+                    if (Object.prototype.hasOwnProperty.call(saved, key)) {
+                        if (Array.isArray(this[key])) {
+                            this[key] = saved[key];
+                        } else if (this[key] && typeof this[key] === 'object' && saved[key] && typeof saved[key] === 'object') {
+                            this[key] = { ...this[key], ...saved[key] };
+                        } else {
+                            this[key] = saved[key];
+                        }
+                    }
+                });
+                this.ensureDefaultAdmin();
+            } catch (error) {
+                console.warn('Could not load saved lab CMS data:', error);
+                this.ensureDefaultAdmin();
+            }
+        },
+
+        ensureDefaultAdmin() {
+            const defaultAdmins = [
+                { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' },
+                { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iit.ac.in', password: 'admin123', role: 'Super Admin' }
+            ];
+            defaultAdmins.forEach(admin => {
+                const exists = this.usersRegistry.some(u => (u.email || '').toLowerCase() === admin.email);
+                if (!exists) this.usersRegistry.unshift(admin);
+            });
+        },
+
+        persistState() {
+            try {
+                const state = {};
+                this.persistKeys.forEach(key => { state[key] = this[key]; });
+                localStorage.setItem(this.storageKey, JSON.stringify(state));
+            } catch (error) {
+                console.warn('Could not save lab CMS data:', error);
+                this.showToast('Storage full. Please reduce uploaded file sizes.');
+            }
+        },
+
+        resetSavedState() {
+            if (!confirm('Reset all saved website changes on this browser?')) return;
+            localStorage.removeItem(this.storageKey);
+            location.reload();
+        },
+
+        announcementBarStyle() {
+            return `linear-gradient(90deg, ${this.siteSettings.annBgStart}, ${this.siteSettings.annBgEnd})`;
+        },
+
+        heroStyle() {
+            if (this.siteSettings.heroBgImage) {
+                return {
+                    background: `linear-gradient(rgba(15,23,42,.58), rgba(15,23,42,.58)), url('${this.siteSettings.heroBgImage}') center/cover no-repeat`
+                };
+            }
+            return {
+                background: `linear-gradient(135deg, ${this.siteSettings.heroBgColor} 0%, ${this.themeColors.navy} 100%)`
+            };
+        },
+
+        currentGalleryImage() {
+            if (!this.gallery.length) return { title: '', url: '' };
+            if (this.currentGalleryIndex >= this.gallery.length) this.currentGalleryIndex = 0;
+            return this.gallery[this.currentGalleryIndex];
+        },
+
+        nextSlide() {
+            if (!this.gallery.length) return;
+            this.currentGalleryIndex = (this.currentGalleryIndex + 1) % this.gallery.length;
+            this.restartSlideshow();
+        },
+
+        previousSlide() {
+            if (!this.gallery.length) return;
+            this.currentGalleryIndex = (this.currentGalleryIndex - 1 + this.gallery.length) % this.gallery.length;
+            this.restartSlideshow();
+        },
+
+        restartSlideshow() {
+            clearInterval(this.galleryTimer);
+            const seconds = Math.max(Number(this.siteSettings.slideshowSeconds) || 5, 2);
+            this.galleryTimer = setInterval(() => {
+                if (this.gallery.length > 1) {
+                    this.currentGalleryIndex = (this.currentGalleryIndex + 1) % this.gallery.length;
+                }
+            }, seconds * 1000);
+        },
+
+        formatRichText(command, value = null) {
+            document.execCommand(command, false, value);
+            const editor = document.querySelector('.rich-editor');
+            if (editor) {
+                this.homeData.piBio = editor.innerHTML;
+                editor.focus();
+            }
+        },
+
         // ── AUTH ──
         handleLogin() {
-            const match = this.usersRegistry.find(u => u.email === this.loginEmail && u.password === this.loginPassword);
+            this.ensureDefaultAdmin();
+            const email = (this.loginEmail || '').trim().toLowerCase();
+            const password = (this.loginPassword || '').trim();
+            const match = this.usersRegistry.find(u => (u.email || '').trim().toLowerCase() === email && String(u.password || '').trim() === password);
             if (match) {
                 this.isLoggedIn = true;
                 this.currentUser = match;
@@ -1811,8 +2090,19 @@ function labCMS() {
             setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 60);
         },
         init() {
-            this.$watch('activePage', () => this.refreshIcons());
+            this.loadSavedState();
+            this.$watch('activePage', () => {
+                this.mobileMenuOpen = false;
+                this.refreshIcons();
+            });
             this.$watch('adminSubTab', () => this.refreshIcons());
+            this.persistKeys.forEach(key => {
+                this.$watch(key, () => this.persistState());
+            });
+            this.$watch('siteSettings.slideshowSeconds', () => this.restartSlideshow());
+            this.$watch('gallery.length', () => this.restartSlideshow());
+            window.addEventListener('beforeunload', () => this.persistState());
+            this.restartSlideshow();
             this.refreshIcons();
         }
     }
