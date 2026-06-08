@@ -128,9 +128,9 @@
     </style>
 </head>
 <body
-x-data="labCMS()"
-class="text-slate-800"
-:style="{ backgroundColor: themeColors.background }">
+    x-data="labCMS()"
+    class="text-slate-800"
+    :style="{ backgroundColor: themeColors.background }">
 
 <!-- ══════════════════════════════════════════
      ANNOUNCEMENT SCROLLING BAR
@@ -219,8 +219,8 @@ class="text-slate-800"
                 </button>
             </form>
             <div class="p-3 bg-slate-50 rounded-lg text-center text-[10px] text-slate-400 font-mono">
-               🛡️ Confidential Area
-Admin credentials are confidential. Never share your Security Key Phrase with anyone.
+                🛡️SECURITY ALERT
+Authorized Personnel Only. All login attempts are encrypted, monitored, and logged for security compliance.
             </div>
         </div>
     </div>
@@ -252,7 +252,7 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
 
                     <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
-                            <i data-lucide="clapperboard" class="w-5 h-5"></i> Lab Media 
+                            <i data-lucide="clapperboard" class="w-5 h-5"></i> Lab Media & Operations Stream
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <template x-for="media in labMediaList" :key="media.id">
@@ -594,18 +594,42 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                 <div class="adm-card-hd"><div class="adm-card-title">📝 Word-by-Word Content Editor</div></div>
                                 <div class="p-5 space-y-4 text-xs">
                                     <div class="fg">
-                                        <label class="adm-label">Brand Logo URL</label>
-                                        <input type="text" x-model="labLogo" class="adm-input" placeholder="Paste logo image URL...">
-                                         <div class="mt-3">
-    <label class="adm-label">Upload Image From Device</label>
-
-    <input type="file"
-           accept="image/*"
-           @change="uploadImage($event)"
-           class="adm-input">
-</div>
+                                        <label class="adm-label">Brand Logo (Upload from device)</label>
+                                        <div style="border:2px dashed #e2e8f0;border-radius:10px;padding:14px;background:#f8fafc;cursor:pointer;transition:border-color .2s" 
+                                             @dragover.prevent @drop.prevent="handleDrop($event, 'logo')"
+                                             onclick="document.getElementById('logo-upload-input').click()">
+                                            <input type="file" id="logo-upload-input" accept="image/*" style="display:none"
+                                                   @change="uploadLogo($event)">
+                                            <template x-if="!labLogo">
+                                                <div style="text-align:center;color:#9ca3af">
+                                                    <div style="font-size:28px;margin-bottom:6px">🖼️</div>
+                                                    <div style="font-size:13px;font-weight:600">Click to upload logo</div>
+                                                    <div style="font-size:11px;margin-top:3px">JPG, PNG, SVG, WEBP, GIF supported</div>
+                                                </div>
+                                            </template>
+                                            <template x-if="labLogo">
+                                                <div style="display:flex;align-items:center;gap:12px">
+                                                    <img :src="labLogo" style="height:48px;width:auto;border-radius:6px;object-fit:contain;background:#fff;padding:4px;border:1px solid #e2e8f0">
+                                                    <div>
+                                                        <div style="font-size:13px;font-weight:600;color:#1f2937">Logo uploaded ✅</div>
+                                                        <div style="font-size:11px;color:#6b7280">Click to change</div>
+                                                    </div>
+                                                    <button @click.stop="labLogo=''" style="margin-left:auto;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕ Remove</button>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
+<div class="mt-3">
+    <label class="adm-label">Background Color</label>
+    <div class="flex items-center gap-3">
+        <input type="color" x-model="themeColors.background"
+               style="width:50px;height:40px;border:none;cursor:pointer;">
+        <input type="text" x-model="themeColors.background"
+               class="adm-input"
+               placeholder="#f8fafc">
+    </div>
+</div>
                                         <div>
                                             <label class="adm-label">Lab Code Title (Navbar)</label>
                                             <input type="text" x-model="homeData.labCode" class="adm-input">
@@ -635,8 +659,16 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="adm-label">PI Image URL</label>
-                                        <input type="text" x-model="homeData.piImage" class="adm-input">
+                                        <label class="adm-label">PI Photo (Upload from device)</label>
+                                        <div style="display:flex;align-items:center;gap:12px;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc">
+                                            <img :src="homeData.piImage || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=60&q=80'" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0">
+                                            <div style="flex:1">
+                                                <input type="file" id="pi-photo-input" accept="image/*" style="display:none" @change="uploadPIPhoto($event)">
+                                                <button type="button" onclick="document.getElementById('pi-photo-input').click()" class="btn-pri" style="font-size:12px;padding:7px 14px">📁 Choose PI Photo</button>
+                                                <div style="font-size:11px;color:#9ca3af;margin-top:4px">JPG, PNG, WEBP, GIF · max 5MB</div>
+                                            </div>
+                                            <button type="button" @click="homeData.piImage=''" style="padding:4px 10px;border-radius:6px;font-size:11px;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕</button>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="adm-label">PI Biography (HTML allowed)</label>
@@ -774,8 +806,18 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                             <input type="text" x-model="teamForm.researchArea" class="adm-input" placeholder="e.g. Biophotonics">
                                         </div>
                                         <div>
-                                            <label class="adm-label">Photo URL</label>
-                                            <input type="text" x-model="teamForm.img" class="adm-input" placeholder="https://... or leave blank for default">
+                                            <label class="adm-label">Profile Photo</label>
+                                            <div style="border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc;display:flex;align-items:center;gap:10px">
+                                                <img :src="teamForm.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=60&q=80'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0">
+                                                <div style="flex:1">
+                                                    <input type="file" :id="'member-photo-'+Date.now()" class="member-photo-input" accept="image/*" style="display:none" @change="handleMemberPhoto($event)">
+                                                    <button type="button" onclick="this.closest('div').querySelector('.member-photo-input').click()" class="btn-sm" style="font-size:11px">📁 Upload Photo</button>
+                                                    <div style="font-size:10px;color:#9ca3af;margin-top:3px">JPG, PNG, WEBP · max 5MB</div>
+                                                </div>
+                                                <template x-if="teamForm.img && teamForm.img !== 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=60&q=80'">
+                                                    <button type="button" @click="teamForm.img=''" style="padding:3px 8px;border-radius:5px;font-size:10px;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕</button>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
@@ -1014,36 +1056,101 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                     <button class="btn-pri text-xs" @click="showMediaForm=!showMediaForm">+ Add Media</button>
                                 </div>
                                 <div x-show="showMediaForm" class="p-5 border-b bg-slate-50 space-y-3">
-                                    <div class="grid grid-cols-3 gap-3">
+                                    <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="adm-label">Title *</label>
-                                            <input type="text" x-model="mediaForm.title" class="adm-input">
+                                            <input type="text" x-model="mediaForm.title" class="adm-input" placeholder="e.g. Lab Setup 2026">
                                         </div>
                                         <div>
-                                            <label class="adm-label">Type</label>
+                                            <label class="adm-label">File Type</label>
                                             <select x-model="mediaForm.type" class="adm-input" style="appearance:auto">
-                                                <option value="image">Image</option>
-                                                <option value="video">Video</option>
+                                                <option value="image">🖼️ Image</option>
+                                                <option value="video">🎥 Video</option>
+                                                <option value="document">📄 Document</option>
                                             </select>
                                         </div>
-                                        <div>
-                                            <label class="adm-label">URL *</label>
-                                            <input type="text" x-model="mediaForm.url" class="adm-input" placeholder="https://...">
+                                    </div>
+
+                                    <!-- Upload Zone -->
+                                    <div>
+                                        <label class="adm-label">Upload File *</label>
+                                        <div style="border:2px dashed #CBD5E0;border-radius:10px;padding:20px;background:#fff;text-align:center;cursor:pointer;transition:all .2s"
+                                             :style="mediaForm.url ? 'border-color:#22C55E;background:#f0fdf4' : 'border-color:#CBD5E0'"
+                                             @dragover.prevent="$event.currentTarget.style.borderColor='#4DA8DA'"
+                                             @dragleave="$event.currentTarget.style.borderColor=mediaForm.url?'#22C55E':'#CBD5E0'"
+                                             @drop.prevent="handleMediaDrop($event)"
+                                             onclick="document.getElementById('media-file-input').click()">
+                                            <input type="file" id="media-file-input" style="display:none"
+                                                   :accept="mediaForm.type==='image' ? 'image/*' : mediaForm.type==='video' ? 'video/*,.mp4,.mov,.avi,.mkv,.webm' : '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.csv'"
+                                                   @change="handleMediaUpload($event)">
+
+                                            <template x-if="!mediaForm.url && !mediaForm.uploadProgress">
+                                                <div>
+                                                    <div style="font-size:32px;margin-bottom:8px">
+                                                        <span x-text="mediaForm.type==='image'?'🖼️':mediaForm.type==='video'?'🎥':'📄'"></span>
+                                                    </div>
+                                                    <div style="font-size:13px;font-weight:700;color:#374151">Click to upload or drag & drop</div>
+                                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px" x-text="mediaForm.type==='image'?'JPG, PNG, WEBP, GIF, SVG — max 10MB':mediaForm.type==='video'?'MP4, MOV, AVI, MKV, WEBM — max 100MB':'PDF, DOCX, PPTX, XLSX, TXT, ZIP — max 50MB'"></div>
+                                                </div>
+                                            </template>
+
+                                            <template x-if="mediaForm.uploadProgress">
+                                                <div>
+                                                    <div style="font-size:13px;font-weight:700;color:#0F4C81;margin-bottom:8px">⏳ Processing file...</div>
+                                                    <div style="height:6px;background:#e2e8f0;border-radius:100px;overflow:hidden">
+                                                        <div style="height:100%;background:linear-gradient(90deg,#0F4C81,#4DA8DA);border-radius:100px;transition:width .3s" :style="'width:'+mediaForm.uploadProgress+'%'"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template x-if="mediaForm.url && !mediaForm.uploadProgress">
+                                                <div style="display:flex;align-items:center;gap:12px" @click.stop>
+                                                    <template x-if="mediaForm.type === 'image'">
+                                                        <img :src="mediaForm.url" style="height:56px;width:80px;object-fit:cover;border-radius:6px;border:2px solid #22C55E">
+                                                    </template>
+                                                    <template x-if="mediaForm.type === 'video'">
+                                                        <div style="height:56px;width:80px;background:#1f2937;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid #22C55E">🎥</div>
+                                                    </template>
+                                                    <template x-if="mediaForm.type === 'document'">
+                                                        <div style="height:56px;width:60px;background:#EFF6FF;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid #22C55E">📄</div>
+                                                    </template>
+                                                    <div style="text-align:left">
+                                                        <div style="font-size:13px;font-weight:700;color:#15803d">✅ File ready!</div>
+                                                        <div style="font-size:11px;color:#6b7280" x-text="mediaForm.fileName || 'Uploaded file'"></div>
+                                                        <div style="font-size:11px;color:#4DA8DA;margin-top:2px;cursor:pointer;text-decoration:underline" onclick="document.getElementById('media-file-input').click()">Change file</div>
+                                                    </div>
+                                                    <button @click.stop="mediaForm.url='';mediaForm.fileName=''" style="margin-left:auto;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕ Remove</button>
+                                                </div>
+                                            </template>
                                         </div>
                                     </div>
+
                                     <div>
-                                        <label class="adm-label">Description</label>
-                                        <textarea rows="2" x-model="mediaForm.desc" class="adm-input" style="resize:vertical"></textarea>
+                                        <label class="adm-label">Description (optional)</label>
+                                        <textarea rows="2" x-model="mediaForm.desc" class="adm-input" style="resize:vertical" placeholder="Brief description of this media..."></textarea>
                                     </div>
-                                    <button class="btn-pri" @click="addLabMedia()">+ Append Media</button>
+                                    <button class="btn-pri" @click="addLabMedia()">➕ Add to Media Library</button>
                                 </div>
                                 <div class="p-4 space-y-2">
                                     <template x-for="m in labMediaList" :key="m.id">
-                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px;display:flex;justify-content:space-between;align-items:center">
-                                            <div>
-                                                <span style="font-weight:700;font-size:13px" x-text="m.title"></span>
-                                                <span style="font-size:10px;color:#4DA8DA;font-weight:700;margin-left:8px;text-transform:uppercase" x-text="m.type"></span>
-                                                <p style="font-size:12px;color:#6b7280;margin-top:2px" x-text="m.desc"></p>
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px;display:flex;align-items:center;gap:12px">
+                                            <!-- Preview thumbnail -->
+                                            <template x-if="m.type === 'image'">
+                                                <img :src="m.url" style="width:52px;height:42px;object-fit:cover;border-radius:6px;border:1px solid #e2e8f0;flex-shrink:0">
+                                            </template>
+                                            <template x-if="m.type === 'video'">
+                                                <div style="width:52px;height:42px;background:#1f2937;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎥</div>
+                                            </template>
+                                            <template x-if="m.type === 'document'">
+                                                <div style="width:52px;height:42px;background:#EFF6FF;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📄</div>
+                                            </template>
+                                            <div style="flex:1;min-width:0">
+                                                <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="m.title"></div>
+                                                <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+                                                    <span style="font-size:10px;color:#4DA8DA;font-weight:700;text-transform:uppercase;background:#EBF4FD;padding:1px 7px;border-radius:100px" x-text="m.type"></span>
+                                                    <span style="font-size:11px;color:#9ca3af" x-text="m.fileSize || ''"></span>
+                                                </div>
+                                                <p style="font-size:11px;color:#6b7280;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="m.desc"></p>
                                             </div>
                                             <button class="btn-sm btn-del" @click="labMediaList=labMediaList.filter(x=>x.id!==m.id);showToast('Media removed.')">🗑 Delete</button>
                                         </div>
@@ -1060,21 +1167,38 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                     <button class="btn-pri text-xs" @click="showGalleryForm=!showGalleryForm">+ Add Photo</button>
                                 </div>
                                 <div x-show="showGalleryForm" class="p-5 border-b bg-slate-50 space-y-3">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="adm-label">Title *</label>
-                                            <input type="text" x-model="galleryForm.title" class="adm-input">
-                                        </div>
-                                        <div>
-                                            <label class="adm-label">Image URL </label>
-                                            <input type="text" x-model="galleryForm.url" class="adm-input" placeholder="https://...">
-<input type="file"
-       accept="image/*"
-       @change="uploadImage($event, galleryItem, 'image')"
-       class="adm-input">
+                                    <div>
+                                        <label class="adm-label">Photo Title *</label>
+                                        <input type="text" x-model="galleryForm.title" class="adm-input" placeholder="e.g. Lab Setup 2026">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Upload Photo *</label>
+                                        <div style="border:2px dashed #CBD5E0;border-radius:10px;padding:20px;background:#fff;text-align:center;cursor:pointer;transition:all .2s"
+                                             :style="galleryForm.url ? 'border-color:#22C55E;background:#f0fdf4' : ''"
+                                             @dragover.prevent @drop.prevent="handleGalleryDrop($event)"
+                                             onclick="document.getElementById('gallery-file-input').click()">
+                                            <input type="file" id="gallery-file-input" accept="image/*" style="display:none" @change="handleGalleryUpload($event)">
+                                            <template x-if="!galleryForm.url">
+                                                <div>
+                                                    <div style="font-size:32px;margin-bottom:6px">📸</div>
+                                                    <div style="font-size:13px;font-weight:700;color:#374151">Click to upload or drag & drop</div>
+                                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px">JPG, PNG, WEBP, GIF, SVG — max 10MB</div>
+                                                </div>
+                                            </template>
+                                            <template x-if="galleryForm.url">
+                                                <div style="display:flex;align-items:center;gap:12px" @click.stop>
+                                                    <img :src="galleryForm.url" style="height:60px;width:90px;object-fit:cover;border-radius:6px;border:2px solid #22C55E">
+                                                    <div style="text-align:left">
+                                                        <div style="font-size:13px;font-weight:700;color:#15803d">✅ Photo ready!</div>
+                                                        <div style="font-size:11px;color:#6b7280" x-text="galleryForm.fileName || ''"></div>
+                                                        <div style="font-size:11px;color:#4DA8DA;cursor:pointer;margin-top:2px;text-decoration:underline" onclick="document.getElementById('gallery-file-input').click()">Change photo</div>
+                                                    </div>
+                                                    <button @click.stop="galleryForm.url=''" style="margin-left:auto;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕</button>
+                                                </div>
+                                            </template>
                                         </div>
                                     </div>
-                                    <button class="btn-pri" @click="addGalleryItem()">+ Add to Gallery</button>
+                                    <button class="btn-pri" @click="addGalleryItem()">➕ Add to Gallery</button>
                                 </div>
                                 <div class="p-4 grid grid-cols-3 gap-3">
                                     <template x-for="img in gallery" :key="img.id">
@@ -1176,7 +1300,7 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                             <div class="adm-card">
                                 <div class="adm-card-hd"><div class="adm-card-title">🎨 Theme & Color Settings</div></div>
                                 <div class="p-5 space-y-4">
-                                    <div class="grid grid-cols-3 gap-4">
+                                    <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <label class="adm-label">Primary / Navy Color</label>
                                             <div style="display:flex;gap:10px;align-items:center">
@@ -1189,15 +1313,7 @@ Admin credentials are confidential. Never share your Security Key Phrase with an
                                             <div style="display:flex;gap:10px;align-items:center">
                                                 <input type="color" x-model="themeColors.sky" style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
                                                 <input type="text" x-model="themeColors.sky" class="adm-input" style="flex:1">
-                                            <div>
-                                                  <label class="adm-label">Background Color</label>
-                                                   <div style="display:flex;gap:10px;align-items:center">
-                                                   <input type="color" x-model="themeColors.background"
-                                                    style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
-                                                  <input type="text" x-model="themeColors.background"
-                                                         class="adm-input" style="flex:1">
-    </div>
-</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div style="display:flex;gap:12px;padding:14px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;align-items:center">
@@ -1265,11 +1381,7 @@ function labCMS() {
             { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
         ],
 
-        themeColors: {
-    navy: '#0F4C81',
-    sky: '#4DA8DA',
-    background: '#F8FAFC'
-},
+        themeColors: { navy: '#0F4C81', sky: '#4DA8DA' },
 
         // PAGE NAMES — editable in admin
         pageNames: {
@@ -1337,12 +1449,12 @@ function labCMS() {
 
         // FORMS
         teamForm: { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' },
-        mediaForm: { title: '', type: 'image', url: '', desc: '' },
+        mediaForm: { title: '', type: 'image', url: '', desc: '', fileName: '', fileSize: '', uploadProgress: null },
         oppForm: { position: '', type: 'Internship', deadline: '', status: 'Open', desc: '' },
         newsForm: { date: '', text: '' },
         pubForm: { title: '', authors: '', journal: '', year: '', doi: '' },
         userForm: { name: '', email: '', password: '', role: 'Admin' },
-        galleryForm: { title: '', url: '' },
+        galleryForm: { title: '', url: '', fileName: '' },
 
         // ── AUTH ──
         handleLogin() {
@@ -1482,21 +1594,161 @@ function labCMS() {
             this.showToast('✅ Updated!');
         },
 
-        // ── MEDIA & GALLERY ──
-        addLabMedia() {
-            if (!this.mediaForm.title || !this.mediaForm.url) { this.showToast('⚠️ Title & URL required'); return; }
-            this.labMediaList.push({ id: Date.now(), ...this.mediaForm });
-            this.showToast('✅ Media added!');
-            this.mediaForm = { title: '', type: 'image', url: '', desc: '' };
-        },
-        addGalleryItem() {
-            if (!this.galleryForm.title || !this.galleryForm.url) { this.showToast('⚠️ Title & URL required'); return; }
-            this.gallery.push({ id: Date.now(), ...this.galleryForm });
-            this.showToast('✅ Photo added to gallery!');
-            this.galleryForm = { title: '', url: '' };
+        // ── FILE UPLOAD UTILITIES ──
+        readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('File read failed'));
+                reader.readAsDataURL(file);
+            });
         },
 
-        // ── ANNOUNCEMENTS ──
+        formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        },
+
+        // Logo Upload
+        async uploadLogo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { this.showToast('⚠️ Logo file too large. Max 5MB.'); return; }
+            try {
+                this.labLogo = await this.readFileAsBase64(file);
+                this.showToast('✅ Logo uploaded!');
+            } catch(e) { this.showToast('❌ Upload failed. Try again.'); }
+        },
+
+        handleDrop(event, target) {
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
+            if (target === 'logo') {
+                const fakeEvent = { target: { files: [file] } };
+                this.uploadLogo(fakeEvent);
+            }
+        },
+
+        // PI Photo Upload
+        async uploadPIPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { this.showToast('⚠️ File too large. Max 5MB.'); return; }
+            if (!file.type.startsWith('image/')) { this.showToast('⚠️ Please select an image file.'); return; }
+            try {
+                this.homeData.piImage = await this.readFileAsBase64(file);
+                this.showToast('✅ PI photo uploaded!');
+            } catch(e) { this.showToast('❌ Upload failed.'); }
+        },
+
+        // Team Member Photo Upload
+        async handleMemberPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) { this.showToast('⚠️ File too large. Max 5MB.'); return; }
+            if (!file.type.startsWith('image/')) { this.showToast('⚠️ Please select an image file.'); return; }
+            try {
+                this.teamForm.img = await this.readFileAsBase64(file);
+                this.showToast('✅ Photo uploaded!');
+            } catch(e) { this.showToast('❌ Upload failed.'); }
+        },
+
+        // Media Upload (Image / Video / Document)
+        async handleMediaUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Size limits
+            const maxSizes = { image: 10, video: 100, document: 50 };
+            const maxMB = maxSizes[this.mediaForm.type] || 50;
+            if (file.size > maxMB * 1024 * 1024) {
+                this.showToast(`⚠️ File too large. Max ${maxMB}MB for ${this.mediaForm.type}.`);
+                return;
+            }
+
+            this.mediaForm.uploadProgress = 10;
+            this.mediaForm.fileName = file.name;
+            this.mediaForm.fileSize = this.formatFileSize(file.size);
+
+            // Auto-detect type
+            if (file.type.startsWith('image/')) this.mediaForm.type = 'image';
+            else if (file.type.startsWith('video/')) this.mediaForm.type = 'video';
+            else this.mediaForm.type = 'document';
+
+            try {
+                // Simulate progress
+                const progress = setInterval(() => {
+                    if (this.mediaForm.uploadProgress < 85) this.mediaForm.uploadProgress += 15;
+                }, 100);
+
+                const base64 = await this.readFileAsBase64(file);
+                clearInterval(progress);
+                this.mediaForm.uploadProgress = 100;
+
+                setTimeout(() => {
+                    this.mediaForm.url = base64;
+                    this.mediaForm.uploadProgress = null;
+                    this.showToast('✅ File ready to add!');
+                }, 300);
+            } catch(e) {
+                this.mediaForm.uploadProgress = null;
+                this.showToast('❌ Upload failed. Try again.');
+            }
+        },
+
+        handleMediaDrop(event) {
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
+            const fakeEvent = { target: { files: [file] } };
+            this.handleMediaUpload(fakeEvent);
+        },
+
+        // Gallery Photo Upload
+        async handleGalleryUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { this.showToast('⚠️ Please select an image file.'); return; }
+            if (file.size > 10 * 1024 * 1024) { this.showToast('⚠️ File too large. Max 10MB.'); return; }
+            try {
+                this.galleryForm.url = await this.readFileAsBase64(file);
+                this.galleryForm.fileName = file.name;
+                this.showToast('✅ Photo ready!');
+            } catch(e) { this.showToast('❌ Upload failed.'); }
+        },
+
+        handleGalleryDrop(event) {
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
+            const fakeEvent = { target: { files: [file] } };
+            this.handleGalleryUpload(fakeEvent);
+        },
+
+        // ── MEDIA & GALLERY SAVE ──
+        addLabMedia() {
+            if (!this.mediaForm.title) { this.showToast('⚠️ Title is required'); return; }
+            if (!this.mediaForm.url) { this.showToast('⚠️ Please upload a file first'); return; }
+            this.labMediaList.push({
+                id: Date.now(),
+                title: this.mediaForm.title,
+                type: this.mediaForm.type,
+                url: this.mediaForm.url,
+                desc: this.mediaForm.desc,
+                fileName: this.mediaForm.fileName || '',
+                fileSize: this.mediaForm.fileSize || ''
+            });
+            this.showToast('✅ Media added to library!');
+            this.mediaForm = { title: '', type: 'image', url: '', desc: '', fileName: '', fileSize: '', uploadProgress: null };
+            this.showMediaForm = false;
+        },
+        addGalleryItem() {
+            if (!this.galleryForm.title) { this.showToast('⚠️ Title is required'); return; }
+            if (!this.galleryForm.url) { this.showToast('⚠️ Please upload a photo first'); return; }
+            this.gallery.push({ id: Date.now(), title: this.galleryForm.title, url: this.galleryForm.url });
+            this.showToast('✅ Photo added to gallery!');
+            this.galleryForm = { title: '', url: '', fileName: '' };
+            this.showGalleryForm = false;
+        },
         addAnn() {
             if (!this.newAnnText.trim()) { this.showToast('⚠️ Enter announcement text'); return; }
             this.announcements.push(this.newAnnText.trim());
