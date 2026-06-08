@@ -1,1157 +1,1569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BPBME Enterprise Console & Lab Portal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ===== CORE SYSTEM VARIABLES WITH SYSTEM THEME CONTROLLER ===== */
-:root {
-  --c-primary: #0F4C81;
-  --c-primary-dark: #0a3560;
-  --c-secondary: #2A7F9E;
-  --c-accent: #4DA8DA;
-  --c-accent-light: #e8f4fb;
-  --c-bg: #F8FAFC;
-  --c-white: #FFFFFF;
-  --c-text: #1F2937;
-  --c-muted: #6B7280;
-  --c-border: #E5E7EB;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --font-head: 'Poppins', sans-serif;
-  --font-body: 'Inter', sans-serif;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIT Indore - Biophysics & Biomedical Engineering Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
 
-/* THEME CODES MANAGEMENT MAPPINGS */
-body.theme-classic {
-  --c-primary: #0F4C81; --c-primary-dark: #0a3560; --c-secondary: #2A7F9E; --c-accent: #4DA8DA; --c-accent-light: #e8f4fb;
-}
-body.theme-emerald {
-  --c-primary: #065F46; --c-primary-dark: #044332; --c-secondary: #0D9488; --c-accent: #14B8A6; --c-accent-light: #CCFBF1;
-}
-body.theme-maroon {
-  --c-primary: #881337; --c-primary-dark: #4C0519; --c-secondary: #9F1239; --c-accent: #F43F5E; --c-accent-light: #FFE4E6;
-}
-body.theme-dark {
-  --c-bg: #0F172A; --c-white: #1E293B; --c-text: #F8FAFC; --c-muted: #94A3B8; --c-border: #334155; --c-accent-light: #334155; --c-primary: #38BDF8; --c-primary-dark: #0284C7; --c-secondary: #0EA5E9;
-}
+        /* ── Admin Panel Styles (BPBME Style) ── */
+        #adm-sidebar {
+            width: 260px;
+            background: #0d1117;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #21262d;
+        }
+        .adm-logo-box {
+            padding: 18px 16px;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .adm-logo-badge {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg,#0F4C81,#4DA8DA);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 11px;
+            text-align: center; line-height: 1.2;
+            font-family: 'Poppins', sans-serif;
+        }
+        .adm-logo-text { color: #e6edf3; font-size: 13px; font-weight: 700; display: block; }
+        .adm-logo-sub  { color: #6e7681; font-size: 11px; }
+        .adm-nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
+        .adm-sec-label {
+            font-size: 10px; font-weight: 700; color: #6e7681;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 11px 8px 5px;
+        }
+        .adm-btn {
+            display: flex; align-items: center; gap: 9px;
+            padding: 9px 11px; border-radius: 8px;
+            font-size: 13px; font-weight: 500; color: #8b949e;
+            cursor: pointer; transition: all .2s; margin-bottom: 2px;
+            background: none; border: none; width: 100%; text-align: left;
+            font-family: 'Inter', sans-serif;
+        }
+        .adm-btn:hover { background: #1a2a3a; color: #4DA8DA; }
+        .adm-btn.active { background: #1a2a3a; color: #4DA8DA; }
+        .adm-btn .badge {
+            margin-left: auto; background: #0F4C81; color: #fff;
+            font-size: 10px; font-weight: 700; padding: 1px 7px;
+            border-radius: 100px;
+        }
+        .adm-btn .badge-r {
+            margin-left: auto; background: #EF4444; color: #fff;
+            font-size: 10px; font-weight: 700; padding: 1px 7px;
+            border-radius: 100px;
+        }
+        .adm-footer {
+            padding: 12px 14px;
+            border-top: 1px solid #21262d;
+        }
+        .adm-user-row { display: flex; align-items: center; gap: 9px; }
+        .adm-av {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg,#0F4C81,#4DA8DA);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 12px;
+        }
+        .adm-un { color: #e6edf3; font-size: 13px; font-weight: 700; }
+        .adm-ur { color: #6e7681; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .rdot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; display: inline-block; }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-body); color: var(--c-text); background: var(--c-bg); line-height: 1.6; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
-.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; width: 100%; }
+        /* Panel area */
+        #adm-main-panel { flex: 1; background: #f8fafc; overflow-y: auto; max-height: 90vh; }
+        .ap { display: none; }
+        .ap.active { display: block; }
 
-p, h1, h2, h3, h4, h5, h6, span, div, td, th, li, a {
-  word-wrap: break-word !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-  white-space: normal !important;
-  max-width: 100%;
-}
+        /* Form inputs in admin */
+        .adm-input {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid #e2e8f0; border-radius: 8px;
+            background: #fff; color: #1f2937; font-size: 13px;
+            font-family: 'Inter', sans-serif; outline: none;
+            transition: border-color .2s;
+        }
+        .adm-input:focus { border-color: #4DA8DA; box-shadow: 0 0 0 3px rgba(77,168,218,.1); }
+        .adm-label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
+        .adm-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+        .adm-card-hd { padding: 12px 18px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+        .adm-card-title { font-size: 14px; font-weight: 700; color: #1f2937; }
+        .adm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .adm-table th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+        .adm-table td { padding: 11px 16px; border-bottom: 1px solid #e2e8f0; color: #1f2937; }
+        .adm-table tr:last-child td { border-bottom: none; }
+        .adm-table tr:hover td { background: #f8fafc; }
+        .btn-pri { padding: 9px 18px; background: linear-gradient(135deg,#0F4C81,#2A7F9E); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; }
+        .btn-pri:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,76,129,.3); }
+        .btn-sm { padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f1f5f9; color: #4b5563; transition: all .2s; font-family: 'Inter', sans-serif; }
+        .btn-sm:hover { border-color: #0F4C81; color: #0F4C81; }
+        .btn-del:hover { border-color: #EF4444; color: #EF4444; }
+        .status-pub { background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+        .status-dr  { background: #fef9c3; color: #854d0e; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
+        .status-pe  { background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 100px; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 24px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; text-decoration: none; }
-.btn-primary { background: var(--c-primary); color: #fff; box-shadow: 0 4px 12px rgba(15, 76, 129, 0.2); }
-.btn-primary:hover { background: var(--c-primary-dark); }
-.btn-outline { background: transparent; color: var(--c-text); border: 1.5px solid var(--c-border); }
-.btn-outline:hover { border-color: var(--c-primary); color: var(--c-primary); }
-.btn-danger { background: #DC2626; color: #fff; }
-.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
-.badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; background: var(--c-accent-light); color: var(--c-primary); }
+        /* Toast */
+        #toast { position: fixed; bottom: 22px; right: 22px; background: #1a1a2e; color: #fff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 28px rgba(0,0,0,.3); z-index: 9999; display: none; align-items: center; gap: 8px; max-width: 320px; }
+        #toast.show { display: flex; }
 
-.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; width: 100%; }
-.card-flat { background: var(--c-white); border-radius: var(--radius-lg); border: 1px solid var(--c-border); padding: 28px; box-shadow: var(--shadow-sm); width: 100%; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; }
-.category-block { margin-bottom: 40px; width: 100%; }
-.category-title { font-family: var(--font-head); font-size: 22px; font-weight: 600; color: var(--c-primary); margin-bottom: 16px; border-left: 4px solid var(--c-secondary); padding-left: 12px; }
-
-.form-group { margin-bottom: 18px; width: 100%; display: flex; flex-direction: column; gap: 6px; }
-.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--c-text); }
-.form-input, .form-select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--c-border); border-radius: var(--radius-md); font-size: 14px; background: var(--c-white); color: var(--c-text); outline: none; }
-.form-input:focus, .form-select:focus { border-color: var(--c-primary); }
-
-/* WYSIWYG EDITOR SETUP */
-.wysiwyg-wrapper { border: 1.5px solid var(--c-border); border-radius: var(--radius-md); overflow: hidden; background: var(--c-white); width: 100%; }
-.wysiwyg-toolbar { background: var(--c-accent-light); border-bottom: 1px solid var(--c-border); padding: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
-.wysiwyg-btn { background: var(--c-white); color: var(--c-text); border: 1px solid var(--c-border); border-radius: 4px; padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
-.wysiwyg-editor { min-height: 120px; max-height: 250px; overflow-y: auto; padding: 14px; outline: none; background: var(--c-white); color: var(--c-text); font-size: 14px; }
-
-/* BRANDING & NAVBAR CONFIGURATION CHANNELS */
-.lab-top-brand { background: var(--c-primary); color: #FFF; padding: 28px 0; text-align: center; }
-.lab-top-brand h1 { font-family: var(--font-head); font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
-.lab-top-brand p { font-size: 13px; opacity: 0.9; margin-top: 4px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; }
-
-.navbar { position: sticky; top: 0; z-index: 900; background: var(--c-white); border-bottom: 1px solid var(--c-border); padding: 14px 0; box-shadow: var(--shadow-sm); }
-.navbar .container { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
-.nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
-.nav-link { padding: 8px 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--c-muted); cursor: pointer; transition: all 0.2s; text-transform: capitalize; }
-.nav-link:hover, .nav-link.active { color: var(--c-primary); background: var(--c-accent-light); }
-
-/* ONE-NOTIFICATION-AT-A-TIME DISCRETE DISPLAY BAR SYSTEM */
-.notification-ticker-bar { background: #FEF3C7; border-bottom: 1px solid #FCD34D; color: #92400E; min-height: 48px; display: flex; align-items: center; justify-content: center; padding: 8px 24px; text-align: center; font-size: 14px; font-weight: 600; width: 100%; position: relative; overflow: hidden; }
-.ticker-slide-node { width: 100%; max-width: 900px; display: none; opacity: 0; transform: translateY(15px); transition: opacity 0.5s ease, transform 0.5s ease; }
-.ticker-slide-node.active { display: block; opacity: 1; transform: translateY(0); }
-
-/* VIEW PORTS PLATFORM STRUCTURAL CORE SCALINGS */
-.viewport-segment { display: none; padding: 40px 0; width: 100%; }
-.viewport-segment.active { display: block; }
-
-/* === UPDATED PI PROFILE SECTION: GRID BARABAR BALANCE LOCKS === */
-.pi-section { 
-  background: var(--c-accent-light); 
-  padding: 40px; 
-  border-radius: var(--radius-lg); 
-  width: 100%; 
-  box-sizing: border-box; 
-  border: 1px solid rgba(15, 76, 129, 0.08);
-  display: grid;
-  grid-template-columns: 1fr 2fr; /* Photo aur Text ko exact ratio balance diya */
-  gap: 40px;
-  align-items: stretch; /* Isse dono blocks barabar height ke ho jate hain */
-}
-@media(max-width: 768px) {
-  .pi-section { grid-template-columns: 1fr; gap: 24px; }
-}
-.pi-image-wrapper { 
-  width: 100%; 
-  height: 100%; /* Text container ke total height ke barabar stretch hoga */
-  min-height: 320px; /* Safe fall-back aspect */
-  border-radius: var(--radius-md); 
-  overflow: hidden; 
-  box-shadow: var(--shadow-md); 
-  border: 5px solid var(--c-white); 
-}
-.pi-image-wrapper img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; /* Image bina stretch ya bura dikhe exact size me auto-crop aur fit hogi */
-  display: block;
-}
-.pi-name { font-family: var(--font-head); font-size: 30px; font-weight: 700; color: var(--c-primary); letter-spacing: -0.5px; }
-.pi-role { font-size: 16px; font-weight: 600; color: var(--c-secondary); margin-bottom: 12px; }
-
-/* HIGH PREMIUM SIDE-BY-SIDE MODULAR CLUSTER MATRIX ARCHITECTURE */
-.homepage-cluster-matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 32px; margin-top: 36px; width: 100%; align-items: stretch; }
-@media(max-width: 992px) {
-  .homepage-cluster-matrix { grid-template-columns: 1fr; }
-}
-
-/* HIGH PERFORMANCE PEECHEY-SE-NIKALNE-VALA (STACK-PULL) LAYER SLIDESHOW MACHINERY */
-.slideshow-wheel-frame { width: 100%; height: 380px; background: #0F172A; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid var(--c-border); box-shadow: var(--shadow-md); }
-.slide-node-instance { width: 100%; height: 100%; position: absolute; inset: 0; opacity: 0; z-index: 1; transform: scale(0.9) translateY(20px); transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), z-index 0.3s; }
-.slide-node-instance.active { opacity: 1; z-index: 5; transform: scale(1) translateY(0); }
-.slide-node-instance.previous-stack { opacity: 0.4; z-index: 2; transform: scale(0.95) translateY(-10px); }
-.slide-node-instance img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.85); }
-.slide-caption-overlay-strip { position: absolute; bottom: 0; inset-x: 0; background: linear-gradient(transparent, rgba(15,23,42,0.95) 75%); color: #FFF; padding: 28px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
-
-/* DATA RESPONSIVE TABLE PATTERNS STRIPS */
-.table-responsive { width: 100%; overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--c-border); background: var(--c-white); box-shadow: var(--shadow-sm); }
-.data-table-framework { width: 100%; border-collapse: collapse; text-align: left; table-layout: auto; }
-.data-table-framework th, .data-table-framework td { padding: 14px 18px; font-size: 14px; border-bottom: 1px solid var(--c-border); vertical-align: top; }
-.data-table-framework th { background: var(--c-accent-light); font-weight: 600; color: var(--c-primary); font-family: var(--font-head); }
-.data-table-framework tr:last-child td { border-bottom: none; }
-
-.team-grid-client { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; }
-.team-card-node { background: var(--c-white); border: 1px solid var(--c-border); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.team-card-img-container { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid var(--c-accent-light); }
-.team-card-img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-/* SORTABLE DRAG ARCHITECTURE CHASSIS ROW */
-.sortable-drag-list-item { padding: 14px 18px; background: var(--c-accent-light); border: 1.5px dashed var(--c-primary); margin-bottom: 12px; border-radius: var(--radius-md); cursor: move; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: background 0.2s; }
-.sortable-drag-list-item:hover { background: #e0f0fa; }
-
-/* OPERATOR TERMINAL ADMIN CORE CONSOLE BACKEND */
-.admin-view-panel { position: fixed; inset: 0; background: var(--c-bg); z-index: 2000; display: none; }
-.admin-view-panel.open { display: flex; }
-.admin-sidebar { width: 300px; background: #0F172A; color: #94A3B8; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--c-border); overflow-y: auto; }
-.admin-menu-item { padding: 12px 14px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #94A3B8; transition: all 0.2s; }
-.admin-menu-item:hover, .admin-menu-item.active { background: #1E293B; color: #FFF; }
-.admin-workspace { flex: 1; padding: 40px; overflow-y: auto; background: var(--c-bg); box-sizing: border-box; }
-.admin-tab-content { display: none; width: 100%; }
-.admin-tab-content.active { display: block; }
-
-/* DIALOG OVERLAY MODALS PLATFORMS */
-.modal-wrapper { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
-.modal-wrapper.open { display: flex; }
-.modal-container { background: var(--c-white); color: var(--c-text); border-radius: var(--radius-lg); width: 100%; max-width: 680px; box-shadow: var(--shadow-md); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--c-border); }
-.modal-header { padding: 18px 24px; background: var(--c-accent-light); border-bottom: 1px solid var(--c-border); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-head); font-weight: 600; color: var(--c-primary); }
-.modal-body { padding: 24px; overflow-y: auto; max-height: 70vh; display: flex; flex-direction: column; gap: 4px; }
-.modal-footer { padding: 16px 24px; background: var(--c-bg); border-top: 1px solid var(--c-border); display: flex; justify-content: flex-end; gap: 12px; }
-
-.portal-footer { background: #0F172A; color: #94A3B8; padding: 40px 0; text-align: center; margin-top: 80px; font-size: 14px; border-top: 4px solid var(--c-primary); }
-</style>
+        /* Announcement bar */
+        #ann-bar { background: linear-gradient(90deg,#0F4C81,#2A7F9E); color: #fff; padding: 7px 0; overflow: hidden; position: relative; z-index: 100; }
+        .ann-scroll { display: flex; gap: 60px; animation: marquee 50s linear infinite; white-space: nowrap; }
+        .ann-scroll span::before { content: "📢 "; }
+        .ann-scroll span { font-size: 13px; font-weight: 500; }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        #ann-bar.off { display: none; }
+    </style>
 </head>
-<body class="theme-classic">
+<body
+x-data="labCMS()"
+class="text-slate-800"
+:style="{ backgroundColor: themeColors.background }">
 
-<div class="lab-top-brand">
-  <div class="container">
-    <h1 id="live-lab-name">BPBME Advanced Laboratory Ecosystem</h1>
-    <p id="live-lab-subtext">Department of Biosciences and Biomedical Engineering – IIT Indore</p>
-  </div>
+<!-- ══════════════════════════════════════════
+     ANNOUNCEMENT SCROLLING BAR
+══════════════════════════════════════════ -->
+<div id="ann-bar" x-show="showAnnBar">
+    <div class="ann-scroll" id="ann-scroll-el">
+        <template x-for="(a, i) in announcements" :key="i">
+            <span x-text="a"></span>
+        </template>
+        <!-- duplicate for seamless loop -->
+        <template x-for="(a, i) in announcements" :key="'d'+i">
+            <span x-text="a"></span>
+        </template>
+    </div>
 </div>
 
-<header class="navbar">
-  <div class="container">
-    <nav class="nav-links" id="clientLiveRenderNavbarContainerSlot"></nav>
-    <button class="btn btn-primary btn-sm" onclick="toggleModal('loginModal', true)">Control Tower Panel</button>
-  </div>
-</header>
+<!-- ══════════════════════════════════════════
+     ORIGINAL NAVBAR (unchanged)
+══════════════════════════════════════════ -->
+<nav class="text-white shadow-md sticky top-0 z-50 transition-all duration-300" :style="{ backgroundColor: themeColors.navy }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <div class="flex items-center gap-3 cursor-pointer" @click="activePage = 'home'">
+                <template x-if="labLogo">
+                    <img :src="labLogo" alt="Brand Logo" class="h-12 w-12 object-contain rounded-md bg-white p-1">
+                </template>
+                <div>
+                    <h1 class="text-xl font-bold font-poppins" x-text="homeData.labCode">IIT Indore</h1>
+                    <p class="text-xs opacity-80" x-text="homeData.labSubName">Biophysics & Biomedical Engineering Lab</p>
+                </div>
+            </div>
 
-<div class="notification-ticker-bar" id="clientLiveDiscreteNotificationContainerSlot"></div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-2">
+                    <template x-for="(menuItem, index) in menuOrder" :key="index">
+                        <button @click="activePage = menuItem.toLowerCase()"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer capitalize"
+                                :class="activePage === menuItem.toLowerCase() ? 'bg-black/20 shadow-inner' : 'hover:bg-white/10'"
+                                x-text="pageNames[menuItem.toLowerCase()] || menuItem">
+                        </button>
+                    </template>
+                </div>
+            </div>
 
-<div class="container">
-  
-  <main class="viewport-segment" id="view-home">
-    <section class="pi-section">
-      <div class="pi-image-wrapper"><img id="view-pi-img" src="" alt="Principal Investigator"></div>
-      <div style="display:flex; flex-direction:column; justify-content:center;">
-        <h2 class="pi-name" id="view-pi-name">Dr. Sarah Jenkins</h2>
-        <div class="pi-role" id="view-pi-role">Associate Professor & PI</div>
-        <div id="view-pi-bio" style="font-size: 15px; opacity: 0.95; color: var(--c-text);"></div>
-      </div>
-    </section>
-
-    <section class="homepage-cluster-matrix">
-      <div style="display:flex; flex-direction:column;">
-        <h3 style="font-family:var(--font-head); margin-bottom:14px; color:var(--c-primary); font-size:18px; display:flex; align-items:center; gap:8px;">🖼️ Lab Cluster Visual Slideshow</h3>
-        <div class="slideshow-wheel-frame" id="clientMediaSlideshowContainerSlot"></div>
-      </div>
-      
-      <div style="display:flex; flex-direction:column;">
-        <h3 style="font-family:var(--font-head); margin-bottom:14px; color:var(--c-primary); font-size:18px; display:flex; align-items:center; gap:8px;">📅 Live Feed Desk & Recent Track Logs</h3>
-        <div class="table-responsive" style="flex: 1; min-height: 380px;">
-          <table class="data-table-framework" style="height: 100%;">
-            <thead>
-              <tr><th style="width:120px;">Date</th><th>News / Event Announcement Track</th></tr>
-            </thead>
-            <tbody id="homepageDirectLiveNewsTableBodySlot"></tbody>
-          </table>
+            <div class="hidden md:flex items-center gap-2">
+                <template x-if="!isLoggedIn">
+                    <button @click="activePage = 'login-gateway'" class="px-4 py-2 rounded-full text-xs font-bold bg-amber-400 text-slate-900 flex items-center gap-1.5 hover:bg-amber-300 transition shadow-sm cursor-pointer">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Admin Login
+                    </button>
+                </template>
+                <template x-if="isLoggedIn">
+                    <button @click="activePage = 'admin'" class="px-4 py-2 rounded-full text-xs font-bold bg-emerald-400 text-slate-900 flex items-center gap-1.5 hover:bg-emerald-300 transition shadow-sm cursor-pointer">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Panel
+                    </button>
+                </template>
+            </div>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <main class="viewport-segment" id="view-research">
-    <h2 style="font-family:var(--font-head); margin-bottom:24px; color:var(--c-primary);">Strategic Research Matrix & Focus Domains</h2>
-    <div style="display:flex; flex-direction:column; gap:24px;" id="clientResearchViewportInjectionArea"></div>
-  </main>
-
-  <main class="viewport-segment" id="view-publications">
-    <h2 style="font-family:var(--font-head); margin-bottom:24px; color:var(--c-primary);">Scientific Literature Index & Research Papers</h2>
-    <div style="display:flex; flex-direction:column; gap:16px;" id="clientPublicationsViewportInjectionArea"></div>
-  </main>
-
-  <main class="viewport-segment" id="view-people">
-    <h2 style="font-family:var(--font-head); text-align:center; margin-bottom:8px; color:var(--c-primary);">Meet Our Superstars ✨</h2>
-    <p style="text-align:center; color:var(--c-muted); margin-bottom:40px;">The brilliance pushing computational frameworks and biofabrication architectures inside the group.</p>
-    <div id="clientTeamCategorizedRosterInjectionArea"></div>
-  </main>
-
-  <main class="viewport-segment" id="view-teaching">
-    <h2 style="font-family:var(--font-head); margin-bottom:24px; color:var(--c-primary);">Academic Curriculum & Teaching Portfolios</h2>
-    <div style="display:flex; flex-direction:column; gap:20px;" id="clientTeachingViewportInjectionArea"></div>
-  </main>
-
-  <main class="viewport-segment" id="view-events">
-    <h2 style="font-family:var(--font-head); margin-bottom:24px; color:var(--c-primary);">Recent Lab Feed & Scheduled Events Logs (Comprehensive View)</h2>
-    <div class="table-responsive">
-      <table class="data-table-framework">
-        <thead>
-          <tr><th style="width:140px;">Event Date</th><th style="width:130px;">Classification</th><th>Headline Track Context Details</th></tr>
-        </thead>
-        <tbody id="clientEventsViewportTableBodyArea"></tbody>
-      </table>
     </div>
-  </main>
+</nav>
 
-  <main class="viewport-segment" id="view-joinus">
-    <h2 style="font-family:var(--font-head); margin-bottom:32px; color:var(--c-primary);">Open Research Positions & Fellowships</h2>
-    <div class="grid-2" style="align-items: flex-start;">
-      <div style="display:flex; flex-direction:column; gap:20px;" id="clientOpportunitiesViewportInjectionArea"></div>
-      <div class="card-flat">
-        <h3 style="font-family:var(--font-head); color:var(--c-primary);">Submit Credentials Packet</h3>
-        <form onsubmit="executeSubmitApplicationPipelineForm(event)">
-          <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="app-name" class="form-input" required></div>
-          <div class="form-group"><label class="form-label">Email Address *</label><input type="email" id="app-email" class="form-input" required></div>
-          <div class="form-group"><label class="form-label">Target Position Code Title *</label><input type="text" id="app-pos" class="form-input" required></div>
-          <div class="form-group"><label class="form-label">Curriculum Vitae Address URL / Notes *</label><textarea id="app-msg" class="form-input" style="height:90px;" required></textarea></div>
-          <button type="submit" class="btn btn-primary" style="width:100%;">Dispatch Application Pipeline</button>
-        </form>
-      </div>
+<!-- ══════════════════════════════════════════
+     MAIN PAGES (ALL ORIGINAL, UNCHANGED)
+══════════════════════════════════════════ -->
+<main class="min-h-[75vh]">
+
+    <!-- LOGIN PAGE -->
+    <div x-show="activePage === 'login-gateway'" class="max-w-md mx-auto px-4 py-20" x-transition>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 space-y-5">
+            <div class="text-center">
+                <div class="inline-flex p-3 bg-amber-50 rounded-full text-amber-500 mb-2">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold font-poppins text-slate-900">Secure Admin Node Entrance</h2>
+            </div>
+            <form @submit.prevent="handleLogin()" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Registered Mail</label>
+                    <input type="email" x-model="loginEmail" required class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Security Key Phrase</label>
+                    <input type="password" x-model="loginPassword" required class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs transition cursor-pointer">
+                    Authenticate Parameters
+                </button>
+            </form>
+            <div class="p-3 bg-slate-50 rounded-lg text-center text-[10px] text-slate-400 font-mono">
+                Default: superadmin@iiti.ac.in / admin123
+            </div>
+        </div>
     </div>
-  </main>
 
-  <main class="viewport-segment" id="view-contact">
-    <div style="max-width:650px; margin: 0 auto; width:100%;">
-      <div class="card-flat">
-        <h2 style="font-family:var(--font-head); color:var(--c-primary);">Transmit Direct Message Packet Coordinates</h2>
-        <form onsubmit="executeSubmitContactInquiryPipelineForm(event)">
-          <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="cnt-name" class="form-input" required></div>
-          <div class="form-group"><label class="form-label">Contact Email Coordinate</label><input type="email" id="cnt-email" class="form-input" required></div>
-          <div class="form-group"><label class="form-label">Message Text Stream Payload Context</label><textarea id="cnt-msg" class="form-input" style="height:120px;" required></textarea></div>
-          <button type="submit" class="btn btn-primary">Transmit Message String Packet</button>
-        </form>
-      </div>
+    <!-- HOME PAGE (original) -->
+    <div x-show="activePage === 'home'" x-transition>
+        <header class="text-white py-20 px-4 text-center transition-all duration-500"
+                :style="{ background: `linear-gradient(135deg, ${themeColors.navy} 0%, #1e3a8a 100%)` }">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 font-poppins tracking-tight" x-text="homeData.headline"></h2>
+                <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto font-light" x-text="homeData.subheadline"></p>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins" :style="{ color: themeColors.navy }">Principal Investigator</h3>
+                        <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                            <img :src="homeData.piImage" alt="PI" class="w-44 h-44 rounded-2xl object-cover shadow-sm border-4" :style="{ borderColor: themeColors.sky }">
+                            <div class="space-y-3 text-center sm:text-left">
+                                <h4 class="text-2xl font-bold text-slate-900" x-text="homeData.piName"></h4>
+                                <p class="text-sm font-semibold" :style="{ color: themeColors.sky }" x-text="homeData.piRole"></p>
+                                <div class="text-slate-600 text-sm leading-relaxed" x-html="homeData.piBio"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="clapperboard" class="w-5 h-5"></i> Lab Media & Operations Stream
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <template x-for="media in labMediaList" :key="media.id">
+                                <div class="bg-slate-50 border rounded-xl overflow-hidden shadow-2xs flex flex-col justify-between">
+                                    <div class="relative bg-black h-48 flex items-center justify-center overflow-hidden">
+                                        <template x-if="media.type === 'video'">
+                                            <video :src="media.url" controls class="w-full h-full object-cover"></video>
+                                        </template>
+                                        <template x-if="media.type === 'image'">
+                                            <img :src="media.url" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                                        </template>
+                                    </div>
+                                    <div class="p-4 space-y-1">
+                                        <h4 class="font-bold text-slate-900 text-sm" x-text="media.title"></h4>
+                                        <p class="text-xs text-slate-600 leading-relaxed" x-text="media.desc"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+
+                    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
+                        <h3 class="text-xl font-bold mb-6 font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="image" class="w-5 h-5"></i> Lab Gallery Layout
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <template x-for="img in gallery" :key="img.id">
+                                <div class="group relative rounded-xl overflow-hidden shadow-xs h-40">
+                                    <img :src="img.url" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                                        <p class="text-white text-xs font-medium" x-text="img.title"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <section class="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 sticky top-28">
+                        <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
+                            <i data-lucide="newspaper" class="w-5 h-5"></i> News & Updates
+                        </h3>
+                        <div class="space-y-6">
+                            <template x-for="item in news" :key="item.id">
+                                <div class="flex gap-3 border-l-2 pl-3" :style="{ borderLeftColor: themeColors.sky }">
+                                    <div>
+                                        <span class="text-[10px] font-bold tracking-wider text-slate-400 block" x-text="item.date"></span>
+                                        <p class="text-sm text-slate-700 mt-0.5" x-text="item.text"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <main class="viewport-segment" id="view-dynamic-runtime-frame">
-    <div class="card-flat">
-      <h2 style="font-family:var(--font-head); color:var(--c-primary);" id="dynamicViewportCustomPageHeaderTitle">Custom Page</h2>
-      <div id="dynamicViewportCustomPageRichContentAreaSlot" style="font-size:15px; line-height:1.7;"></div>
+    <!-- RESEARCH PAGE (original) -->
+    <div x-show="activePage === 'research'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['research'] || 'Research'"></h2>
+        <div class="space-y-6">
+            <template x-for="r in researchAreas" :key="r.id">
+                <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-100">
+                    <h3 class="text-xl font-bold mb-2 text-slate-900" x-text="r.title"></h3>
+                    <p class="text-slate-600 text-sm leading-relaxed" x-text="r.desc"></p>
+                </div>
+            </template>
+        </div>
     </div>
-  </main>
 
+    <!-- PEOPLE PAGE (original) -->
+    <div x-show="activePage === 'people'" class="max-w-7xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Our Superstars'"></h2>
+        <div class="flex flex-wrap justify-center gap-2 mb-10">
+            <template x-for="cat in ['All', 'Faculty', 'Post Doc', 'PhD', 'MSc', 'MTech', 'Intern', 'Alumni']">
+                <button @click="peopleFilter = cat"
+                        class="px-4 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer"
+                        :style="peopleFilter === cat ? { backgroundColor: themeColors.sky, color: '#fff', borderColor: themeColors.sky } : { backgroundColor: '#fff', color: '#475569' }"
+                        x-text="cat"></button>
+            </template>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <template x-for="person in people" :key="person.id">
+                <div x-show="peopleFilter === 'All' || person.category === peopleFilter"
+                     class="bg-white p-5 rounded-2xl shadow-2xs border border-slate-100 flex flex-col justify-between text-center space-y-4">
+                    <div>
+                        <img :src="person.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80'" class="w-24 h-24 rounded-full mx-auto object-cover mb-2 ring-4 ring-blue-100">
+                        <h4 class="font-bold text-slate-900 text-base" x-text="person.name"></h4>
+                        <p class="text-xs font-semibold inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mt-1" x-text="person.role"></p>
+                        <template x-if="person.researchArea">
+                            <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
+                        </template>
+                        <template x-if="person.bio">
+                            <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2" x-text="person.bio"></p>
+                        </template>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                        <span class="font-mono text-[10px]" x-text="person.email"></span>
+                        <template x-if="person.scholarUrl">
+                            <a :href="person.scholarUrl" target="_blank" class="text-blue-500 font-bold hover:underline inline-flex items-center gap-0.5">🎓 Scholar</a>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- PUBLICATIONS PAGE (original) -->
+    <div x-show="activePage === 'publications'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['publications'] || 'Publications'"></h2>
+        <div class="mb-8 max-w-md mx-auto relative">
+            <input type="text" x-model="pubSearch" placeholder="Search papers..." class="w-full px-4 py-2.5 pl-10 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <div class="absolute left-3 top-3.5 text-slate-400"><i data-lucide="search" class="w-4 h-4"></i></div>
+        </div>
+        <div class="space-y-4">
+            <template x-for="pub in filteredPublications" :key="pub.id">
+                <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs transition hover:border-l-4" :style="{ borderLeftColor: themeColors.sky }">
+                    <span class="text-[10px] px-2 py-0.5 rounded text-white font-bold uppercase tracking-wider" :style="{ backgroundColor: themeColors.navy }" x-text="pub.year"></span>
+                    <h4 class="text-base font-bold text-slate-900 mt-2" x-text="pub.title"></h4>
+                    <p class="text-xs text-slate-600 mt-1 italic" x-text="pub.authors"></p>
+                    <p class="text-[11px] text-slate-400 mt-1 font-semibold" x-text="pub.journal"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- OPPORTUNITIES PAGE (original) -->
+    <div x-show="activePage === 'opportunities'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['opportunities'] || 'Opportunities'"></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <template x-for="opp in opportunities" :key="opp.id">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase" :class="opp.status === 'Open' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" x-text="opp.status"></span>
+                            <span class="text-xs text-slate-400 font-medium" x-text="'Deadline: ' + opp.deadline"></span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base" x-text="opp.position"></h3>
+                        <p class="text-xs font-semibold text-blue-600 mb-2" x-text="opp.type"></p>
+                        <p class="text-xs text-slate-600 leading-relaxed" x-text="opp.desc"></p>
+                    </div>
+                    <button class="mt-4 w-full bg-slate-900 text-white text-xs font-semibold py-2 rounded-xl">Apply Now</button>
+                </div>
+            </template>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-xs">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">Application Form</h3>
+            <form @submit.prevent="showToast('Application submitted successfully!')" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Applicant Name</label>
+                        <input type="text" required class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Email ID</label>
+                        <input type="email" required class="w-full px-3 py-2 border rounded-lg text-xs bg-slate-50">
+                    </div>
+                </div>
+                <button type="submit" class="w-full text-white font-bold py-2 rounded-lg text-xs transition cursor-pointer" :style="{ backgroundColor: themeColors.navy }">Submit Application</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTACT PAGE (original) -->
+    <div x-show="activePage === 'contact'" class="max-w-5xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['contact'] || 'Contact'"></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
+                <h3 class="text-lg font-bold text-slate-900">Lab Location</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">IIT Indore Campus, Khandwa Road, Simrol, Madhya Pradesh, India.</p>
+            </div>
+            <div class="bg-slate-200 rounded-2xl h-48 flex flex-col justify-center items-center text-slate-400 font-medium">
+                <i data-lucide="map-pin" class="w-6 h-6 mb-1 text-rose-500"></i>
+                <span class="text-xs">Map Sensor Tracking Area</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ADMIN PAGE — BPBME STYLE FULL PANEL
+    ══════════════════════════════════════════ -->
+    <div x-show="activePage === 'admin'" x-transition>
+        <template x-if="!isLoggedIn">
+            <div class="p-12 text-center bg-white border rounded-2xl shadow-sm space-y-4 max-w-md mx-auto mt-12">
+                <p class="text-red-500 font-bold">🚫 Unauthorized. Please login first.</p>
+                <button @click="activePage = 'login-gateway'" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs">Go to Login</button>
+            </div>
+        </template>
+
+        <template x-if="isLoggedIn">
+            <div class="max-w-[1400px] mx-auto px-4 py-6">
+                <!-- Admin top bar -->
+                <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+                    <div>
+                        <div class="text-xl font-bold text-slate-800" x-text="adminPanelTitle">Dashboard</div>
+                        <div class="text-xs text-slate-400">BPBME CMS · Full Owner Access</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button @click="activePage = 'home'; handleLogout()" class="btn-sm btn-del" style="color:#ef4444;border-color:#ef4444">⏏ Logout</button>
+                        <button @click="activePage = 'home'" class="btn-pri text-xs px-4 py-2">← Back to Site</button>
+                    </div>
+                </div>
+
+                <!-- Admin grid: sidebar + content -->
+                <div class="flex gap-0 rounded-2xl overflow-hidden border border-slate-200 shadow-xl min-h-[680px]">
+                    <!-- SIDEBAR -->
+                    <div id="adm-sidebar" style="min-width:260px;max-width:260px">
+                        <div class="adm-logo-box">
+                            <div class="adm-logo-badge">BP<br>BME</div>
+                            <div><span class="adm-logo-text">BPBME CMS</span><span class="adm-logo-sub">Admin Dashboard</span></div>
+                        </div>
+                        <nav class="adm-nav">
+                            <div class="adm-sec-label">Overview</div>
+                            <button class="adm-btn" :class="adminSubTab==='dashboard'?'active':''" @click="adminSubTab='dashboard';adminPanelTitle='Dashboard'">
+                                <span>📊</span> Dashboard
+                            </button>
+
+                            <div class="adm-sec-label">Content Editor</div>
+                            <button class="adm-btn" :class="adminSubTab==='text-editor'?'active':''" @click="adminSubTab='text-editor';adminPanelTitle='Text & Branding Editor'">
+                                <span>✏️</span> Text & Branding
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='page-names'?'active':''" @click="adminSubTab='page-names';adminPanelTitle='Page Name Editor'">
+                                <span>🏷️</span> Page Names <span class="badge">New</span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='announce'?'active':''" @click="adminSubTab='announce';adminPanelTitle='Announcements'">
+                                <span>📢</span> Announcements <span class="badge" x-text="announcements.length"></span>
+                            </button>
+
+                            <div class="adm-sec-label">Database</div>
+                            <button class="adm-btn" :class="adminSubTab==='team-adder'?'active':''" @click="adminSubTab='team-adder';adminPanelTitle='People & Team'">
+                                <span>👥</span> People & Team <span class="badge" x-text="people.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='pubs-mgr'?'active':''" @click="adminSubTab='pubs-mgr';adminPanelTitle='Publications Manager'">
+                                <span>📚</span> Publications <span class="badge" x-text="publications.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='research-mgr'?'active':''" @click="adminSubTab='research-mgr';adminPanelTitle='Research Areas'">
+                                <span>🔬</span> Research Areas
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='opps-control'?'active':''" @click="adminSubTab='opps-control';adminPanelTitle='Opportunities'">
+                                <span>💼</span> Opportunities <span class="badge" x-text="opportunities.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='news-mgr'?'active':''" @click="adminSubTab='news-mgr';adminPanelTitle='News & Updates'">
+                                <span>📰</span> News & Updates <span class="badge" x-text="news.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='media-control'?'active':''" @click="adminSubTab='media-control';adminPanelTitle='Media Manager'">
+                                <span>🎞️</span> Media Manager
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='gallery-mgr'?'active':''" @click="adminSubTab='gallery-mgr';adminPanelTitle='Gallery'">
+                                <span>🖼️</span> Gallery
+                            </button>
+
+                            <div class="adm-sec-label">Settings</div>
+                            <button class="adm-btn" :class="adminSubTab==='users-provision'?'active':''" @click="adminSubTab='users-provision';adminPanelTitle='User Management'">
+                                <span>🔐</span> User Management
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='theme-settings'?'active':''" @click="adminSubTab='theme-settings';adminPanelTitle='Theme & Colors'">
+                                <span>🎨</span> Theme & Colors
+                            </button>
+                        </nav>
+                        <div class="adm-footer">
+                            <div class="adm-user-row">
+                                <div class="adm-av" x-text="currentUser ? currentUser.name.substring(0,2).toUpperCase() : 'SG'"></div>
+                                <div>
+                                    <div class="adm-un" x-text="currentUser ? currentUser.name : 'Admin'"></div>
+                                    <div class="adm-ur"><span class="rdot"></span><span x-text="currentUser ? currentUser.role : 'Owner'"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MAIN PANEL CONTENT -->
+                    <div id="adm-main-panel"
+     class="flex-1 p-6 overflow-y-auto"
+     style="max-height:85vh"
+     :style="{ backgroundColor: themeColors.background }">
+
+                        <!-- ── DASHBOARD ── -->
+                        <div x-show="adminSubTab === 'dashboard'" class="space-y-5">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#EBF4FD;display:flex;align-items:center;justify-content:center;font-size:20px">👥</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="people.length"></div>
+                                        <div class="text-xs text-slate-500">Team Members</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:20px">📚</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="publications.length"></div>
+                                        <div class="text-xs text-slate-500">Publications</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#FFF7ED;display:flex;align-items:center;justify-content:center;font-size:20px">💼</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="opportunities.length"></div>
+                                        <div class="text-xs text-slate-500">Opportunities</div>
+                                    </div>
+                                </div>
+                                <div class="adm-card p-4 flex items-center gap-3">
+                                    <div style="width:44px;height:44px;border-radius:11px;background:#F3EEFF;display:flex;align-items:center;justify-content:center;font-size:20px">📢</div>
+                                    <div>
+                                        <div class="font-bold text-2xl text-slate-800" x-text="announcements.length"></div>
+                                        <div class="text-xs text-slate-500">Announcements</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="adm-card">
+                                    <div class="adm-card-hd"><div class="adm-card-title">Quick Actions</div></div>
+                                    <div class="p-4 flex flex-col gap-2">
+                                        <button class="btn-pri text-sm" @click="adminSubTab='team-adder';adminPanelTitle='People & Team'">➕ Add Team Member</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='pubs-mgr';adminPanelTitle='Publications Manager'">➕ Add Publication</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='news-mgr';adminPanelTitle='News & Updates'">➕ Post News</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='announce';adminPanelTitle='Announcements'">📢 Manage Announcements</button>
+                                        <button class="btn-pri text-sm" @click="adminSubTab='page-names';adminPanelTitle='Page Name Editor'">🏷️ Rename Pages</button>
+                                    </div>
+                                </div>
+                                <div class="adm-card">
+                                    <div class="adm-card-hd"><div class="adm-card-title">Current Page Names</div></div>
+                                    <div class="p-4 space-y-2 text-xs">
+                                        <template x-for="(page, key) in pageNames" :key="key">
+                                            <div class="flex justify-between items-center bg-slate-50 rounded-lg px-3 py-2 border">
+                                                <span class="text-slate-500 font-mono capitalize" x-text="key"></span>
+                                                <span class="font-bold text-slate-800" x-text="page"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── TEXT & BRANDING EDITOR ── -->
+                        <div x-show="adminSubTab === 'text-editor'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">📝 Word-by-Word Content Editor</div></div>
+                                <div class="p-5 space-y-4 text-xs">
+                                    <div class="fg">
+                                        <label class="adm-label">Brand Logo URL</label>
+                                        <input type="text" x-model="labLogo" class="adm-input" placeholder="Paste logo image URL...">
+                                         <div class="mt-3">
+    <label class="adm-label">Upload Image From Device</label>
+
+    <input type="file"
+           accept="image/*"
+           @change="uploadImage($event)"
+           class="adm-input">
 </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Lab Code Title (Navbar)</label>
+                                            <input type="text" x-model="homeData.labCode" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Lab Sub-Name (Navbar)</label>
+                                            <input type="text" x-model="homeData.labSubName" class="adm-input">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Hero Main Headline</label>
+                                        <input type="text" x-model="homeData.headline" class="adm-input">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Hero Subheadline</label>
+                                        <textarea rows="2" x-model="homeData.subheadline" class="adm-input" style="min-height:60px;resize:vertical"></textarea>
+                                    </div>
+                                    <hr class="border-slate-100">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">PI Name</label>
+                                            <input type="text" x-model="homeData.piName" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">PI Role / Designation</label>
+                                            <input type="text" x-model="homeData.piRole" class="adm-input">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">PI Image URL</label>
+                                        <input type="text" x-model="homeData.piImage" class="adm-input">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">PI Biography (HTML allowed)</label>
+                                        <textarea rows="4" x-model="homeData.piBio" class="adm-input" style="min-height:90px;resize:vertical;font-family:monospace"></textarea>
+                                    </div>
+                                    <button class="btn-pri" @click="showToast('✅ Content updated live on site!')">💾 Apply Changes</button>
+                                </div>
+                            </div>
+                        </div>
 
-<footer class="portal-footer">
-  <div class="container">&copy; 2026 IIT Indore Enterprise Lab Administration Portals Engine Matrix.</div>
+                        <!-- ── PAGE NAME EDITOR ── -->
+                        <div x-show="adminSubTab === 'page-names'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🏷️ Page Name Editor</div>
+                                    <span style="font-size:12px;color:#6e7681">Changes reflect instantly in navbar</span>
+                                </div>
+                                <div class="p-5">
+                                    <div style="background:linear-gradient(135deg,#EBF4FD,#F0F9FF);border:1px solid #BAE6FD;border-radius:10px;padding:14px;margin-bottom:18px">
+                                        <div style="font-size:13px;font-weight:700;color:#0F4C81;margin-bottom:5px">💡 How it works</div>
+                                        <div style="font-size:12px;color:#4b5563;line-height:1.7">Change the display name of any page — the name shown in the navbar and as the page heading. The page itself stays the same, only the label changes.</div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <template x-for="(_, key) in pageNames" :key="key">
+                                            <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl p-3">
+                                                <div style="width:80px;font-size:12px;font-weight:700;color:#9ca3af;text-transform:capitalize;font-family:monospace" x-text="key"></div>
+                                                <div style="color:#cbd5e1;font-size:16px">→</div>
+                                                <input type="text" x-model="pageNames[key]" class="adm-input" style="flex:1" :placeholder="'Display name for ' + key">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="mt-4 flex gap-3">
+                                        <button class="btn-pri" @click="showToast('✅ Page names updated in navbar!')">💾 Save Page Names</button>
+                                        <button class="btn-sm" @click="resetPageNames()">🔄 Reset to Defaults</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MENU ORDER -->
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">📋 Navbar Menu Order</div></div>
+                                <div class="p-5 space-y-3">
+                                    <div style="font-size:12px;color:#6e7681;margin-bottom:10px">Currently showing pages (in this order):</div>
+                                    <template x-for="(item, idx) in menuOrder" :key="idx">
+                                        <div class="flex items-center gap-3 bg-slate-50 border rounded-xl p-3">
+                                            <span style="font-size:12px;color:#9ca3af;font-weight:700;width:20px" x-text="idx+1+'. '"></span>
+                                            <span style="font-size:13px;font-weight:600;color:#1f2937;flex:1" x-text="pageNames[item.toLowerCase()] || item"></span>
+                                            <div class="flex gap-1">
+                                                <button class="btn-sm" @click="moveMenuUp(idx)" x-show="idx > 0">↑</button>
+                                                <button class="btn-sm" @click="moveMenuDown(idx)" x-show="idx < menuOrder.length - 1">↓</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <button class="btn-pri mt-2" @click="showToast('✅ Menu order saved!')">💾 Save Order</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── ANNOUNCEMENTS ── -->
+                        <div x-show="adminSubTab === 'announce'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📢 Scrolling Announcement Bar</div>
+                                    <div class="flex gap-2 items-center">
+                                        <span style="font-size:12px;font-weight:600;color:#6e7681">Bar:</span>
+                                        <button @click="showAnnBar = !showAnnBar; showToast(showAnnBar ? '✅ Announcement bar shown' : '❌ Announcement bar hidden')"
+                                            :style="showAnnBar ? 'background:#22C55E;color:#fff' : 'background:#EF4444;color:#fff'"
+                                            style="padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;border:none;cursor:pointer"
+                                            x-text="showAnnBar ? '● Visible' : '○ Hidden'">
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="(ann, i) in announcements" :key="i">
+                                        <div class="flex items-center gap-2 bg-slate-50 border rounded-lg p-2.5">
+                                            <span style="font-size:13px;flex:1;color:#374151" x-text="ann"></span>
+                                            <button class="btn-sm" @click="editAnn(i)">✏️ Edit</button>
+                                            <button class="btn-sm btn-del" @click="deleteAnn(i)">✕</button>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="p-4 pt-0 flex gap-2">
+                                    <input type="text" x-model="newAnnText" class="adm-input" placeholder="Type new announcement text..." style="flex:1">
+                                    <button class="btn-pri" @click="addAnn()">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── PEOPLE & TEAM ── -->
+                        <div x-show="adminSubTab === 'team-adder'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">👥 Add / Edit Team Members</div>
+                                    <button class="btn-pri text-xs" @click="openAddMemberForm()">+ Add Member</button>
+                                </div>
+
+                                <!-- Add form -->
+                                <div x-show="showMemberForm" class="p-5 border-b border-slate-100 bg-slate-50 space-y-3">
+                                    <div class="font-bold text-sm text-slate-700 mb-2" x-text="editingMemberId ? '✏️ Edit Member' : '➕ New Member'"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="adm-label">Name *</label>
+                                            <input type="text" x-model="teamForm.name" class="adm-input" placeholder="e.g. Dr. Amit Kumar">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Role / Designation *</label>
+                                            <input type="text" x-model="teamForm.role" class="adm-input" placeholder="e.g. Senior PhD Scholar">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Category *</label>
+                                            <select x-model="teamForm.category" class="adm-input" style="appearance:auto">
+                                                <option value="Faculty">Faculty / PI</option>
+                                                <option value="Post Doc">Post Doc</option>
+                                                <option value="PhD">PhD Scholar</option>
+                                                <option value="MSc">MSc Student</option>
+                                                <option value="MTech">MTech Student</option>
+                                                <option value="Intern">Intern</option>
+                                                <option value="Alumni">Alumni</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Email</label>
+                                            <input type="email" x-model="teamForm.email" class="adm-input" placeholder="name@iiti.ac.in">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Google Scholar URL</label>
+                                            <input type="url" x-model="teamForm.scholarUrl" class="adm-input" placeholder="https://scholar.google.com/...">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Research Area</label>
+                                            <input type="text" x-model="teamForm.researchArea" class="adm-input" placeholder="e.g. Biophotonics">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Photo URL</label>
+                                            <input type="text" x-model="teamForm.img" class="adm-input" placeholder="https://... or leave blank for default">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Short Bio</label>
+                                        <textarea rows="2" x-model="teamForm.bio" class="adm-input" style="resize:vertical" placeholder="Short introduction paragraph..."></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveMember()">💾 Save Member</button>
+                                        <button class="btn-sm" @click="showMemberForm=false;editingMemberId=null">Cancel</button>
+                                    </div>
+                                </div>
+
+                                <!-- Table -->
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="p in people" :key="p.id">
+                                                <tr>
+                                                    <td><img :src="p.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=60&q=80'" style="width:36px;height:36px;border-radius:50%;object-fit:cover"></td>
+                                                    <td style="font-weight:600" x-text="p.name"></td>
+                                                    <td style="color:#4b5563" x-text="p.role"></td>
+                                                    <td><span class="status-pub" x-text="p.category"></span></td>
+                                                    <td><span class="status-pub">Active</span></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editMemberForm(p)">✏️ Edit</button>
+                                                            <button class="btn-sm btn-del" @click="people = people.filter(x => x.id !== p.id); showToast('Member removed.')">🗑 Remove</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── PUBLICATIONS ── -->
+                        <div x-show="adminSubTab === 'pubs-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📚 Publications Manager</div>
+                                    <button class="btn-pri text-xs" @click="showPubForm=true;editingPubId=null;pubForm={title:'',authors:'',journal:'',year:''}">+ Add Publication</button>
+                                </div>
+                                <!-- Add form -->
+                                <div x-show="showPubForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="font-bold text-sm text-slate-700 mb-2" x-text="editingPubId ? '✏️ Edit Publication' : '➕ Add Publication'"></div>
+                                    <div>
+                                        <label class="adm-label">Title *</label>
+                                        <input type="text" x-model="pubForm.title" class="adm-input" placeholder="Full paper title...">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Authors *</label>
+                                            <input type="text" x-model="pubForm.authors" class="adm-input" placeholder="Author A., Author B., et al.">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Journal / Conference *</label>
+                                            <input type="text" x-model="pubForm.journal" class="adm-input" placeholder="Journal Name · Publisher">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Year *</label>
+                                            <input type="text" x-model="pubForm.year" class="adm-input" placeholder="2024">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">DOI (optional)</label>
+                                            <input type="text" x-model="pubForm.doi" class="adm-input" placeholder="10.xxxx/xxxxx">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="savePub()">💾 Save</button>
+                                        <button class="btn-sm" @click="showPubForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Title</th><th>Authors</th><th>Journal</th><th>Year</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="pub in publications" :key="pub.id">
+                                                <tr>
+                                                    <td style="font-weight:600;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="pub.title.substring(0,50)+'...'"></td>
+                                                    <td style="color:#4b5563" x-text="pub.authors.split(',')[0]+'...'"></td>
+                                                    <td x-text="pub.journal.split('·')[0]"></td>
+                                                    <td x-text="pub.year"></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editPub(pub)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="publications=publications.filter(x=>x.id!==pub.id);showToast('Publication deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── RESEARCH AREAS ── -->
+                        <div x-show="adminSubTab === 'research-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🔬 Research Areas Manager</div>
+                                    <button class="btn-pri text-xs" @click="addResearchArea()">+ Add Area</button>
+                                </div>
+                                <div class="p-4 space-y-3">
+                                    <template x-for="r in researchAreas" :key="r.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;display:flex;align-items:start;gap:12px">
+                                            <div style="flex:1">
+                                                <div style="font-weight:700;font-size:14px;margin-bottom:3px" x-text="r.title"></div>
+                                                <div style="font-size:13px;color:#4b5563" x-text="r.desc.substring(0,90)+'...'"></div>
+                                            </div>
+                                            <div style="display:flex;gap:6px">
+                                                <button class="btn-sm" @click="editRA(r)">✏️ Edit</button>
+                                                <button class="btn-sm btn-del" @click="researchAreas=researchAreas.filter(x=>x.id!==r.id);showToast('Deleted.')">🗑</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── OPPORTUNITIES ── -->
+                        <div x-show="adminSubTab === 'opps-control'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">💼 Opportunities Manager</div>
+                                    <button class="btn-pri text-xs" @click="showOppForm=true;editingOppId=null;oppForm={position:'',type:'Internship',deadline:'',status:'Open',desc:''}">+ Add Position</button>
+                                </div>
+                                <div x-show="showOppForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Position Title *</label>
+                                            <input type="text" x-model="oppForm.position" class="adm-input" placeholder="e.g. Research Intern">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Type</label>
+                                            <select x-model="oppForm.type" class="adm-input" style="appearance:auto">
+                                                <option>Internship</option><option>PhD Position</option><option>Postdoc</option><option>JRF/SRF</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Deadline</label>
+                                            <input type="text" x-model="oppForm.deadline" class="adm-input" placeholder="e.g. July 31, 2024">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Status</label>
+                                            <select x-model="oppForm.status" class="adm-input" style="appearance:auto">
+                                                <option>Open</option><option>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Description</label>
+                                        <textarea rows="2" x-model="oppForm.desc" class="adm-input" style="resize:vertical"></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveOpp()">💾 Save</button>
+                                        <button class="btn-sm" @click="showOppForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Position</th><th>Type</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="o in opportunities" :key="o.id">
+                                                <tr>
+                                                    <td style="font-weight:600" x-text="o.position"></td>
+                                                    <td x-text="o.type"></td>
+                                                    <td x-text="o.deadline"></td>
+                                                    <td><span :class="o.status==='Open'?'status-pub':'status-pe'" x-text="o.status"></span></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editOpp(o)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="opportunities=opportunities.filter(x=>x.id!==o.id);showToast('Deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── NEWS ── -->
+                        <div x-show="adminSubTab === 'news-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">📰 News & Updates Manager</div>
+                                    <button class="btn-pri text-xs" @click="showNewsForm=true;editingNewsId=null;newsForm={date:'',text:''}">+ Add News</button>
+                                </div>
+                                <div x-show="showNewsForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Date *</label>
+                                            <input type="text" x-model="newsForm.date" class="adm-input" placeholder="e.g. June 05, 2026">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">News Text *</label>
+                                        <textarea rows="2" x-model="newsForm.text" class="adm-input" style="resize:vertical" placeholder="News content here..."></textarea>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveNews()">💾 Save</button>
+                                        <button class="btn-sm" @click="showNewsForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="(n, i) in news" :key="n.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px 14px;display:flex;align-items:start;gap:10px">
+                                            <div style="flex:1">
+                                                <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:3px" x-text="n.date"></div>
+                                                <div style="font-size:13px;color:#374151" x-text="n.text"></div>
+                                            </div>
+                                            <div style="display:flex;gap:5px">
+                                                <button class="btn-sm" @click="editNews(n)">✏️</button>
+                                                <button class="btn-sm btn-del" @click="news=news.filter(x=>x.id!==n.id);showToast('Deleted.')">🗑</button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── MEDIA MANAGER ── -->
+                        <div x-show="adminSubTab === 'media-control'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🎞️ Lab Media Manager</div>
+                                    <button class="btn-pri text-xs" @click="showMediaForm=!showMediaForm">+ Add Media</button>
+                                </div>
+                                <div x-show="showMediaForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="adm-label">Title *</label>
+                                            <input type="text" x-model="mediaForm.title" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Type</label>
+                                            <select x-model="mediaForm.type" class="adm-input" style="appearance:auto">
+                                                <option value="image">Image</option>
+                                                <option value="video">Video</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">URL *</label>
+                                            <input type="text" x-model="mediaForm.url" class="adm-input" placeholder="https://...">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Description</label>
+                                        <textarea rows="2" x-model="mediaForm.desc" class="adm-input" style="resize:vertical"></textarea>
+                                    </div>
+                                    <button class="btn-pri" @click="addLabMedia()">+ Append Media</button>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="m in labMediaList" :key="m.id">
+                                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+                                            <div>
+                                                <span style="font-weight:700;font-size:13px" x-text="m.title"></span>
+                                                <span style="font-size:10px;color:#4DA8DA;font-weight:700;margin-left:8px;text-transform:uppercase" x-text="m.type"></span>
+                                                <p style="font-size:12px;color:#6b7280;margin-top:2px" x-text="m.desc"></p>
+                                            </div>
+                                            <button class="btn-sm btn-del" @click="labMediaList=labMediaList.filter(x=>x.id!==m.id);showToast('Media removed.')">🗑 Delete</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── GALLERY ── -->
+                        <div x-show="adminSubTab === 'gallery-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🖼️ Gallery Manager</div>
+                                    <button class="btn-pri text-xs" @click="showGalleryForm=!showGalleryForm">+ Add Photo</button>
+                                </div>
+                                <div x-show="showGalleryForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Title *</label>
+                                            <input type="text" x-model="galleryForm.title" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Image URL </label>
+                                            <input type="text" x-model="galleryForm.url" class="adm-input" placeholder="https://...">
+<input type="file"
+       accept="image/*"
+       @change="uploadImage($event, galleryItem, 'image')"
+       class="adm-input">
+                                        </div>
+                                    </div>
+                                    <button class="btn-pri" @click="addGalleryItem()">+ Add to Gallery</button>
+                                </div>
+                                <div class="p-4 grid grid-cols-3 gap-3">
+                                    <template x-for="img in gallery" :key="img.id">
+                                        <div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0">
+                                            <img :src="img.url" style="width:100%;height:100px;object-fit:cover">
+                                            <div style="padding:8px;background:#f8fafc">
+                                                <div style="font-size:12px;font-weight:600" x-text="img.title"></div>
+                                            </div>
+                                            <button class="btn-sm btn-del" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,.6);border-color:transparent;color:#fff" @click="gallery=gallery.filter(x=>x.id!==img.id);showToast('Photo removed.')">✕</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── USER MANAGEMENT ── -->
+                        <div x-show="adminSubTab === 'users-provision'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">🔐 Create / Manage Users</div></div>
+                                <div class="p-5 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Full Name</label>
+                                            <input type="text" x-model="userForm.name" class="adm-input" placeholder="User Full Name">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Email ID</label>
+                                            <input type="email" x-model="userForm.email" class="adm-input" placeholder="user@iiti.ac.in">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Password</label>
+                                            <input type="password" x-model="userForm.password" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Role</label>
+                                            <select x-model="userForm.role" class="adm-input" style="appearance:auto">
+                                                <option>Super Admin</option>
+                                                <option>Admin</option>
+                                                <option>Editor</option>
+                                                <option>Member</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn-pri" @click="provisionUser()">➕ Create User</button>
+                                </div>
+                            </div>
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">Registered Users</div></div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="usr in usersRegistry" :key="usr.email">
+                                                <tr>
+                                                    <td style="font-weight:600" x-text="usr.name"></td>
+                                                    <td style="font-family:monospace;font-size:12px;color:#6b7280" x-text="usr.email"></td>
+                                                    <td>
+                                                        <span style="padding:2px 9px;border-radius:100px;font-size:11px;font-weight:700;background:#EFF6FF;color:#1D4ED8" x-text="usr.role"></span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn-sm btn-del" @click="deleteUserRegistryNode(usr)">Revoke</button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Permissions matrix -->
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">Role Permissions Matrix</div></div>
+                                <div class="p-4" style="overflow-x:auto">
+                                    <table style="width:100%;border-collapse:collapse;font-size:12px">
+                                        <thead>
+                                            <tr style="background:#f1f5f9">
+                                                <th style="padding:9px 13px;text-align:left;border:1px solid #e2e8f0">Permission</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#C2410C">Super Admin</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#1D4ED8">Admin</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#166534">Editor</th>
+                                                <th style="padding:9px 13px;text-align:center;border:1px solid #e2e8f0;color:#9ca3af">Member</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td style="padding:9px 13px;border:1px solid #e2e8f0">Edit all content</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr style="background:#f8fafc"><td style="padding:9px 13px;border:1px solid #e2e8f0">Manage users</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr><td style="padding:9px 13px;border:1px solid #e2e8f0">Rename pages</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                            <tr style="background:#f8fafc"><td style="padding:9px 13px;border:1px solid #e2e8f0">Change colors</td><td style="text-align:center;border:1px solid #e2e8f0">✅</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td><td style="text-align:center;border:1px solid #e2e8f0">❌</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── THEME & COLORS ── -->
+                        <div x-show="adminSubTab === 'theme-settings'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd"><div class="adm-card-title">🎨 Theme & Color Settings</div></div>
+                                <div class="p-5 space-y-4">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="adm-label">Primary / Navy Color</label>
+                                            <div style="display:flex;gap:10px;align-items:center">
+                                                <input type="color" x-model="themeColors.navy" style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                <input type="text" x-model="themeColors.navy" class="adm-input" style="flex:1">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Accent / Sky Color</label>
+                                            <div style="display:flex;gap:10px;align-items:center">
+                                                <input type="color" x-model="themeColors.sky" style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                <input type="text" x-model="themeColors.sky" class="adm-input" style="flex:1">
+                                            <div>
+                                                  <label class="adm-label">Background Color</label>
+                                                   <div style="display:flex;gap:10px;align-items:center">
+                                                   <input type="color" x-model="themeColors.background"
+                                                    style="width:44px;height:36px;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer">
+                                                  <input type="text" x-model="themeColors.background"
+                                                         class="adm-input" style="flex:1">
+    </div>
+</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:12px;padding:14px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;align-items:center">
+                                        <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.navy}"></div>
+                                        <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.sky}"></div>
+                                        <div style="font-size:12px;color:#6b7280">Live preview — changes apply to navbar, buttons, and headings instantly.</div>
+                                    </div>
+                                    <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end adm-main-panel -->
+                </div><!-- end admin grid -->
+            </div>
+        </template>
+    </div>
+
+</main>
+
+<!-- FOOTER (original) -->
+<footer class="text-white py-8 transition-colors duration-300" :style="{ backgroundColor: themeColors.navy }">
+    <div class="max-w-7xl mx-auto px-4 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-75">
+        <p>© 2026 Biophysics & Biomedical Engineering Lab, IIT Indore.</p>
+        <p>Powered by BPBME CMS</p>
+    </div>
 </footer>
 
-<div class="modal-wrapper" id="loginModal">
-  <div class="modal-container" style="max-width:380px;">
-    <div class="modal-header">
-      <div>Console Authentication Gateway</div>
-      <button onclick="toggleModal('loginModal', false)" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="authErrorMsgZone" style="color:#DC2626; font-size:13px; font-weight:600;"></div>
-      <div class="form-group"><label class="form-label">Operator Identity Email ID</label><input type="email" id="loginEmail" class="form-input" value="admin@iiti.ac.in"></div>
-      <div class="form-group"><label class="form-label">Passphrase Key Signature</label><input type="password" id="loginPass" class="form-input" value="admin123"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline btn-sm" onclick="toggleModal('loginModal', false)">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="executeAuthorizationSessionGateway()">Authorize Console</button>
-    </div>
-  </div>
-</div>
-
-<div class="admin-view-panel" id="adminTerminalDashboardConsoleWorkspace">
-  <aside class="admin-sidebar">
-    <div>
-      <div style="padding-bottom:16px; border-bottom:1px solid #334155; margin-bottom:20px;">
-        <h3 style="color:#FFF; font-family:var(--font-head); font-size:16px;">Central Terminal Registry</h3>
-        <p style="font-size:11px; color:#38BDF8; font-weight:600; text-transform:uppercase;">Advanced Customizer v2026</p>
-      </div>
-      <nav style="display:flex; flex-direction:column; gap:4px;">
-        <div class="admin-menu-item active" id="mtab-home" onclick="switchAdminWorkspaceTabWindow('home')">🏠 Home Page Global Editor</div>
-        <div class="admin-menu-item" id="mtab-layout" onclick="switchAdminWorkspaceTabWindow('layout')">🔀 Navigation &amp; Dynamic Custom Pages</div>
-        <div class="admin-menu-item" id="mtab-announcements" onclick="switchAdminWorkspaceTabWindow('announcements')">📢 Announcement Discrete Feeds</div>
-        <div class="admin-menu-item" id="mtab-research" onclick="switchAdminWorkspaceTabWindow('research')">🔬 Research Focus Areas</div>
-        <div class="admin-menu-item" id="mtab-publications" onclick="switchAdminWorkspaceTabWindow('publications')">📄 Publications Matrix</div>
-        <div class="admin-menu-item" id="mtab-team" onclick="switchAdminWorkspaceTabWindow('team')">👥 Superstar Lab Personnel</div>
-        <div class="admin-menu-item" id="mtab-teaching" onclick="switchAdminWorkspaceTabWindow('teaching')">🎓 Teaching Portfolios Matrix</div>
-        <div class="admin-menu-item" id="mtab-news" onclick="switchAdminWorkspaceTabWindow('news')">📅 Events Diary Tracking</div>
-        <div class="admin-menu-item" id="mtab-opportunities" onclick="switchAdminWorkspaceTabWindow('opportunities')">💼 Open Career Openings</div>
-        <div class="admin-menu-item" id="mtab-slideshow" onclick="switchAdminWorkspaceTabWindow('slideshow')">🖼️ Media Slideshow Gallery</div>
-        <div class="admin-menu-item" id="mtab-users" onclick="switchAdminWorkspaceTabWindow('users')">🔑 Operator Identities Security</div>
-        <div class="admin-menu-item" id="mtab-appinbox" onclick="switchAdminWorkspaceTabWindow('appinbox')">📥 Applications Inbox Channel</div>
-        <div class="admin-menu-item" id="mtab-cntinbox" onclick="switchAdminWorkspaceTabWindow('cntinbox')">💬 Contact Inquiry Log Packet</div>
-      </nav>
-    </div>
-    <button class="btn btn-danger btn-sm" style="width:100%;" onclick="terminateSessionTokenAuthSequence()">De-authorize Interface</button>
-  </aside>
-
-  <main class="admin-workspace">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--c-border); padding-bottom:12px;">
-      <h2 style="font-family:var(--font-head); color:var(--c-primary);" id="admWorkspaceHeadlineTitle">Home Page Global Text Editor</h2>
-      <button class="btn btn-outline btn-sm" onclick="toggleModal('adminTerminalDashboardConsoleWorkspace', false)">Minimize Console Panel</button>
-    </div>
-
-    <div class="admin-tab-content active" id="apanel-home">
-      <div class="card-flat" style="max-width:800px;">
-        <div class="form-group">
-          <label class="form-label" style="color:var(--c-primary); font-size:14px; font-weight:700;">🎨 GLOBAL CORE INTERFACE ACCENT THEME DESIGN CONFIGURATOR</label>
-          <select id="adm-set-theme" class="form-select" style="border: 2px solid var(--c-primary); font-weight: 600;" onchange="executeRealtimeGlobalThemeSwitchMutation(this.value)">
-            <option value="theme-classic">Classic Blueprint Institutional Blue</option>
-            <option value="theme-emerald">Elegance Bio-Organic Deep Emerald Green</option>
-            <option value="theme-maroon">Academic Council Velvet Deep Maroon</option>
-            <option value="theme-dark">High-Contrast Quantum Dark Mode Console</option>
-          </select>
-        </div>
-        
-        <div class="form-group" style="background:var(--c-accent-light); padding:16px; border-radius:10px; border:1px solid var(--c-border); margin-top:8px;">
-          <label class="form-label" style="color:var(--c-primary); font-weight:700;">⏱️ AUTOMATED SLIDESHOW TIMER OPTION CONFIGURATION</label>
-          <p style="font-size:12.5px; color:var(--c-muted); margin-bottom:10px;">Set exactly how many seconds each picture remains active before the next image slides from behind seamlessly.</p>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <input type="number" id="adm-set-slideshow-timer-seconds" class="form-input" min="1" max="30" step="1" style="max-width:140px; font-weight:700; border-color:var(--c-primary);">
-            <span style="font-size:13px; font-weight:600; color:var(--c-primary);">Seconds Per Layer Slide</span>
-          </div>
-        </div>
-        
-        <div style="border-top:1px dashed var(--c-border); margin:16px 0;"></div>
-        <div class="form-group"><label class="form-label">Primary Laboratory Group Title Heading Text</label><input type="text" id="adm-set-labname" class="form-input"></div>
-        <div class="form-group"><label class="form-label">Institutional Department Branding Subtext Mapping String</label><input type="text" id="adm-set-labsub" class="form-input"></div>
-        <div style="border-top:1px dashed var(--c-border); margin-top:16px;"><h4 style="font-family:var(--font-head); color:var(--c-primary);">Principal Investigator (PI) Profile Architecture</h4></div>
-        <div class="form-group"><label class="form-label">PI Full Legal Identity Name String</label><input type="text" id="adm-set-piname" class="form-input"></div>
-        <div class="form-group"><label class="form-label">PI Designation / Academic Rank String</label><input type="text" id="adm-set-pirole" class="form-input"></div>
-        <div class="form-group"><label class="form-label">PI Photograph Reference Resource Link Address (URL)</label><input type="text" id="adm-set-piurl" class="form-input"></div>
-        <div class="form-group">
-          <label class="form-label">PI Comprehensive Biography Profile (WYSIWYG Mode)</label>
-          <div class="wysiwyg-wrapper">
-            <div class="wysiwyg-toolbar">
-              <button type="button" class="wysiwyg-btn" onclick="execCmd('bold')"><b>B</b></button>
-              <button type="button" class="wysiwyg-btn" onclick="execCmd('italic')"><i>I</i></button>
-              <button type="button" class="wysiwyg-btn" onclick="execCmd('insertUnorderedList')">• List</button>
-            </div>
-            <div class="wysiwyg-editor" id="admRichBioTextEditorArea" contenteditable="true"></div>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="commitGlobalSettingsMutationStreamParameters()" style="align-self:flex-start; margin-top:12px;">Commit Operational Configurations</button>
-      </div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-layout">
-      <div class="grid-2" style="align-items: flex-start; gap:32px;">
-        <div class="card-flat">
-          <h3 style="font-family:var(--font-head); color:var(--c-primary);">Navigation Sequence Configuration Matrix</h3>
-          <p style="font-size:12px; color:var(--c-muted);">Drag elements into preferred sequence layout. Click "Save Sequence Order Matrix" to compile navigation maps.</p>
-          <div id="admSortableNavbarItemsListTrackingContainer"></div>
-          <button class="btn btn-primary btn-sm" onclick="commitNavbarArrangementSequenceMutationMatrix()" style="width:100%; margin-top:8px;">Save Sequence Order Matrix</button>
-        </div>
-        
-        <div class="card-flat">
-          <h3 style="font-family:var(--font-head); color:var(--c-primary);">🆕 Add Dynamic Custom Page Module</h3>
-          <p style="font-size:12px; color:var(--c-muted);">Incorporate brand new modular structural nodes injected natively inside system routing streams.</p>
-          <div class="form-group"><label class="form-label">Page Title Label Designation *</label><input type="text" id="adm-newpage-title" class="form-input" placeholder="e.g., Instrumentation Complex"></div>
-          <div class="form-group">
-            <label class="form-label">Custom Content Layout Architecture (WYSIWYG Workspace)</label>
-            <div class="wysiwyg-wrapper">
-              <div class="wysiwyg-toolbar"><button type="button" class="wysiwyg-btn" onclick="execCmd('bold')">B</button><button type="button" class="wysiwyg-btn" onclick="execLinkCmd()">🔗 Link</button></div>
-              <div class="wysiwyg-editor" id="admRichNewPageContentTextEditorArea" contenteditable="true"></div>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-sm" onclick="executeCreateDynamicCustomPagePipelineChannel()" style="width:100%;">Compile &amp; Append Dynamic Page Node</button>
-        </div>
-      </div>
-      
-      <div class="card-flat" style="margin-top:32px;">
-        <h3 style="font-family:var(--font-head); color:var(--c-primary);">Active Custom Dynamic Pages Registries Inventory</h3>
-        <p style="font-size:12px; color:var(--c-muted);">Review compiled custom pages or instantly trigger secure purge vectors to wipe them completely from database and navbar links map.</p>
-        <div class="table-responsive">
-          <table class="data-table-framework">
-            <thead>
-              <tr><th>Dynamic Page Key ID Pointer</th><th>Label Representation Title Designation</th><th style="width:200px;">Actions Mappings</th></tr>
-            </thead>
-            <tbody id="tbl-dynamic-pages-inventory-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-announcements">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Discrete Ticker Feeds Registry (One at a Time)</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('announcements')">+ Register New Ticker Notification Line</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Announcement Text Content String Data Stream</th><th style="width:120px;">Actions</th></tr></thead><tbody id="tbl-announcements"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-research">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Strategic Focus Domains Logs Matrix</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('research')">+ Post Research Focus Field</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Field Title</th><th>Summary Key Framework Context</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-research"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-publications">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Publications Index Master Records</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('publications')">+ Register Publication Entry</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Title Header String</th><th>Authors</th><th>Journal Vector</th><th style="width:80px;">Year</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-publications"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-team">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Laboratory Personnel Roster Array (Superstars Cluster)</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('team')">+ Provision Lab Superstar Entry</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Full Legal Name</th><th>Category Designation Choice</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-team"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-teaching">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Teaching Portfolios &amp; Lectures Schemes Array Logs</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('teaching')">+ Add Course Portfolio Entry</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Course Code / Title Parameter</th><th>Curriculum Focus Domain Summary</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-teaching"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-news">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Events Diary Timetracks Logs Arrays Matrix</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('news')">+ Register Event Diary Track</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th style="width:120px;">Event Date</th><th style="width:120px;">Category</th><th>Title Headline Parameters</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-news"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-opportunities">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Open Career Openings Fellowships Matrix</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('opportunities')">+ Post Career Position Vacancy Node</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>Position Title Code</th><th>Type Dropdown</th><th style="width:120px;">Deadline</th><th style="width:100px;">Status</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-opportunities"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-slideshow">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Automated Layer-Sliding Visual Slideshow Component Mappings</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('slideshow')">+ Insert Slideshow Media Node</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th style="width:100px;">Type</th><th>Media Source URL Link</th><th>Title Descriptor Context</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-slideshow"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-users">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h3>Operator Identities Security Registries Accounts</h3>
-        <button class="btn btn-primary btn-sm" onclick="invokeCrudWizardPopupBuilder('users')">+ Provision Identity Profile Account</button>
-      </div>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th>User Operator Name</th><th>Email Identifier Profile</th><th>Privilege Role</th><th style="width:160px;">Actions</th></tr></thead><tbody id="tbl-users"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-appinbox">
-      <h3>Inbox Applications System Channel Logging Tracking Queues</h3>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th style="width:140px;">Applicant Name</th><th style="width:160px;">Email Coordinate</th><th style="width:140px;">Target Position</th><th>Covering Payload Notes</th></tr></thead><tbody id="tbl-appinbox"></tbody></table></div>
-    </div>
-
-    <div class="admin-tab-content" id="apanel-cntinbox">
-      <h3>Inbox Contact Direct Message Communication Logging Channels</h3>
-      <div class="table-responsive"><table class="data-table-framework"><thead><tr><th style="width:140px;">Sender Entity Name</th><th style="width:160px;">Email Profile</th><th>Message Text Stream Payload</th></tr></thead><tbody id="tbl-cntinbox"></tbody></table></div>
-    </div>
-
-  </main>
-</div>
-
-<div class="modal-wrapper" id="crudWizardDynamicEntryDataPopupModal">
-  <div class="modal-container">
-    <div class="modal-header" id="crudModalTitleHeaderStringLabel">Add/Edit Data Input Matrix Wizard Form</div>
-    <form id="runtimeFormSubmissionCarrierPipeline" onsubmit="executeCommitCrudDataMutationOperationArray(event)">
-      <input type="hidden" id="crudScopeTargetArrayKeyRef">
-      <input type="hidden" id="crudScopePrimaryKeyRecordIdRef">
-      <div class="modal-body" id="crudDynamicInputsInjectionZone"></div>
-      <div class="modal-footer" id="crudModalActionButtonsSlot"></div>
-    </form>
-  </div>
-</div>
+<!-- TOAST -->
+<div id="toast"><span>✅</span><span id="toast-msg">Done</span></div>
 
 <script>
-const ENGINE_STORE_PERSIST_KEY_SNAPSHOT_R2026 = 'bpbme_enterprise_console_master_data_v26_discrete_final';
+function labCMS() {
+    return {
+        activePage: 'home',
+        peopleFilter: 'All',
+        adminSubTab: 'dashboard',
+        adminPanelTitle: 'Dashboard',
+        pubSearch: '',
+        showAnnBar: true,
+        newAnnText: '',
 
-function buildBlankInitialSystemFallbackStateStructure() {
-  return {
-    settings: {
-      labTheme: 'theme-classic',
-      labName: 'BPBME Advanced Laboratory Ecosystem',
-      labSubtext: 'Department of Biosciences and Biomedical Engineering – IIT Indore',
-      piName: 'Dr. Sarah Jenkins',
-      piRole: 'Associate Professor & Principal Investigator',
-      piUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400',
-      piBio: '<p>Welcome to the premium computational biochemistry and dynamic diagnostic vector tracking hub architecture mapping physical matrices. Our focus spans across state-of-the-art biofabrication engineering models, advanced microfluidics layouts, and cloud-native computational frameworks designed specifically for real-time cellular structural inspections and predictive disease matrix mappings.</p>',
-      slideshowIntervalSeconds: 4 
-    },
-    navOrder: ['home', 'research', 'publications', 'people', 'teaching', 'events', 'joinus', 'contact'],
-    customPages: {}, 
-    announcements: [
-      { id: 'ann-1', text: 'PhD Admission Registries tracking portals window open for Autumn Semester 2026 scheme.' },
-      { id: 'ann-2', text: 'Dr. Sarah Jenkins elected as Senior Fellow of the Biophysical Society Core Cluster Council.' }
-    ],
-    research: [
-      { id: 'res-1', title: 'Computational Molecular Biophysics Schemes', desc: '<p>Atomistic scaling and membrane dynamic interaction models map execution environments tracking cellular deformation vectors.</p>' }
-    ],
-    publications: [
-      { id: 'pub-1', title: 'High-Throughput Acoustic Sorting Framework in Microfluidic Channels', authors: 'Mukherjee, R., Jenkins, S.', journal: 'IEEE Transactions on Biomedical Engineering', year: '2025', volume: '72', pages: '142-150', doi: 'https://doi.org/', type: 'Journal Article', featured: 'Yes' }
-    ],
-    team: [
-      { id: 'tm-1', name: 'Dr. Sarah Jenkins', category: 'PI', bio: '<p>Principal Investigator directing core molecular mechanics analytic schemes pipelines inside the cleanroom clusters block.</p>', topic: 'Structural Proteomics, Diagnostic Vectors Chips', paper: '', imageUrlPointer: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400', imgFileLocalBuffer: '' }
-    ],
-    teaching: [
-      { id: 'tch-1', title: 'BME-602: Advanced Computational Bioengineering Arrays', desc: '<p>Core doctoral track framework lecturing distributed finite element models tracking viscous cell behavior dynamics vectors arrays parameters.</p>' }
-    ],
-    news: [
-      { id: 'nw-1', title: 'Conferral of Institutional Scientific Research Grant Concluded', date: '2026-05-10', category: 'Award', excerpt: 'Lab granted strategic instrumentation development sponsorship tokens.', content: '<p>Full analytical review parameters metrics tracking institutional funding channels pipelines logs mapped.</p>', icon: '🏆' },
-      { id: 'nw-2', title: 'International Bio-Informatics Seminar Conclave Scheduled', date: '2026-06-25', category: 'Conference', excerpt: 'Global panel deployment cluster tracks alignment protocols verification indices.', content: '<p>Systematic conference assembly protocols parameters data stream metrics track mapping.</p>', icon: '🔬' }
-    ],
-    opportunities: [
-      { id: 'opp-1', title: 'Junior Research Fellow (JRF) — Computational Systems Project', type: 'Project Position', deadline: '2026-08-15', description: 'Investigating cell wall dynamic stress tolerances arrays metrics tracks models parameters.', requirements: 'M.Tech / M.Sc in Biotechnology / Biophysics with certified GATE eligibility records parameters.', status: 'Open' }
-    ],
-    slideshow: [
-      { id: 'sld-1', type: 'Image Asset Node', url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800', title: 'Cleanroom Spectroscopy Rig', desc: 'Automated laser excitation cluster tracking cellular microfluidic flow paths.' },
-      { id: 'sld-2', type: 'Image Asset Node', url: 'https://images.unsplash.com/photo-1532187863486-abf9d39d6618?q=80&w=800', title: 'Bio-Fabrication Fluidics Suite', desc: 'Cellular alignment synthesis arrays configured for biocompatible scaffolding deployment workflows.' }
-    ],
-    users: [
-      { id: 'usr-1', name: 'System Chief Admin Operator', email: 'admin@iiti.ac.in', pass: 'admin123', role: 'Super Administrator' }
-    ],
-    appinbox: [],
-    cntinbox: []
-  };
-}
+        // FORM SHOW FLAGS
+        showMemberForm: false,
+        showPubForm: false,
+        showOppForm: false,
+        showNewsForm: false,
+        showMediaForm: false,
+        showGalleryForm: false,
 
-let DATA_ENGINE_STORE = {};
-let activeSlideIndexPointerValue = 0;
-let coreSlideshowIntervalLoopObjectReference = null;
-let discreteNotificationLoopIntervalReference = null;
-let currentDiscreteNotificationArrayIndexPointer = 0;
+        // EDITING IDs
+        editingMemberId: null,
+        editingPubId: null,
+        editingOppId: null,
+        editingNewsId: null,
 
-function bootstrapStorageInitializationPipeline() {
-  const dataStream = localStorage.getItem(ENGINE_STORE_PERSIST_KEY_SNAPSHOT_R2026);
-  if (dataStream) {
-    try { 
-      DATA_ENGINE_STORE = JSON.parse(dataStream); 
-      if(!DATA_ENGINE_STORE.customPages) DATA_ENGINE_STORE.customPages = {};
-      if(!DATA_ENGINE_STORE.settings.slideshowIntervalSeconds) DATA_ENGINE_STORE.settings.slideshowIntervalSeconds = 4;
-    } catch(e) { 
-      DATA_ENGINE_STORE = buildBlankInitialSystemFallbackStateStructure(); 
+        // AUTH
+        isLoggedIn: false,
+        currentUser: null,
+        loginEmail: '',
+        loginPassword: '',
+        labLogo: '',
+
+        usersRegistry: [
+            { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
+        ],
+
+        themeColors: {
+    navy: '#0F4C81',
+    sky: '#4DA8DA',
+    background: '#F8FAFC'
+},
+
+        // PAGE NAMES — editable in admin
+        pageNames: {
+            home: 'Home',
+            research: 'Research',
+            people: 'Superstars',
+            publications: 'Publications',
+            opportunities: 'Opportunities',
+            contact: 'Contact'
+        },
+
+        menuOrder: ['Home', 'Research', 'People', 'Publications', 'Opportunities', 'Contact'],
+
+        // DATA
+        homeData: {
+            labCode: 'IIT Indore',
+            labSubName: 'Biophysics & Biomedical Engineering Lab',
+            headline: 'Biophysics & Biomedical Engineering Laboratory',
+            subheadline: 'Pushing the boundaries of light, life, and advanced diagnostic optics at Indian Institute of Technology Indore.',
+            piName: 'Dr. S. Gupta',
+            piRole: 'Associate Professor, Biosciences and Biomedical Engineering',
+            piImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+            piBio: `<p class="mb-2">Welcome to our research hub. Hamari lab ka core focus light waves aur biomedical structures ke interactions ko exploit karna hai.</p><p>We are engineering non-invasive computational diagnostic platforms for early-stage screening parameters, especially focusing on affordable Indian healthcare systems.</p>`
+        },
+
+        labMediaList: [
+            { id: 1, title: 'Spectroscopy Instrumentation Laser Run', type: 'image', url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=400&q=80', desc: 'Capture overview run demonstrating diffuse optical tracking data filters.' },
+            { id: 2, title: 'Computational Diagnostic Interface Modeling', type: 'image', url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80', desc: 'Real-time neural node matrix array processing system.' }
+        ],
+
+        news: [
+            { id: 1, date: 'June 05, 2026', text: 'Our advanced paper on Deep Biophotonics got accepted in Nature Framework Diagnostics.' },
+            { id: 2, date: 'May 18, 2026', text: 'Congratulations to PhD Scholar Amit Kumar for securing the Best Abstract presentation award at IEEE.' }
+        ],
+
+        gallery: [
+            { id: 1, title: 'Spectroscopy Setup', url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80' },
+            { id: 2, title: 'Lab Cohort 2026', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80' }
+        ],
+
+        researchAreas: [
+            { id: 1, title: 'Biophotonics & Optical Tomography', desc: 'Developing non-ionizing diffuse laser mechanisms to slice and detect subdermal tumor metrics without conventional tissue biopsy workflows.' },
+            { id: 2, title: 'Nanobiotechnology & Drug Delivery', desc: 'Engineering functional nanomaterials for targeted drug delivery, biosensing, and disease diagnostics in affordable healthcare.' }
+        ],
+
+        people: [
+            { id: 1, name: 'Dr. S. Gupta', role: 'Principal Investigator', category: 'Faculty', email: 'sgupta@iiti.ac.in', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80', researchArea: 'Biophotonics Tomography Systems', scholarUrl: '', bio: 'Directing advanced diagnostic optics platforms.' },
+            { id: 2, name: 'Amit Kumar', role: 'Senior PhD Candidate', category: 'PhD', email: 'amit.k@iiti.ac.in', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80', researchArea: 'Deep Biophotonics Analytics', scholarUrl: 'https://scholar.google.com', bio: 'Focusing on Convolutional bio-sensor noise filters.' }
+        ],
+
+        publications: [
+            { id: 1, title: 'Diffuse Light Scattering Profiles in Multi-layered Phantom Tissues', authors: 'Gupta S., Kumar A.', journal: 'IEEE Transactions on Bio-Engineering', year: '2026', doi: '' },
+            { id: 2, title: 'Nanomaterial-based Biosensors for Early Cancer Diagnosis', authors: 'Gupta S., Sharma P., et al.', journal: 'Biosensors & Bioelectronics · Elsevier', year: '2025', doi: '' }
+        ],
+
+        opportunities: [
+            { id: 1, position: 'Research Intern Position Call', type: 'Internship', deadline: 'July 15, 2026', status: 'Open', desc: 'Work on advanced computational biophotonics instrumentation algorithms.' }
+        ],
+
+        announcements: [
+            'PhD Admissions Open 2026 – Apply Before July 31, 2026',
+            'New paper accepted in IEEE Transactions on Bio-Engineering – Congratulations to the team!',
+            'Internship positions available – Applications open for Summer 2026'
+        ],
+
+        // FORMS
+        teamForm: { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' },
+        mediaForm: { title: '', type: 'image', url: '', desc: '' },
+        oppForm: { position: '', type: 'Internship', deadline: '', status: 'Open', desc: '' },
+        newsForm: { date: '', text: '' },
+        pubForm: { title: '', authors: '', journal: '', year: '', doi: '' },
+        userForm: { name: '', email: '', password: '', role: 'Admin' },
+        galleryForm: { title: '', url: '' },
+
+        // ── AUTH ──
+        handleLogin() {
+            const match = this.usersRegistry.find(u => u.email === this.loginEmail && u.password === this.loginPassword);
+            if (match) {
+                this.isLoggedIn = true;
+                this.currentUser = match;
+                this.activePage = 'admin';
+            } else {
+                alert('❌ Invalid credentials. Please try again.');
+            }
+        },
+        handleLogout() {
+            this.isLoggedIn = false;
+            this.currentUser = null;
+            this.activePage = 'home';
+        },
+        provisionUser() {
+            if (!this.userForm.email || !this.userForm.name) { alert('Please fill all fields.'); return; }
+            this.usersRegistry.push({ ...this.userForm });
+            this.showToast('✅ User created successfully!');
+            this.userForm = { name: '', email: '', password: '', role: 'Admin' };
+        },
+        deleteUserRegistryNode(targetUsr) {
+            if (targetUsr.email === this.currentUser.email) {
+                const countSuper = this.usersRegistry.filter(u => u.role === 'Super Admin').length;
+                if (countSuper <= 1) { alert('🚫 Cannot revoke your own access when you are the only Super Admin.'); return; }
+                if (confirm('⚠️ You are revoking your own access. Continue?')) {
+                    this.usersRegistry = this.usersRegistry.filter(u => u.email !== targetUsr.email);
+                    this.handleLogout();
+                }
+            } else {
+                this.usersRegistry = this.usersRegistry.filter(u => u.email !== targetUsr.email);
+                this.showToast('User access revoked.');
+            }
+        },
+
+        // ── TEAM MEMBERS ──
+        openAddMemberForm() {
+            this.editingMemberId = null;
+            this.teamForm = { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' };
+            this.showMemberForm = true;
+        },
+        editMemberForm(p) {
+            this.editingMemberId = p.id;
+            this.teamForm = { ...p };
+            this.showMemberForm = true;
+        },
+        saveMember() {
+            if (!this.teamForm.name) { this.showToast('⚠️ Name is required'); return; }
+            if (this.editingMemberId) {
+                const i = this.people.findIndex(p => p.id === this.editingMemberId);
+                if (i > -1) this.people[i] = { ...this.people[i], ...this.teamForm };
+                this.showToast('✅ Member updated!');
+            } else {
+                this.people.push({ id: Date.now(), ...this.teamForm });
+                this.showToast('✅ Member added!');
+            }
+            this.showMemberForm = false;
+            this.editingMemberId = null;
+        },
+
+        // ── PUBLICATIONS ──
+        editPub(pub) {
+            this.editingPubId = pub.id;
+            this.pubForm = { ...pub };
+            this.showPubForm = true;
+        },
+        savePub() {
+            if (!this.pubForm.title || !this.pubForm.authors) { this.showToast('⚠️ Title & Authors required'); return; }
+            if (this.editingPubId) {
+                const i = this.publications.findIndex(p => p.id === this.editingPubId);
+                if (i > -1) this.publications[i] = { ...this.publications[i], ...this.pubForm };
+                this.showToast('✅ Publication updated!');
+            } else {
+                this.publications.push({ id: Date.now(), ...this.pubForm });
+                this.showToast('✅ Publication added!');
+            }
+            this.showPubForm = false;
+            this.editingPubId = null;
+        },
+
+        // ── OPPORTUNITIES ──
+        editOpp(o) {
+            this.editingOppId = o.id;
+            this.oppForm = { ...o };
+            this.showOppForm = true;
+        },
+        saveOpp() {
+            if (!this.oppForm.position) { this.showToast('⚠️ Position title required'); return; }
+            if (this.editingOppId) {
+                const i = this.opportunities.findIndex(x => x.id === this.editingOppId);
+                if (i > -1) this.opportunities[i] = { ...this.opportunities[i], ...this.oppForm };
+                this.showToast('✅ Updated!');
+            } else {
+                this.opportunities.push({ id: Date.now(), ...this.oppForm });
+                this.showToast('✅ Opportunity added!');
+            }
+            this.showOppForm = false;
+            this.editingOppId = null;
+        },
+
+        // ── NEWS ──
+        editNews(n) {
+            this.editingNewsId = n.id;
+            this.newsForm = { ...n };
+            this.showNewsForm = true;
+        },
+        saveNews() {
+            if (!this.newsForm.text) { this.showToast('⚠️ News text required'); return; }
+            if (this.editingNewsId) {
+                const i = this.news.findIndex(x => x.id === this.editingNewsId);
+                if (i > -1) this.news[i] = { ...this.news[i], ...this.newsForm };
+                this.showToast('✅ Updated!');
+            } else {
+                this.news.push({ id: Date.now(), ...this.newsForm });
+                this.showToast('✅ News added!');
+            }
+            this.showNewsForm = false;
+            this.editingNewsId = null;
+        },
+
+        // ── RESEARCH AREAS ──
+        addResearchArea() {
+            const t = prompt('Research Area Title:');
+            if (!t) return;
+            const d = prompt('Short Description:') || 'Description here...';
+            this.researchAreas.push({ id: Date.now(), title: t, desc: d });
+            this.showToast('✅ Research area added!');
+        },
+        editRA(r) {
+            const t = prompt('Edit Title:', r.title);
+            if (t === null) return;
+            const d = prompt('Edit Description:', r.desc);
+            const i = this.researchAreas.findIndex(x => x.id === r.id);
+            if (i > -1) { this.researchAreas[i].title = t; if (d !== null) this.researchAreas[i].desc = d; }
+            this.showToast('✅ Updated!');
+        },
+
+        // ── MEDIA & GALLERY ──
+        addLabMedia() {
+            if (!this.mediaForm.title || !this.mediaForm.url) { this.showToast('⚠️ Title & URL required'); return; }
+            this.labMediaList.push({ id: Date.now(), ...this.mediaForm });
+            this.showToast('✅ Media added!');
+            this.mediaForm = { title: '', type: 'image', url: '', desc: '' };
+        },
+        addGalleryItem() {
+            if (!this.galleryForm.title || !this.galleryForm.url) { this.showToast('⚠️ Title & URL required'); return; }
+            this.gallery.push({ id: Date.now(), ...this.galleryForm });
+            this.showToast('✅ Photo added to gallery!');
+            this.galleryForm = { title: '', url: '' };
+        },
+
+        // ── ANNOUNCEMENTS ──
+        addAnn() {
+            if (!this.newAnnText.trim()) { this.showToast('⚠️ Enter announcement text'); return; }
+            this.announcements.push(this.newAnnText.trim());
+            this.newAnnText = '';
+            this.showToast('✅ Announcement added!');
+        },
+        editAnn(i) {
+            const t = prompt('Edit announcement:', this.announcements[i]);
+            if (t === null) return;
+            this.announcements[i] = t;
+            this.showToast('✅ Updated!');
+        },
+        deleteAnn(i) {
+            this.announcements.splice(i, 1);
+            this.showToast('Announcement removed.');
+        },
+
+        // ── PAGE NAMES ──
+        resetPageNames() {
+            this.pageNames = { home:'Home', research:'Research', people:'Superstars', publications:'Publications', opportunities:'Opportunities', contact:'Contact' };
+            this.showToast('✅ Page names reset to defaults.');
+        },
+
+        // ── MENU ORDER ──
+        moveMenuUp(idx) {
+            if (idx <= 0) return;
+            const arr = [...this.menuOrder];
+            [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+            this.menuOrder = arr;
+        },
+        moveMenuDown(idx) {
+            if (idx >= this.menuOrder.length - 1) return;
+            const arr = [...this.menuOrder];
+            [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+            this.menuOrder = arr;
+        },
+
+        // ── COMPUTED ──
+        get filteredPublications() {
+            if (!this.pubSearch) return this.publications;
+            return this.publications.filter(p =>
+                p.title.toLowerCase().includes(this.pubSearch.toLowerCase()) ||
+                p.authors.toLowerCase().includes(this.pubSearch.toLowerCase())
+            );
+        },
+
+        // ── TOAST ──
+        showToast(msg) {
+            const el = document.getElementById('toast');
+            const m = document.getElementById('toast-msg');
+            if (!el || !m) return;
+            m.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(el._t);
+            el._t = setTimeout(() => el.classList.remove('show'), 3000);
+        },
+
+        // ── LUCIDE ICONS REFRESH ──
+        refreshIcons() {
+            setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 60);
+        },
+        init() {
+            this.$watch('activePage', () => this.refreshIcons());
+            this.$watch('adminSubTab', () => this.refreshIcons());
+            this.refreshIcons();
+        }
     }
-  } else {
-    DATA_ENGINE_STORE = buildBlankInitialSystemFallbackStateStructure();
-    commitDataEngineStoreStateChangesToDisk();
-  }
 }
-
-function commitDataEngineStoreStateChangesToDisk() {
-  localStorage.setItem(ENGINE_STORE_PERSIST_KEY_SNAPSHOT_R2026, JSON.stringify(DATA_ENGINE_STORE));
-}
-
-function toggleModal(modalKeyId, displayStateFlag) {
-  const node = document.getElementById(modalKeyId);
-  if (node) {
-    if (displayStateFlag) node.classList.add('open');
-    else node.classList.remove('open');
-  }
-}
-
-function execCmd(command, value = null) { document.execCommand(command, false, value); }
-function execLinkCmd() {
-  const targetUrl = prompt('Enter Target Destination Hyperlink URL Parameters:');
-  if (targetUrl) document.execCommand('createLink', false, targetUrl);
-}
-
-function route(viewTargetKeyId, isCustomDynamicPage = false) {
-  document.querySelectorAll('.viewport-segment').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  
-  if (isCustomDynamicPage) {
-    const customPageObj = DATA_ENGINE_STORE.customPages[viewTargetKeyId];
-    if (customPageObj) {
-      document.getElementById('dynamicViewportCustomPageHeaderTitle').textContent = customPageObj.title;
-      document.getElementById('dynamicViewportCustomPageRichContentAreaSlot').innerHTML = customPageObj.content;
-      document.getElementById('view-dynamic-runtime-frame').classList.add('active');
-      const lnk = document.getElementById('lnk-' + viewTargetKeyId);
-      if (lnk) lnk.classList.add('active');
-    }
-    clearInterval(coreSlideshowIntervalLoopObjectReference);
-    return;
-  }
-
-  const targetedChassisSegment = document.getElementById('view-' + viewTargetKeyId);
-  if (targetedChassisSegment) targetedChassisSegment.classList.add('active');
-  
-  const lnkNode = document.getElementById('lnk-' + viewTargetKeyId);
-  if (lnkNode) lnkNode.classList.add('active');
-  
-  if (viewTargetKeyId === 'home') buildClientMediaSlideshowDomStructureViewport();
-  else clearInterval(coreSlideshowIntervalLoopObjectReference);
-}
-
-function executeRealtimeGlobalThemeSwitchMutation(selectedThemeClassNameValue) {
-  document.body.className = '';
-  document.body.classList.add(selectedThemeClassNameValue);
-  DATA_ENGINE_STORE.settings.labTheme = selectedThemeClassNameValue;
-}
-
-function executeCreateDynamicCustomPagePipelineChannel() {
-  const titleField = document.getElementById('adm-newpage-title');
-  const contentField = document.getElementById('admRichNewPageContentTextEditorArea');
-  const titleText = titleField.value.trim();
-  const htmlContent = contentField.innerHTML;
-  
-  if (!titleText) { alert('Enter valid dynamic page title label parameters.'); return; }
-  const formattedUniqueKeyPagePointerId = 'cpage_' + Date.now();
-  
-  DATA_ENGINE_STORE.customPages[formattedUniqueKeyPagePointerId] = {
-    id: formattedUniqueKeyPagePointerId,
-    title: titleText,
-    content: htmlContent
-  };
-  DATA_ENGINE_STORE.navOrder.push(formattedUniqueKeyPagePointerId);
-  
-  commitDataEngineStoreStateChangesToDisk();
-  syncDynamicStateDataModelsToClientViews();
-  initializeDragAndDropOrderingInteractionsTrack();
-  buildDynamicCustomPagesInventoryRegistryTableRows();
-  
-  titleField.value = '';
-  contentField.innerHTML = '';
-  alert('Custom dynamic page built successfully and active in navigation sequences.');
-}
-
-function executePurgeDynamicCustomPageRecordNodePipeline(pageKeyUniquePointerId) {
-  if (confirm('Are you absolutely certain you want to erase this dynamic custom page?')) {
-    delete DATA_ENGINE_STORE.customPages[pageKeyUniquePointerId];
-    DATA_ENGINE_STORE.navOrder = DATA_ENGINE_STORE.navOrder.filter(item => item !== pageKeyUniquePointerId);
-    
-    commitDataEngineStoreStateChangesToDisk();
-    syncDynamicStateDataModelsToClientViews();
-    initializeDragAndDropOrderingInteractionsTrack();
-    buildDynamicCustomPagesInventoryRegistryTableRows();
-    alert('Custom dynamic page removed safely from portal indexes.');
-  }
-}
-
-function buildDynamicCustomPagesInventoryRegistryTableRows() {
-  const targetBodySlot = document.getElementById('tbl-dynamic-pages-inventory-body');
-  const mapKeys = Object.keys(DATA_ENGINE_STORE.customPages);
-  
-  if(mapKeys.length === 0) {
-    targetBodySlot.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--c-muted); padding:16px;">No Custom Dynamic Pages Processed Inside Framework Registry.</td></tr>`;
-    return;
-  }
-  
-  targetBodySlot.innerHTML = mapKeys.map(key => {
-    const pageObj = DATA_ENGINE_STORE.customPages[key];
-    return `
-      <tr>
-        <td><code>${pageObj.id}</code></td>
-        <td><strong>${pageObj.title}</strong></td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="executePurgeDynamicCustomPageRecordNodePipeline('${pageObj.id}')">❌ Delete Custom Page Node</button></td>
-      </tr>
-    `;
-  }).join('');
-}
-
-let activeDraggedElementNodePointerReference = null;
-function initializeDragAndDropOrderingInteractionsTrack() {
-  const sortableTrackContainerSlot = document.getElementById('admSortableNavbarItemsListTrackingContainer');
-  sortableTrackContainerSlot.innerHTML = DATA_ENGINE_STORE.navOrder.map((key, index) => {
-    let plainTextRepresentationLabel = key.toUpperCase();
-    let controlBadgeHtml = `<small style="color:var(--c-muted); font-size:11px;">Static System Core Tab</small>`;
-    
-    if (DATA_ENGINE_STORE.customPages[key]) {
-      plainTextRepresentationLabel = `[PAGE] ` + DATA_ENGINE_STORE.customPages[key].title.toUpperCase();
-      controlBadgeHtml = `<button type="button" class="btn btn-danger btn-sm" style="padding:2px 8px; font-size:10px;" onclick="executePurgeDynamicCustomPageRecordNodePipeline('${key}')">Remove ❌</button>`;
-    }
-    return `
-      <div class="sortable-drag-list-item" draggable="true" data-nav-key-ref="${key}" data-sequence-index-ref="${index}">
-        <span>☰ &nbsp; <strong>${plainTextRepresentationLabel}</strong></span>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <span style="font-size:11px; opacity:0.8;">Rank: ${index}</span>
-          ${controlBadgeHtml}
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  sortableTrackContainerSlot.querySelectorAll('.sortable-drag-list-item').forEach(itemNode => {
-    itemNode.addEventListener('dragstart', (e) => { activeDraggedElementNodePointerReference = itemNode; e.dataTransfer.effectAllowed = 'move'; });
-    itemNode.addEventListener('dragover', (e) => { e.preventDefault(); });
-    itemNode.addEventListener('drop', (e) => {
-      e.preventDefault();
-      if (itemNode !== activeDraggedElementNodePointerReference) {
-        let theoreticalLayoutArraySnapshot = Array.from(sortableTrackContainerSlot.querySelectorAll('.sortable-drag-list-item')).map(node => node.getAttribute('data-nav-key-ref'));
-        const sourceKeyString = activeDraggedElementNodePointerReference.getAttribute('data-nav-key-ref');
-        const targetKeyString = itemNode.getAttribute('data-nav-key-ref');
-        
-        const srcIdx = theoreticalLayoutArraySnapshot.indexOf(sourceKeyString);
-        const tgtIdx = theoreticalLayoutArraySnapshot.indexOf(targetKeyString);
-        theoreticalLayoutArraySnapshot.splice(srcIdx, 1);
-        theoreticalLayoutArraySnapshot.splice(tgtIdx, 0, sourceKeyString);
-        
-        DATA_ENGINE_STORE.navOrder = theoreticalLayoutArraySnapshot;
-        initializeDragAndDropOrderingInteractionsTrack();
-      }
-    });
-  });
-}
-
-function commitNavbarArrangementSequenceMutationMatrix() {
-  commitDataEngineStoreStateChangesToDisk();
-  syncDynamicStateDataModelsToClientViews();
-  alert('Navigation alignment sequence order maps saved live.');
-}
-
-function executeAuthorizationSessionGateway() {
-  const provEmail = document.getElementById('loginEmail').value.trim();
-  const provPass = document.getElementById('loginPass').value;
-  const feedbackZoneNode = document.getElementById('authErrorMsgZone');
-  
-  const matchIdentity = DATA_ENGINE_STORE.users.find(u => u.email === provEmail && u.pass === provPass);
-  if (matchIdentity) {
-    feedbackZoneNode.textContent = '';
-    toggleModal('loginModal', false);
-    
-    document.getElementById('adm-set-theme').value = DATA_ENGINE_STORE.settings.labTheme || 'theme-classic';
-    document.getElementById('adm-set-slideshow-timer-seconds').value = DATA_ENGINE_STORE.settings.slideshowIntervalSeconds || 4;
-    document.getElementById('adm-set-labname').value = DATA_ENGINE_STORE.settings.labName;
-    document.getElementById('adm-set-labsub').value = DATA_ENGINE_STORE.settings.labSubtext;
-    document.getElementById('adm-set-piname').value = DATA_ENGINE_STORE.settings.piName;
-    document.getElementById('adm-set-pirole').value = DATA_ENGINE_STORE.settings.piRole;
-    document.getElementById('adm-set-piurl').value = DATA_ENGINE_STORE.settings.piUrl;
-    document.getElementById('admRichBioTextEditorArea').innerHTML = DATA_ENGINE_STORE.settings.piBio;
-
-    toggleModal('adminTerminalDashboardConsoleWorkspace', true);
-    initializeDragAndDropOrderingInteractionsTrack();
-    buildDynamicCustomPagesInventoryRegistryTableRows();
-    refreshAdminConsoleGridDataTables();
-  } else {
-    feedbackZoneNode.textContent = 'Verification Fault: Clearances password passphrase incorrect.';
-  }
-}
-
-function terminateSessionTokenAuthSequence() {
-  toggleModal('adminTerminalDashboardConsoleWorkspace', false);
-  alert('Operator gateway locked safely.');
-}
-
-function switchAdminWorkspaceTabWindow(tabIdentifierCodeKeyId) {
-  document.querySelectorAll('.admin-tab-content').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-menu-item').forEach(m => m.classList.remove('active'));
-  document.getElementById('apanel-' + tabIdentifierCodeKeyId).classList.add('active');
-  document.getElementById('mtab-' + tabIdentifierCodeKeyId).classList.add('active');
-}
-
-function commitGlobalSettingsMutationStreamParameters() {
-  DATA_ENGINE_STORE.settings.labName = document.getElementById('adm-set-labname').value.trim();
-  DATA_ENGINE_STORE.settings.labSubtext = document.getElementById('adm-set-labsub').value.trim();
-  DATA_ENGINE_STORE.settings.piName = document.getElementById('adm-set-piname').value.trim();
-  DATA_ENGINE_STORE.settings.piRole = document.getElementById('adm-set-pirole').value.trim();
-  DATA_ENGINE_STORE.settings.piUrl = document.getElementById('adm-set-piurl').value.trim();
-  DATA_ENGINE_STORE.settings.piBio = document.getElementById('admRichBioTextEditorArea').innerHTML;
-  
-  const timingValueInput = parseInt(document.getElementById('adm-set-slideshow-timer-seconds').value);
-  DATA_ENGINE_STORE.settings.slideshowIntervalSeconds = (timingValueInput && timingValueInput > 0) ? timingValueInput : 4;
-  
-  commitDataEngineStoreStateChangesToDisk();
-  syncDynamicStateDataModelsToClientViews();
-  alert('Global administrative portal definitions saved live.');
-}
-
-function syncDynamicStateDataModelsToClientViews() {
-  const currentAssignedTheme = DATA_ENGINE_STORE.settings.labTheme || 'theme-classic';
-  document.body.className = '';
-  document.body.classList.add(currentAssignedTheme);
-
-  document.getElementById('live-lab-name').textContent = DATA_ENGINE_STORE.settings.labName;
-  document.getElementById('live-lab-subtext').textContent = DATA_ENGINE_STORE.settings.labSubtext;
-  document.getElementById('view-pi-name').textContent = DATA_ENGINE_STORE.settings.piName;
-  document.getElementById('view-pi-role').textContent = DATA_ENGINE_STORE.settings.piRole;
-  document.getElementById('view-pi-img').src = DATA_ENGINE_STORE.settings.piUrl;
-  document.getElementById('view-pi-bio').innerHTML = DATA_ENGINE_STORE.settings.piBio;
-
-  const clientNavbarContainerSlot = document.getElementById('clientLiveRenderNavbarContainerSlot');
-  clientNavbarContainerSlot.innerHTML = DATA_ENGINE_STORE.navOrder.map(key => {
-    if (DATA_ENGINE_STORE.customPages[key]) {
-      return `<div class="nav-link" id="lnk-${key}" onclick="route('${key}', true)">${DATA_ENGINE_STORE.customPages[key].title}</div>`;
-    }
-    let label = key;
-    if (key === 'joinus') label = 'Join Us';
-    return `<div class="nav-link" id="lnk-${key}" onclick="route('${key}', false)">${label}</div>`;
-  }).join('');
-
-  const currentNavSelectionLinkNodePointer = document.querySelector('.nav-link.active');
-  if (!currentNavSelectionLinkNodePointer && clientNavbarContainerSlot.firstElementChild) {
-    const firstKey = DATA_ENGINE_STORE.navOrder[0];
-    const isCustom = DATA_ENGINE_STORE.customPages[firstKey] ? true : false;
-    route(firstKey, isCustom);
-  }
-
-  setupDiscreteNotificationTickerEngineLoop();
-
-  const homepageNewsTableBodyNode = document.getElementById('homepageDirectLiveNewsTableBodySlot');
-  if(!DATA_ENGINE_STORE.news || DATA_ENGINE_STORE.news.length === 0) {
-    homepageNewsTableBodyNode.innerHTML = `
-      <tr>
-        <td colspan="2" style="color:var(--c-muted); text-align:center; padding:40px 20px; vertical-align:middle;">
-          <div style="font-size:28px; margin-bottom:8px;">📅</div>
-          <div style="font-weight:600; font-size:14px; color:var(--c-muted);">No Active Events Posted</div>
-        </td>
-      </tr>`;
-  } else {
-    const arrangedTimelineDataArrays = [...DATA_ENGINE_STORE.news].sort((a,b) => new Date(b.date) - new Date(a.date));
-    homepageNewsTableBodyNode.innerHTML = arrangedTimelineDataArrays.map(item => `
-      <tr>
-        <td style="font-weight:700; color:var(--c-primary); white-space:nowrap !important;">⚡ ${item.date}</td>
-        <td>
-          <div style="font-weight:600; font-size:14px; color:var(--c-text);">${item.icon || '📢'} ${item.title}</div>
-          <p style="font-size:12.5px; color:var(--c-muted); margin-top:3px; line-height:1.4;">${item.excerpt}</p>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  document.getElementById('clientResearchViewportInjectionArea').innerHTML = DATA_ENGINE_STORE.research.map(r => `
-    <div class="card-flat">
-      <h3 style="font-family:var(--font-head); color:var(--c-primary);">${r.title}</h3>
-      <div style="font-size:14.5px;">${r.desc}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('clientPublicationsViewportInjectionArea').innerHTML = DATA_ENGINE_STORE.publications.map(p => `
-    <div class="card-flat" style="border-left:4px solid ${p.featured==='Yes'?'var(--c-primary)':'var(--c-border)'}">
-      ${p.featured==='Yes'?'<span class="badge" style="margin-bottom:6px; background:#D1FAE5; color:#065F46;">FEATURED LITERARY RECORD</span>':''}
-      <h4 style="font-family:var(--font-head); font-size:16px; color:var(--c-text);">${p.title}</h4>
-      <p style="font-size:13px; color:var(--c-muted);">${p.authors}</p>
-      <div style="font-size:12.5px; font-weight:500; color:var(--c-secondary); margin-top:2px;"><em>${p.journal}</em>, ${p.year}</div>
-      ${p.doi ? `<a href="${p.doi}" target="_blank" class="btn btn-outline btn-sm" style="margin-top:10px; padding:4px 12px; font-size:11px;">Access Publication Source Matrix ↗</a>` : ''}
-    </div>
-  `).join('');
-
-  document.getElementById('clientTeachingViewportInjectionArea').innerHTML = DATA_ENGINE_STORE.teaching.map(t => `
-    <div class="card-flat"><h3 style="font-family:var(--font-head); font-size:16px; color:var(--c-primary);">${t.title}</h3><div style="font-size:14px;">${t.desc}</div></div>
-  `).join('');
-
-  document.getElementById('clientEventsViewportTableBodyArea').innerHTML = DATA_ENGINE_STORE.news.map(n => `
-    <tr>
-      <td><strong>${n.date}</strong></td><td><span class="badge">${n.category}</span></td>
-      <td><div style="font-weight:600; font-size:15px; color:var(--c-primary);">${n.icon || '📢'} ${n.title}</div><p style="font-size:13.5px; color:var(--c-muted);">${n.excerpt}</p></td>
-    </tr>
-  `).join('');
-
-  document.getElementById('clientOpportunitiesViewportInjectionArea').innerHTML = DATA_ENGINE_STORE.opportunities.map(o => `
-    <div class="card-flat">
-      <h3 style="font-family:var(--font-head); font-size:16px; color:var(--c-primary);">${o.title}</h3>
-      <p style="font-size:14px;">${o.description}</p>
-      <div style="font-size:12.5px; font-weight:700; color:#DC2626;">Deadline: ${o.deadline}</div>
-    </div>
-  `).join('');
-
-  executeBuildSuperstarsCategorizedClientRosterBlocks();
-  buildClientMediaSlideshowDomStructureViewport();
-}
-
-function setupDiscreteNotificationTickerEngineLoop() {
-  clearInterval(discreteNotificationLoopIntervalReference);
-  const discreteCarrierSlotNode = document.getElementById('clientLiveDiscreteNotificationContainerSlot');
-  
-  if (!DATA_ENGINE_STORE.announcements || DATA_ENGINE_STORE.announcements.length === 0) {
-    discreteCarrierSlotNode.innerHTML = `<div class="ticker-slide-node active" style="opacity:1; transform:none;">✨ Welcome to BPBME Research Group Digital Infrastructure Console Hub Portal.</div>`;
-    return;
-  }
-
-  discreteCarrierSlotNode.innerHTML = DATA_ENGINE_STORE.announcements.map((ann, idx) => `
-    <div class="ticker-slide-node" id="discreteNotificationSlideElementCodeID-${idx}">
-      🔔 <strong>ANNOUNCEMENT:</strong> ${ann.text}
-    </div>
-  `).join('');
-
-  currentDiscreteNotificationArrayIndexPointer = 0;
-  const firstActiveSlide = document.getElementById(`discreteNotificationSlideElementCodeID-0`);
-  if (firstActiveSlide) firstActiveSlide.classList.add('active');
-
-  if (DATA_ENGINE_STORE.announcements.length > 1) {
-    discreteNotificationLoopIntervalReference = setInterval(() => {
-      const activeCurrentNode = document.getElementById(`discreteNotificationSlideElementCodeID-${currentDiscreteNotificationArrayIndexPointer}`);
-      if (activeCurrentNode) activeCurrentNode.classList.remove('active');
-      
-      currentDiscreteNotificationArrayIndexPointer = (currentDiscreteNotificationArrayIndexPointer + 1) % DATA_ENGINE_STORE.announcements.length;
-      
-      const nextActiveNode = document.getElementById(`discreteNotificationSlideElementCodeID-${currentDiscreteNotificationArrayIndexPointer}`);
-      if (nextActiveNode) nextActiveNode.classList.add('active');
-    }, 5000);
-  }
-}
-
-function executeBuildSuperstarsCategorizedClientRosterBlocks() {
-  const targetZone = document.getElementById('clientTeamCategorizedRosterInjectionArea');
-  const levelFrameworkKeysArray = ['PI', 'Postdoctorol Fellow', 'Ph.D Scholars', 'M.Tech. Students', 'M.Sc. Students', 'Trainee', 'alumni'];
-  
-  targetZone.innerHTML = levelFrameworkKeysArray.map(levelKey => {
-    const matchingMembers = DATA_ENGINE_STORE.team.filter(m => m.category === levelKey);
-    if (matchingMembers.length === 0) return '';
-    return `
-      <div class="category-block">
-        <h3 class="category-title">${levelKey}</h3>
-        <div class="team-grid-client">
-          ${matchingMembers.map(m => `
-            <div class="team-card-node">
-              <div class="team-card-img-container"><img src="${m.imgFileLocalBuffer || m.imageUrlPointer || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150'}" alt="Lab Superstar"></div>
-              <h4 style="font-family:var(--font-head); font-size:16px; font-weight:600;">${m.name}</h4>
-              <div style="font-size:12.5px; color:var(--c-muted);">Focus: ${m.topic}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function buildClientMediaSlideshowDomStructureViewport() {
-  const slideshowSlot = document.getElementById('clientMediaSlideshowContainerSlot');
-  if(!DATA_ENGINE_STORE.slideshow || DATA_ENGINE_STORE.slideshow.length === 0) {
-    slideshowSlot.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#FFF; padding:20px;">No multimedia slide matrices loaded into gallery frameworks.</div>`;
-    return;
-  }
-  
-  slideshowSlot.innerHTML = DATA_ENGINE_STORE.slideshow.map((slide, idx) => `
-    <div class="slide-node-instance ${idx === 0 ? 'active' : ''}" id="targetSlideNodeIdReferencePointer-${idx}">
-      <img src="${slide.url}" alt="Lab Workspace Node Asset">
-      <div class="slide-caption-overlay-strip">
-        <h4 style="font-family:var(--font-head); font-size:18px; font-weight:600; color:#FFF;">${slide.title}</h4>
-        <p style="font-size:13px; opacity:0.9; color:#F1F5F9;">${slide.desc}</p>
-      </div>
-    </div>
-  `).join('');
-  
-  activeSlideIndexPointerValue = 0;
-  clearInterval(coreSlideshowIntervalLoopObjectReference);
-  
-  const timingDelayConfiguredMilliseconds = (DATA_ENGINE_STORE.settings.slideshowIntervalSeconds || 4) * 1000;
-  
-  if (DATA_ENGINE_STORE.slideshow.length > 1) {
-    coreSlideshowIntervalLoopObjectReference = setInterval(() => {
-      const currentCountTotal = DATA_ENGINE_STORE.slideshow.length;
-      const dynamicPreviousIndex = activeSlideIndexPointerValue;
-      activeSlideIndexPointerValue = (activeSlideIndexPointerValue + 1) % currentCountTotal;
-      
-      for (let i = 0; i < currentCountTotal; i++) {
-        const slideNode = document.getElementById(`targetSlideNodeIdReferencePointer-${i}`);
-        if(slideNode) { slideNode.classList.remove('active'); slideNode.classList.remove('previous-stack'); }
-      }
-      
-      const prevNodeRef = document.getElementById(`targetSlideNodeIdReferencePointer-${dynamicPreviousIndex}`);
-      if (prevNodeRef) prevNodeRef.classList.add('previous-stack');
-      
-      const nextActiveNodeRef = document.getElementById(`targetSlideNodeIdReferencePointer-${activeSlideIndexPointerValue}`);
-      if (nextActiveNodeRef) nextActiveNodeRef.classList.add('active');
-    }, timingDelayConfiguredMilliseconds);
-  }
-}
-
-function refreshAdminConsoleGridDataTables() {
-  document.getElementById('tbl-announcements').innerHTML = DATA_ENGINE_STORE.announcements.map(item => `
-    <tr><td><div>${item.text}</div></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('announcements', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-research').innerHTML = DATA_ENGINE_STORE.research.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('research', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-publications').innerHTML = DATA_ENGINE_STORE.publications.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('publications', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-team').innerHTML = DATA_ENGINE_STORE.team.map(item => `
-    <tr><td><strong>${item.name}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('team', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-teaching').innerHTML = DATA_ENGINE_STORE.teaching.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('teaching', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-news').innerHTML = DATA_ENGINE_STORE.news.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('news', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-opportunities').innerHTML = DATA_ENGINE_STORE.opportunities.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('opportunities', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-slideshow').innerHTML = DATA_ENGINE_STORE.slideshow.map(item => `
-    <tr><td><strong>${item.title}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('slideshow', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-
-  document.getElementById('tbl-users').innerHTML = DATA_ENGINE_STORE.users.map(item => `
-    <tr><td><strong>${item.name}</strong></td><td><button type="button" class="btn btn-danger btn-sm" onclick="executeDeleteRecordOperation('users', '${item.id}')">Delete</button></td></tr>
-  `).join('');
-}
-
-function invokeCrudWizardPopupBuilder(scopeKeyIdentifier, primaryKeyRecordId = '') {
-  document.getElementById('crudScopeTargetArrayKeyRef').value = scopeKeyIdentifier;
-  document.getElementById('crudScopePrimaryKeyRecordIdRef').value = primaryKeyRecordId;
-  
-  const coreInputsContainerZoneNode = document.getElementById('crudDynamicInputsInjectionZone');
-  const actionButtonsContainerZoneNode = document.getElementById('crudModalActionButtonsSlot');
-  const matchingRecordObj = primaryKeyRecordId ? DATA_ENGINE_STORE[scopeKeyIdentifier].find(r => r.id === primaryKeyRecordId) : null;
-  
-  let structuralDynamicHtmlPayload = '';
-  let standardActionButtonsHtml = `<button type="button" class="btn btn-outline btn-sm" onclick="toggleModal('crudWizardDynamicEntryDataPopupModal', false)">Cancel</button><button type="submit" class="btn btn-primary btn-sm">Commit</button>`;
-  
-  if (scopeKeyIdentifier === 'announcements') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Announcement Content String *</label><input type="text" id="f-ann-text" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.text : ''}"></div>`;
-  } else if (scopeKeyIdentifier === 'research') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Research Domain Title *</label><input type="text" id="f-res-title" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.title : ''}"></div><div class="form-group"><label class="form-label">Description</label><div class="wysiwyg-wrapper"><div class="wysiwyg-editor" id="fRichResEditor" contenteditable="true">${matchingRecordObj ? matchingRecordObj.desc : ''}</div></div></div>`;
-  } else if (scopeKeyIdentifier === 'publications') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Research Paper Title *</label><input type="text" id="f-pub-title" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.title : ''}"></div><div class="form-group"><label class="form-label">Authors *</label><input type="text" id="f-pub-authors" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.authors : ''}"></div><div class="form-group"><label class="form-label">Journal *</label><input type="text" id="f-pub-journal" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.journal : ''}"></div><div class="form-group"><label class="form-label">Year *</label><input type="number" id="f-pub-year" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.year : '2026'}"></div>`;
-  } else if (scopeKeyIdentifier === 'team') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Personnel Full Name *</label><input type="text" id="f-team-name" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.name : ''}"></div><div class="form-group"><label class="form-label">Category *</label><select id="f-team-cat" class="form-select"><option value="PI">PI</option><option value="Postdoctorol Fellow">Postdoctoral Fellow</option><option value="Ph.D Scholars">Ph.D. Scholars</option></select></div><div class="form-group"><label class="form-label">Research Topic *</label><input type="text" id="f-team-topic" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.topic : ''}"></div>`;
-  } else if (scopeKeyIdentifier === 'news') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Event Headline *</label><input type="text" id="f-news-title" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.title : ''}"></div><div class="form-group"><label class="form-label">Date *</label><input type="date" id="f-news-date" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.date : ''}"></div><div class="form-group"><label class="form-label">Summary *</label><input type="text" id="f-news-exc" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.excerpt : ''}"></div>`;
-  } else if (scopeKeyIdentifier === 'opportunities') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Vacancy Title *</label><input type="text" id="f-opp-title" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.title : ''}"></div><div class="form-group"><label class="form-label">Deadline *</label><input type="date" id="f-opp-dead" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.deadline : ''}"></div><div class="form-group"><label class="form-label">Description *</label><input type="text" id="f-opp-desc" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.description : ''}"></div>`;
-  } else if (scopeKeyIdentifier === 'slideshow') {
-    structuralDynamicHtmlPayload = `<div class="form-group"><label class="form-label">Image URL *</label><input type="url" id="f-sld-url" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.url : ''}"></div><div class="form-group"><label class="form-label">Slide Title *</label><input type="text" id="f-sld-title" class="form-input" required value="${matchingRecordObj ? matchingRecordObj.title : ''}"></div><div class="form-group"><label class="form-label">Slide Description</label><input type="text" id="f-sld-desc" class="form-input" value="${matchingRecordObj ? matchingRecordObj.desc : ''}"></div>`;
-  }
-
-  coreInputsContainerZoneNode.innerHTML = structuralDynamicHtmlPayload;
-  actionButtonsContainerZoneNode.innerHTML = standardActionButtonsHtml;
-  toggleModal('crudWizardDynamicEntryDataPopupModal', true);
-}
-
-function executeCommitCrudDataMutationOperationArray(event) {
-  event.preventDefault();
-  const scopeKeyIdentifier = document.getElementById('crudScopeTargetArrayKeyRef').value;
-  const primaryKeyRecordId = document.getElementById('crudScopePrimaryKeyRecordIdRef').value;
-  let dynamicCommittedPackagePayload = {};
-
-  if (scopeKeyIdentifier === 'announcements') {
-    dynamicCommittedPackagePayload = { text: document.getElementById('f-ann-text').value.trim() };
-  } else if (scopeKeyIdentifier === 'research') {
-    dynamicCommittedPackagePayload = { title: document.getElementById('f-res-title').value.trim(), desc: document.getElementById('fRichResEditor').innerHTML };
-  } else if (scopeKeyIdentifier === 'publications') {
-    dynamicCommittedPackagePayload = { title: document.getElementById('f-pub-title').value.trim(), authors: document.getElementById('f-pub-authors').value.trim(), journal: document.getElementById('f-pub-journal').value.trim(), year: document.getElementById('f-pub-year').value, featured: 'No' };
-  } else if (scopeKeyIdentifier === 'team') {
-    dynamicCommittedPackagePayload = { name: document.getElementById('f-team-name').value.trim(), category: document.getElementById('f-team-cat').value, topic: document.getElementById('f-team-topic').value.trim(), bio: '' };
-  } else if (scopeKeyIdentifier === 'news') {
-    dynamicCommittedPackagePayload = { title: document.getElementById('f-news-title').value.trim(), date: document.getElementById('f-news-date').value, excerpt: document.getElementById('f-news-exc').value.trim(), category: 'Research', icon: '📢' };
-  } else if (scopeKeyIdentifier === 'opportunities') {
-    dynamicCommittedPackagePayload = { title: document.getElementById('f-opp-title').value.trim(), deadline: document.getElementById('f-opp-dead').value, description: document.getElementById('f-opp-desc').value.trim(), type: 'PhD Position', status: 'Open' };
-  } else if (scopeKeyIdentifier === 'slideshow') {
-    dynamicCommittedPackagePayload = { type: 'Image Asset Node', url: document.getElementById('f-sld-url').value.trim(), title: document.getElementById('f-sld-title').value.trim(), desc: document.getElementById('f-sld-desc').value.trim() };
-  }
-
-  if (primaryKeyRecordId) {
-    dynamicCommittedPackagePayload.id = primaryKeyRecordId;
-    const arrayTargetIndexIdx = DATA_ENGINE_STORE[scopeKeyIdentifier].findIndex(rec => rec.id === primaryKeyRecordId);
-    if(arrayTargetIndexIdx !== -1) DATA_ENGINE_STORE[scopeKeyIdentifier][arrayTargetIndexIdx] = dynamicCommittedPackagePayload;
-  } else {
-    dynamicCommittedPackagePayload.id = scopeKeyIdentifier.slice(0,3) + '-' + Date.now();
-    DATA_ENGINE_STORE[scopeKeyIdentifier].push(dynamicCommittedPackagePayload);
-  }
-
-  commitDataEngineStoreStateChangesToDisk();
-  syncDynamicStateDataModelsToClientViews();
-  refreshAdminConsoleGridDataTables();
-  toggleModal('crudWizardDynamicEntryDataPopupModal', false);
-}
-
-function executeDeleteRecordOperation(scopeKeyIdentifier, primaryKeyRecordId) {
-  if (confirm('Are you certain?')) {
-    DATA_ENGINE_STORE[scopeKeyIdentifier] = DATA_ENGINE_STORE[scopeKeyIdentifier].filter(rec => rec.id !== primaryKeyRecordId);
-    commitDataEngineStoreStateChangesToDisk();
-    syncDynamicStateDataModelsToClientViews();
-    refreshAdminConsoleGridDataTables();
-  }
-}
-
-function executeSubmitApplicationPipelineForm(event) {
-  event.preventDefault();
-  alert('Application recorded!');
-  event.target.reset();
-}
-function executeSubmitContactInquiryPipelineForm(event) {
-  event.preventDefault();
-  alert('Message logged!');
-  event.target.reset();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  bootstrapStorageInitializationPipeline();
-  syncDynamicStateDataModelsToClientViews();
-});
 </script>
 </body>
 </html>
