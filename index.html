@@ -281,7 +281,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <template x-for="img in gallery" :key="img.id">
                                 <div class="group relative rounded-xl overflow-hidden shadow-xs h-40">
-                                    <img :src="img.url" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                                    <img :src="img.url" class="w-full h-full object-contain bg-gray-100 group-hover:scale-105 transition duration-300" />
                                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
                                         <p class="text-white text-xs font-medium" x-text="img.title"></p>
                                     </div>
