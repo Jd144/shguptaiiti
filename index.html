@@ -10,6 +10,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6x8Cz7chwbSEk1TEoxGttKf8vuv-crM",
+            authDomain: "shguptaiiti.firebaseapp.com",
+            projectId: "shguptaiiti",
+            storageBucket: "shguptaiiti.firebasestorage.app",
+            messagingSenderId: "767005349138",
+            appId: "1:767005349138:web:339f9c4150a5dcac4cfbcb",
+            measurementId: "G-RE5XJL2EYQ"
+        };
+
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            window.labDb = firebase.firestore();
+            window.labAuth = firebase.auth();
+        }
+    </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
@@ -1632,6 +1652,8 @@ function labCMS() {
         currentGalleryIndex: 0,
         galleryTimer: null,
         lightbox: { open: false, src: '', type: 'image', title: '' },
+        remoteSaveTimer: null,
+        isRemoteLoading: false,
 
         usersRegistry: [
             { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
@@ -1758,7 +1780,8 @@ function labCMS() {
         ensureDefaultAdmin() {
             const defaultAdmins = [
                 { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' },
-                { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iit.ac.in', password: 'admin123', role: 'Super Admin' }
+                { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iit.ac.in', password: 'admin123', role: 'Super Admin' },
+                { name: 'Firebase Admin', email: '22ibo048@smvdu.ac.in', password: '22ibo048@smvdu.ac.in', role: 'Super Admin' }
             ];
             defaultAdmins.forEach(admin => {
                 const exists = this.usersRegistry.some(u => (u.email || '').toLowerCase() === admin.email);
@@ -1771,9 +1794,65 @@ function labCMS() {
                 const state = {};
                 this.persistKeys.forEach(key => { state[key] = this[key]; });
                 localStorage.setItem(this.storageKey, JSON.stringify(state));
+                this.scheduleRemoteSave(state);
             } catch (error) {
                 console.warn('Could not save lab CMS data:', error);
                 this.showToast('Storage full. Please reduce uploaded file sizes.');
+            }
+        },
+
+        applyState(state) {
+            if (!state) return;
+            this.persistKeys.forEach(key => {
+                if (Object.prototype.hasOwnProperty.call(state, key)) {
+                    if (Array.isArray(this[key])) {
+                        this[key] = state[key];
+                    } else if (this[key] && typeof this[key] === 'object' && state[key] && typeof state[key] === 'object') {
+                        this[key] = { ...this[key], ...state[key] };
+                    } else {
+                        this[key] = state[key];
+                    }
+                }
+            });
+            this.ensureDefaultAdmin();
+        },
+
+        async loadRemoteState() {
+            if (!window.labDb) return;
+            this.isRemoteLoading = true;
+            try {
+                const snap = await window.labDb.collection('cms').doc('site').get();
+                if (snap.exists) {
+                    this.applyState(snap.data());
+                    const state = {};
+                    this.persistKeys.forEach(key => { state[key] = this[key]; });
+                    localStorage.setItem(this.storageKey, JSON.stringify(state));
+                }
+            } catch (error) {
+                console.warn('Could not load Firebase CMS data:', error);
+            } finally {
+                this.isRemoteLoading = false;
+                this.refreshIcons();
+            }
+        },
+
+        scheduleRemoteSave(state) {
+            if (!this.isLoggedIn || this.isRemoteLoading || !window.labDb) return;
+            clearTimeout(this.remoteSaveTimer);
+            this.remoteSaveTimer = setTimeout(() => this.saveRemoteState(state), 800);
+        },
+
+        async saveRemoteState(state) {
+            if (!window.labDb || !this.isLoggedIn) return;
+            try {
+                await window.labDb.collection('cms').doc('site').set({
+                    ...state,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: this.currentUser ? this.currentUser.email : ''
+                }, { merge: true });
+            } catch (error) {
+                console.warn('Could not save Firebase CMS data:', error);
+                this.showToast('Firebase save failed. Check rules/auth.');
             }
         },
 
@@ -1874,20 +1953,47 @@ function labCMS() {
         },
 
         // ── AUTH ──
-        handleLogin() {
+        async handleLogin() {
             this.ensureDefaultAdmin();
             const email = (this.loginEmail || '').trim().toLowerCase();
             const password = (this.loginPassword || '').trim();
             const match = this.usersRegistry.find(u => (u.email || '').trim().toLowerCase() === email && String(u.password || '').trim() === password);
-            if (match) {
-                this.isLoggedIn = true;
-                this.currentUser = match;
-                this.activePage = 'admin';
-            } else {
-                alert('❌ Invalid credentials. Please try again.');
+            try {
+                if (window.labAuth) {
+                    const userCred = await window.labAuth.signInWithEmailAndPassword(email, password);
+                    this.isLoggedIn = true;
+                    this.currentUser = {
+                        name: userCred.user.email,
+                        email: userCred.user.email,
+                        role: 'Super Admin'
+                    };
+                    this.activePage = 'admin';
+                    this.persistState();
+                    this.showToast('Firebase admin login successful.');
+                    return;
+                }
+                if (match) {
+                    this.isLoggedIn = true;
+                    this.currentUser = match;
+                    this.activePage = 'admin';
+                } else {
+                    alert('❌ Invalid credentials. Please try again.');
+                }
+            } catch (error) {
+                console.warn('Firebase login failed:', error);
+                if (match) {
+                    this.isLoggedIn = true;
+                    this.currentUser = match;
+                    this.activePage = 'admin';
+                } else {
+                    alert('❌ Invalid credentials. Please try again.');
+                }
             }
         },
-        handleLogout() {
+        async handleLogout() {
+            if (window.labAuth) {
+                try { await window.labAuth.signOut(); } catch (error) { console.warn('Firebase logout failed:', error); }
+            }
             this.isLoggedIn = false;
             this.currentUser = null;
             this.activePage = 'home';
@@ -2232,6 +2338,15 @@ function labCMS() {
         },
         init() {
             this.loadSavedState();
+            this.loadRemoteState();
+            if (window.labAuth) {
+                window.labAuth.onAuthStateChanged(user => {
+                    if (user) {
+                        this.isLoggedIn = true;
+                        this.currentUser = { name: user.email, email: user.email, role: 'Super Admin' };
+                    }
+                });
+            }
             this.$watch('activePage', () => {
                 this.mobileMenuOpen = false;
                 this.refreshIcons();
