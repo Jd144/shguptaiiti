@@ -124,6 +124,14 @@
         .gallery-slide { position: relative; height: 330px; border-radius: 16px; overflow: hidden; background: #e2e8f0; }
         .gallery-slide img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-slide-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; color: #fff; background: linear-gradient(to top, rgba(0,0,0,.78), transparent); font-weight: 700; }
+        .pi-profile-row { align-items: stretch; }
+        .pi-profile-img { width: 170px; align-self: stretch; object-fit: cover; }
+        .team-section-title { display: flex; align-items: center; gap: 14px; margin: 34px 0 18px; font-family: 'Poppins', sans-serif; font-weight: 800; }
+        .team-section-title::after { content: ""; flex: 1; height: 2px; background: currentColor; opacity: .35; }
+        .clickable-media { cursor: zoom-in; }
+        .lightbox { position: fixed; inset: 0; background: rgba(2,6,23,.88); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 22px; }
+        .lightbox img, .lightbox video { max-width: min(1100px, 96vw); max-height: 86vh; border-radius: 12px; background: #000; box-shadow: 0 24px 70px rgba(0,0,0,.42); }
+        .footer-logo { width: 58px; height: 58px; object-fit: contain; border-radius: 10px; background: rgba(255,255,255,.95); padding: 6px; }
 
         /* Toast */
         #toast { position: fixed; bottom: 22px; right: 22px; background: #1a1a2e; color: #fff; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 28px rgba(0,0,0,.3); z-index: 9999; display: none; align-items: center; gap: 8px; max-width: 320px; }
@@ -172,6 +180,7 @@
             .adm-card { overflow-x: auto; }
             #toast { left: 12px; right: 12px; bottom: 12px; max-width: none; }
             .gallery-slide { height: 220px; }
+            .pi-profile-img { width: 100%; height: auto; max-height: 360px; }
         }
     </style>
 </head>
@@ -203,7 +212,7 @@
         <div class="flex items-center justify-between h-20">
             <div class="flex items-center gap-3 cursor-pointer mobile-text-fit" @click="activePage = 'home'; mobileMenuOpen = false">
                 <template x-if="labLogo">
-                    <img :src="labLogo" alt="Brand Logo" class="h-12 w-12 object-contain rounded-md bg-white p-1">
+                    <img :src="labLogo" alt="Brand Logo" class="h-12 w-12 object-contain rounded-md bg-white p-1 clickable-media" @click.stop="openLightbox(labLogo, 'image', 'Brand Logo')">
                 </template>
                 <div>
                     <h1 class="text-xl font-bold font-poppins" x-text="homeData.labCode">IIT Indore</h1>
@@ -314,8 +323,8 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                 <div class="lg:col-span-2 space-y-8">
                     <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins" :style="{ color: themeColors.navy }">Principal Investigator</h3>
-                        <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-                            <img :src="homeData.piImage" alt="PI" class="w-44 h-44 rounded-2xl object-cover shadow-sm border-4" :style="{ borderColor: themeColors.sky }">
+                        <div class="pi-profile-row flex flex-col sm:flex-row gap-6">
+                            <img :src="homeData.piImage" alt="PI" class="pi-profile-img rounded-2xl shadow-sm border-4 clickable-media" :style="{ borderColor: themeColors.sky }" @click="openLightbox(homeData.piImage, 'image', homeData.piName)">
                             <div class="space-y-3 text-center sm:text-left">
                                 <h4 class="text-2xl font-bold text-slate-900" x-text="homeData.piName"></h4>
                                 <p class="text-sm font-semibold" :style="{ color: themeColors.sky }" x-text="homeData.piRole"></p>
@@ -333,10 +342,10 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                 <div class="bg-slate-50 border rounded-xl overflow-hidden shadow-2xs flex flex-col justify-between">
                                     <div class="relative bg-black h-48 flex items-center justify-center overflow-hidden">
                                         <template x-if="media.type === 'video'">
-                                            <video :src="media.url" controls class="w-full h-full object-cover"></video>
+                                            <video :src="media.url" controls class="w-full h-full object-cover clickable-media" @click.stop="openLightbox(media.url, 'video', media.title)"></video>
                                         </template>
                                         <template x-if="media.type === 'image'">
-                                            <img :src="media.url" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+                                            <img :src="media.url" class="w-full h-full object-cover hover:scale-105 transition duration-300 clickable-media" @click="openLightbox(media.url, 'image', media.title)" />
                                         </template>
                                         <template x-if="media.type === 'document'">
                                             <a :href="media.url" :download="media.fileName || media.title" class="w-full h-full flex flex-col items-center justify-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition">
@@ -360,7 +369,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                         </h3>
                         <div x-show="gallery.length" class="space-y-4">
                             <div class="gallery-slide">
-                                <img :src="currentGalleryImage().url" :alt="currentGalleryImage().title">
+                                <img :src="currentGalleryImage().url" :alt="currentGalleryImage().title" class="clickable-media" @click="openLightbox(currentGalleryImage().url, 'image', currentGalleryImage().title)">
                                 <div class="gallery-slide-caption" x-text="currentGalleryImage().title"></div>
                                 <button @click="previousSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 text-white text-xl leading-none">‹</button>
                                 <button @click="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 text-white text-xl leading-none">›</button>
@@ -415,38 +424,47 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
     <!-- PEOPLE PAGE (original) -->
     <div x-show="activePage === 'people'" class="max-w-7xl mx-auto px-4 py-12" x-transition>
-        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Our Superstars'"></h2>
+        <h2 class="text-3xl font-bold mb-2 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Team Member'"></h2>
+        <p class="text-center text-slate-500 font-semibold mb-6" x-text="siteSettings.teamSubtitle || 'Our Superstars'"></p>
         <div class="flex flex-wrap justify-center gap-2 mb-10">
-            <template x-for="cat in ['All', 'Faculty', 'Post Doc', 'PhD', 'MSc', 'MTech', 'Intern', 'Alumni']">
+            <template x-for="cat in ['All', ...teamCategoryOrder]">
                 <button @click="peopleFilter = cat"
                         class="px-4 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer"
                         :style="peopleFilter === cat ? { backgroundColor: themeColors.sky, color: '#fff', borderColor: themeColors.sky } : { backgroundColor: '#fff', color: '#475569' }"
                         x-text="cat"></button>
             </template>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <template x-for="person in people" :key="person.id">
-                <div x-show="peopleFilter === 'All' || person.category === peopleFilter"
-                     class="bg-white p-5 rounded-2xl shadow-2xs border border-slate-100 flex flex-col justify-between text-center space-y-4">
-                    <div>
-                        <img :src="person.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80'" class="w-24 h-24 rounded-full mx-auto object-cover mb-2 ring-4 ring-blue-100">
-                        <h4 class="font-bold text-slate-900 text-base" x-text="person.name"></h4>
-                        <p class="text-xs font-semibold inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mt-1" x-text="person.role"></p>
-                        <template x-if="person.researchArea">
-                            <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
-                        </template>
-                        <template x-if="person.bio">
-                            <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2 rich-content" x-html="person.bio"></p>
-                        </template>
-                    </div>
-                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                        <span class="font-mono text-[10px]" x-text="person.email"></span>
-                        <template x-if="person.scholarUrl">
-                            <a :href="person.scholarUrl" target="_blank" class="text-blue-500 font-bold hover:underline inline-flex items-center gap-0.5">🎓 Scholar</a>
-                        </template>
-                    </div>
+
+        <template x-for="category in visibleTeamCategories()" :key="category">
+            <section>
+                <h3 class="team-section-title text-xl" :style="{ color: themeColors.navy }" x-text="category === 'Faculty' ? 'Principal Investigator' : category"></h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <template x-for="person in peopleByCategory(category)" :key="person.id">
+                        <div class="bg-white p-5 rounded-2xl shadow-2xs border border-slate-100 flex flex-col justify-between text-center space-y-4">
+                            <div>
+                                <img :src="person.img || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80'" class="w-24 h-24 rounded-full mx-auto object-cover mb-2 ring-4 ring-blue-100 clickable-media" @click="openLightbox(person.img, 'image', person.name)">
+                                <h4 class="font-bold text-slate-900 text-base" x-text="person.name"></h4>
+                                <p class="text-xs font-semibold inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mt-1" x-text="person.role"></p>
+                                <template x-if="person.researchArea">
+                                    <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
+                                </template>
+                                <template x-if="person.bio">
+                                    <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2 rich-content" x-html="person.bio"></p>
+                                </template>
+                            </div>
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                                <span class="font-mono text-[10px]" x-text="person.email"></span>
+                                <template x-if="person.scholarUrl">
+                                    <a :href="person.scholarUrl" target="_blank" class="text-blue-500 font-bold hover:underline inline-flex items-center gap-0.5">🎓 Scholar</a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                 </div>
-            </template>
+            </section>
+        </template>
+        <div x-show="!visibleTeamCategories().length" class="bg-white p-8 rounded-2xl text-center text-slate-500 border border-slate-100">
+            No team members available in this category.
         </div>
     </div>
 
@@ -511,12 +529,24 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
         <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['contact'] || 'Contact'"></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
-                <h3 class="text-lg font-bold text-slate-900">Lab Location</h3>
-                <p class="text-sm text-slate-600 leading-relaxed">IIT Indore Campus, Khandwa Road, Simrol, Madhya Pradesh, India.</p>
+                <h3 class="text-lg font-bold text-slate-900">Contact Information</h3>
+                <div class="text-sm text-slate-700 leading-8 space-y-2">
+                    <p class="font-bold text-slate-900">Prof. Sharad Gupta, Ph.D</p>
+                    <p>Cabin No. 716 A, 6th floor, POD 1A</p>
+                    <p>Mehta Family School of Biosciences and Biomedical Engineering (MFSBSBE)</p>
+                    <p>Indian Institute of Technology Indore</p>
+                    <p>Khandwa Road, Simrol, Indore, Madhya Pradesh, 453252</p>
+                    <p class="flex items-center gap-2 pt-2"><i data-lucide="mail" class="w-4 h-4" :style="{ color: themeColors.navy }"></i><a class="font-semibold hover:underline" href="mailto:shgupta@iiti.ac.in">shgupta@iiti.ac.in</a></p>
+                    <p class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4" :style="{ color: themeColors.navy }"></i><a class="font-semibold hover:underline" href="tel:+91731660222">+91-731-660222</a></p>
+                </div>
             </div>
-            <div class="bg-slate-200 rounded-2xl h-48 flex flex-col justify-center items-center text-slate-400 font-medium">
-                <i data-lucide="map-pin" class="w-6 h-6 mb-1 text-rose-500"></i>
-                <span class="text-xs">Map Sensor Tracking Area</span>
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden min-h-[360px]">
+                <iframe
+                    title="IIT Indore Google Map"
+                    src="https://www.google.com/maps?q=Indian%20Institute%20of%20Technology%20Indore%20Khandwa%20Road%20Simrol%20Indore&output=embed"
+                    class="w-full h-full min-h-[360px]"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </div>
@@ -922,13 +952,9 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <div>
                                             <label class="adm-label">Category *</label>
                                             <select x-model="teamForm.category" class="adm-input" style="appearance:auto">
-                                                <option value="Faculty">Faculty / PI</option>
-                                                <option value="Post Doc">Post Doc</option>
-                                                <option value="PhD">PhD Scholar</option>
-                                                <option value="MSc">MSc Student</option>
-                                                <option value="MTech">MTech Student</option>
-                                                <option value="Intern">Intern</option>
-                                                <option value="Alumni">Alumni</option>
+                                                <template x-for="cat in teamCategoryOrder" :key="'team-form-' + cat">
+                                                    <option :value="cat" x-text="cat === 'Faculty' ? 'Faculty / PI' : cat"></option>
+                                                </template>
                                             </select>
                                         </div>
                                     </div>
@@ -1353,7 +1379,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                 <div class="p-4 grid grid-cols-3 gap-3">
                                     <template x-for="img in gallery" :key="img.id">
                                         <div style="position:relative;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0">
-                                            <img :src="img.url" style="width:100%;height:100px;object-fit:cover">
+                                            <img :src="img.url" style="width:100%;height:100px;object-fit:cover" class="clickable-media" @click="openLightbox(img.url, 'image', img.title)">
                                             <div style="padding:8px;background:#f8fafc">
                                                 <div style="font-size:12px;font-weight:600" x-text="img.title"></div>
                                             </div>
@@ -1471,6 +1497,35 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.sky}"></div>
                                         <div style="font-size:12px;color:#6b7280">Live preview — changes apply to navbar, buttons, and headings instantly.</div>
                                     </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="adm-label">Footer Left Logo URL (IIT Indore)</label>
+                                            <input type="text" x-model="siteSettings.footerLeftLogo" class="adm-input" placeholder="Paste IIT Indore logo URL">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Footer Right Logo URL (Lab Logo)</label>
+                                            <input type="text" x-model="siteSettings.footerRightLogo" class="adm-input" placeholder="Paste lab logo URL or leave blank for uploaded logo">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Team Page Subtitle</label>
+                                        <input type="text" x-model="siteSettings.teamSubtitle" class="adm-input" placeholder="Our Superstars">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Team Category Order</label>
+                                        <div class="space-y-2">
+                                            <template x-for="(cat, idx) in teamCategoryOrder" :key="cat">
+                                                <div class="flex items-center gap-2 bg-slate-50 border rounded-lg p-2">
+                                                    <span class="text-xs font-bold text-slate-500 w-6" x-text="idx + 1"></span>
+                                                    <input type="text" x-model="teamCategoryOrder[idx]" class="adm-input" style="flex:1">
+                                                    <button class="btn-sm" @click="moveTeamCategoryUp(idx)" x-show="idx > 0">Up</button>
+                                                    <button class="btn-sm" @click="moveTeamCategoryDown(idx)" x-show="idx < teamCategoryOrder.length - 1">Down</button>
+                                                    <button class="btn-sm btn-del" @click="teamCategoryOrder.splice(idx, 1)">Remove</button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <button class="btn-sm mt-2" @click="teamCategoryOrder.push('New Category')">+ Add Category</button>
+                                    </div>
                                     <div class="flex flex-wrap gap-3">
                                         <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
                                         <button class="btn-sm btn-del" @click="resetSavedState()">Reset Saved Browser Data</button>
@@ -1487,8 +1542,51 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
 </main>
 
-<!-- FOOTER (original) -->
+<!-- FOOTER -->
 <footer class="text-white py-8 transition-colors duration-300" :style="{ backgroundColor: themeColors.navy }">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+        <div class="flex items-center justify-center md:justify-start gap-3">
+            <template x-if="siteSettings.footerLeftLogo">
+                <img :src="siteSettings.footerLeftLogo" class="footer-logo clickable-media" alt="IIT Indore Logo" @click="openLightbox(siteSettings.footerLeftLogo, 'image', 'IIT Indore Logo')">
+            </template>
+            <div class="text-center md:text-left">
+                <div class="font-bold text-sm">Biophysics & Biomedical Engineering Lab</div>
+                <div class="text-xs opacity-75">Indian Institute of Technology Indore</div>
+            </div>
+        </div>
+        <div class="text-center">
+            <h4 class="font-bold text-sm mb-3">Quick Links</h4>
+            <div class="flex flex-wrap justify-center gap-3 text-xs">
+                <template x-for="menuItem in menuOrder" :key="'footer-' + menuItem">
+                    <button @click="activePage = menuItem.toLowerCase(); window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100" x-text="pageNames[menuItem.toLowerCase()] || menuItem"></button>
+                </template>
+            </div>
+        </div>
+        <div class="flex items-center justify-center md:justify-end gap-3">
+            <div class="text-center md:text-right">
+                <div class="text-xs opacity-75">Powered by BPBME CMS</div>
+                <div class="text-xs opacity-75">© 2026 IIT Indore</div>
+            </div>
+            <template x-if="siteSettings.footerRightLogo || labLogo">
+                <img :src="siteSettings.footerRightLogo || labLogo" class="footer-logo clickable-media" alt="Lab Logo" @click="openLightbox(siteSettings.footerRightLogo || labLogo, 'image', 'Lab Logo')">
+            </template>
+        </div>
+    </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div x-cloak x-show="lightbox.open" x-transition class="lightbox" @click="closeLightbox()" @keydown.escape.window="closeLightbox()">
+    <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white text-slate-900 text-2xl font-bold" @click.stop="closeLightbox()">×</button>
+    <template x-if="lightbox.type === 'image'">
+        <img :src="lightbox.src" :alt="lightbox.title" @click.stop>
+    </template>
+    <template x-if="lightbox.type === 'video'">
+        <video :src="lightbox.src" controls autoplay @click.stop></video>
+    </template>
+</div>
+
+<!-- OLD FOOTER (hidden) -->
+<footer class="hidden text-white py-8 transition-colors duration-300" :style="{ backgroundColor: themeColors.navy }">
     <div class="max-w-7xl mx-auto px-4 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-75">
         <p>© 2026 Biophysics & Biomedical Engineering Lab, IIT Indore.</p>
         <p>Powered by BPBME CMS</p>
@@ -1533,6 +1631,7 @@ function labCMS() {
         labLogo: '',
         currentGalleryIndex: 0,
         galleryTimer: null,
+        lightbox: { open: false, src: '', type: 'image', title: '' },
 
         usersRegistry: [
             { name: 'Dr. S. Gupta (Super Admin)', email: 'superadmin@iiti.ac.in', password: 'admin123', role: 'Super Admin' }
@@ -1548,7 +1647,10 @@ function labCMS() {
             heroBgColor: '#0F4C81',
             heroBgImage: '',
             heroTitleColor: '#ffffff',
-            heroSubtitleColor: '#e0f2fe'
+            heroSubtitleColor: '#e0f2fe',
+            teamSubtitle: 'Our Superstars',
+            footerLeftLogo: '',
+            footerRightLogo: ''
         },
 
         // PAGE NAMES — editable in admin
@@ -1562,6 +1664,7 @@ function labCMS() {
         },
 
         menuOrder: ['Home', 'Research', 'People', 'Publications', 'Opportunities', 'Contact'],
+        teamCategoryOrder: ['Faculty', 'PhD', 'Post Doc', 'MSc', 'MTech', 'Intern', 'Alumni'],
 
         // DATA
         homeData: {
@@ -1626,7 +1729,7 @@ function labCMS() {
 
         persistKeys: [
             'showAnnBar', 'labLogo', 'usersRegistry', 'themeColors', 'siteSettings', 'pageNames',
-            'menuOrder', 'homeData', 'labMediaList', 'news', 'gallery',
+            'menuOrder', 'teamCategoryOrder', 'homeData', 'labMediaList', 'news', 'gallery',
             'researchAreas', 'people', 'publications', 'opportunities',
             'announcements'
         ],
@@ -1730,6 +1833,44 @@ function labCMS() {
                 this.homeData.piBio = editor.innerHTML;
                 editor.focus();
             }
+        },
+
+        peopleByCategory(category) {
+            return this.people.filter(person => person.category === category);
+        },
+
+        visibleTeamCategories() {
+            const categories = this.teamCategoryOrder.filter(category => {
+                const hasPeople = this.people.some(person => person.category === category);
+                return hasPeople && (this.peopleFilter === 'All' || this.peopleFilter === category);
+            });
+            const extraCategories = [...new Set(this.people.map(person => person.category))]
+                .filter(category => !this.teamCategoryOrder.includes(category))
+                .filter(category => this.peopleFilter === 'All' || this.peopleFilter === category);
+            return [...categories, ...extraCategories];
+        },
+
+        moveTeamCategoryUp(idx) {
+            if (idx <= 0) return;
+            const arr = [...this.teamCategoryOrder];
+            [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+            this.teamCategoryOrder = arr;
+        },
+
+        moveTeamCategoryDown(idx) {
+            if (idx >= this.teamCategoryOrder.length - 1) return;
+            const arr = [...this.teamCategoryOrder];
+            [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+            this.teamCategoryOrder = arr;
+        },
+
+        openLightbox(src, type = 'image', title = '') {
+            if (!src) return;
+            this.lightbox = { open: true, src, type, title };
+        },
+
+        closeLightbox() {
+            this.lightbox = { open: false, src: '', type: 'image', title: '' };
         },
 
         // ── AUTH ──
