@@ -444,8 +444,8 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
     <!-- PEOPLE PAGE (original) -->
     <div x-show="activePage === 'people'" class="max-w-7xl mx-auto px-4 py-12" x-transition>
-        <h2 class="text-3xl font-bold mb-2 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Team Member'"></h2>
-        <p class="text-center text-slate-500 font-semibold mb-6" x-text="siteSettings.teamSubtitle || 'Our Superstars'"></p>
+        <h2 class="text-3xl font-bold mb-2 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Our Superstars'"></h2>
+        <p class="text-center text-slate-500 font-semibold mb-6" x-text="siteSettings.teamSubtitle || '.'"></p>
         <div class="flex flex-wrap justify-center gap-2 mb-10">
             <template x-for="cat in ['All', ...teamCategoryOrder]">
                 <button @click="peopleFilter = cat"
