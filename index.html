@@ -355,7 +355,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
                     <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
-                            <i data-lucide="clapperboard" class="w-5 h-5"></i> EVENT
+                            <i data-lucide="clapperboard" class="w-5 h-5"></i> Lab Media
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <template x-for="media in labMediaList" :key="media.id">
@@ -444,8 +444,8 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
     <!-- PEOPLE PAGE (original) -->
     <div x-show="activePage === 'people'" class="max-w-7xl mx-auto px-4 py-12" x-transition>
-        <h2 class="text-3xl font-bold mb-2 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Our Superstars'"></h2>
-        <p class="text-center text-slate-500 font-semibold mb-6" x-text="siteSettings.teamSubtitle || '.'"></p>
+        <h2 class="text-3xl font-bold mb-2 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['people'] || 'Team Member'"></h2>
+        <p class="text-center text-slate-500 font-semibold mb-6" x-text="siteSettings.teamSubtitle || 'Our Superstars'"></p>
         <div class="flex flex-wrap justify-center gap-2 mb-10">
             <template x-for="cat in ['All', ...teamCategoryOrder]">
                 <button @click="peopleFilter = cat"
@@ -502,6 +502,14 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                     <h4 class="text-base font-bold text-slate-900 mt-2" x-text="pub.title"></h4>
                     <p class="text-xs text-slate-600 mt-1 italic" x-text="pub.authors"></p>
                     <p class="text-[11px] text-slate-400 mt-1 font-semibold" x-text="pub.journal"></p>
+                    <template x-if="pub.doi">
+                        <a :href="doiUrl(pub.doi)" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1 mt-3 px-3 py-1.5 rounded-full text-xs font-bold text-white hover:opacity-90 transition"
+                           :style="{ backgroundColor: themeColors.navy }">
+                            <i data-lucide="external-link" class="w-3 h-3"></i>
+                            View DOI / Paper
+                        </a>
+                    </template>
                 </div>
             </template>
         </div>
@@ -1089,7 +1097,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                             <div class="adm-card">
                                 <div class="adm-card-hd">
                                     <div class="adm-card-title">📚 Publications Manager</div>
-                                    <button class="btn-pri text-xs" @click="showPubForm=true;editingPubId=null;pubForm={title:'',authors:'',journal:'',year:''}">+ Add Publication</button>
+                                    <button class="btn-pri text-xs" @click="showPubForm=true;editingPubId=null;pubForm={title:'',authors:'',journal:'',year:'',doi:''}">+ Add Publication</button>
                                 </div>
                                 <!-- Add form -->
                                 <div x-show="showPubForm" class="p-5 border-b bg-slate-50 space-y-3">
@@ -1773,7 +1781,7 @@ function labCMS() {
         pageNames: {
             home: 'Home',
             research: 'Research',
-            people: 'Our Superstars',
+            people: 'Team mamber',
             publications: 'Publications',
             opportunities: 'Opportunities',
             contact: 'Contact'
@@ -2185,6 +2193,7 @@ function labCMS() {
         },
         savePub() {
             if (!this.pubForm.title || !this.pubForm.authors) { this.showToast('⚠️ Title & Authors required'); return; }
+            this.pubForm.doi = (this.pubForm.doi || '').trim();
             if (this.editingPubId) {
                 const i = this.publications.findIndex(p => p.id === this.editingPubId);
                 if (i > -1) this.publications[i] = { ...this.publications[i], ...this.pubForm };
@@ -2195,6 +2204,7 @@ function labCMS() {
             }
             this.showPubForm = false;
             this.editingPubId = null;
+            this.refreshIcons();
         },
 
         // ── OPPORTUNITIES ──
@@ -2505,7 +2515,7 @@ function labCMS() {
 
         // ── PAGE NAMES ──
         resetPageNames() {
-            this.pageNames = { home:'Home', research:'Research', people:'Our Superstars', publications:'Publications', opportunities:'Opportunities', contact:'Contact' };
+            this.pageNames = { home:'Home', research:'Research', people:'Team mamber', publications:'Publications', opportunities:'Opportunities', contact:'Contact' };
             this.showToast('✅ Page names reset to defaults.');
         },
 
@@ -2530,6 +2540,14 @@ function labCMS() {
                 p.title.toLowerCase().includes(this.pubSearch.toLowerCase()) ||
                 p.authors.toLowerCase().includes(this.pubSearch.toLowerCase())
             );
+        },
+
+        doiUrl(doi) {
+            const value = String(doi || '').trim();
+            if (!value) return '#';
+            if (value.startsWith('http://') || value.startsWith('https://')) return value;
+            if (value.startsWith('doi.org/')) return 'https://' + value;
+            return 'https://doi.org/' + value.replace(/^doi:\s*/i, '');
         },
 
         // ── TOAST ──
