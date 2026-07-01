@@ -144,6 +144,15 @@
         .gallery-slide { position: relative; height: 330px; border-radius: 16px; overflow: hidden; background: #e2e8f0; }
         .gallery-slide img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-slide-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; color: #fff; background: linear-gradient(to top, rgba(0,0,0,.78), transparent); font-weight: 700; }
+        .pub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        .year-filter-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; color: #475569; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .news-scroll-box { max-height: 310px; overflow: hidden; position: relative; }
+        .news-scroll-list { animation: newsVerticalScroll linear infinite; }
+        .news-scroll-box:hover .news-scroll-list { animation-play-state: paused; }
+        @keyframes newsVerticalScroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+        .nav-submenu { position: absolute; top: 42px; left: 0; min-width: 180px; background: #fff; color: #0f172a; border-radius: 10px; box-shadow: 0 18px 45px rgba(15,23,42,.18); padding: 8px; z-index: 80; }
+        .nav-submenu button { width: 100%; text-align: left; padding: 9px 11px; border-radius: 8px; font-size: 13px; font-weight: 700; }
+        .nav-submenu button:hover { background: #f1f5f9; }
         .pi-profile-row { align-items: stretch; }
         .pi-profile-img { width: 170px; align-self: stretch; object-fit: cover; }
         .team-section-title { display: flex; align-items: center; gap: 14px; margin: 34px 0 18px; font-family: 'Poppins', sans-serif; font-weight: 800; }
@@ -201,6 +210,7 @@
             #toast { left: 12px; right: 12px; bottom: 12px; max-width: none; }
             .gallery-slide { height: 220px; }
             .pi-profile-img { width: 100%; height: auto; max-height: 360px; }
+            .pub-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -243,11 +253,19 @@
             <div class="hidden md:block">
                 <div class="ml-10 flex items-baseline space-x-2">
                     <template x-for="(menuItem, index) in menuOrder" :key="index">
-                        <button @click="activePage = menuItem.toLowerCase()"
-                                class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer capitalize"
-                                :class="activePage === menuItem.toLowerCase() ? 'bg-black/20 shadow-inner' : 'hover:bg-white/10'"
-                                x-text="pageNames[menuItem.toLowerCase()] || menuItem">
-                        </button>
+                        <div class="relative">
+                            <button @click="handleNavClick(menuItem)"
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer capitalize"
+                                    :class="activePage === menuItem.toLowerCase() ? 'bg-black/20 shadow-inner' : 'hover:bg-white/10'"
+                                    x-text="pageNames[menuItem.toLowerCase()] || menuItem">
+                            </button>
+                            <template x-if="menuItem.toLowerCase() === 'publications' && navPubMenuOpen">
+                                <div class="nav-submenu" @click.outside="navPubMenuOpen=false">
+                                    <button @click="activePage='publications'; publicationTab='publications'; navPubMenuOpen=false">Publications</button>
+                                    <button @click="activePage='publications'; publicationTab='patents'; navPubMenuOpen=false">Patents</button>
+                                </div>
+                            </template>
+                        </div>
                     </template>
                 </div>
             </div>
@@ -274,11 +292,19 @@
 
         <div x-cloak x-show="mobileMenuOpen" x-transition class="md:hidden pb-4 space-y-2">
             <template x-for="(menuItem, index) in menuOrder" :key="'mobile-' + index">
-                <button @click="activePage = menuItem.toLowerCase(); mobileMenuOpen = false"
-                        class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold capitalize transition"
-                        :class="activePage === menuItem.toLowerCase() ? 'bg-black/25' : 'bg-white/10 hover:bg-white/15'"
-                        x-text="pageNames[menuItem.toLowerCase()] || menuItem">
-                </button>
+                <div>
+                    <button @click="handleMobileNavClick(menuItem)"
+                            class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold capitalize transition"
+                            :class="activePage === menuItem.toLowerCase() ? 'bg-black/25' : 'bg-white/10 hover:bg-white/15'"
+                            x-text="pageNames[menuItem.toLowerCase()] || menuItem">
+                    </button>
+                    <template x-if="menuItem.toLowerCase() === 'publications'">
+                        <button @click="activePage='publications'; publicationTab='patents'; mobileMenuOpen=false"
+                                class="w-full text-left px-8 py-2 rounded-lg text-xs font-semibold bg-white/5 hover:bg-white/10">
+                            Patents
+                        </button>
+                    </template>
+                </div>
             </template>
             <template x-if="!isLoggedIn">
                 <button @click="activePage = 'login-gateway'; mobileMenuOpen = false" class="w-full px-4 py-3 rounded-lg text-sm font-bold bg-amber-400 text-slate-900 flex items-center justify-center gap-2">
@@ -413,8 +439,9 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins flex items-center gap-2" :style="{ color: themeColors.navy }">
                             <i data-lucide="newspaper" class="w-5 h-5"></i> News & Updates
                         </h3>
-                        <div class="space-y-6">
-                            <template x-for="item in news" :key="item.id">
+                        <div class="news-scroll-box">
+                            <div class="news-scroll-list space-y-6" :style="{ animationDuration: siteSettings.newsScrollSeconds + 's' }">
+                            <template x-for="item in duplicatedNews()" :key="item._key">
                                 <div class="flex gap-3 border-l-2 pl-3" :style="{ borderLeftColor: themeColors.sky }">
                                     <div>
                                         <span class="text-[10px] font-bold tracking-wider text-slate-400 block" x-text="item.date"></span>
@@ -422,6 +449,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                     </div>
                                 </div>
                             </template>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -435,8 +463,26 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
         <div class="space-y-6">
             <template x-for="r in researchAreas" :key="r.id">
                 <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-100">
-                    <h3 class="text-xl font-bold mb-2 text-slate-900" x-text="r.title"></h3>
-                    <p class="text-slate-600 text-sm leading-relaxed rich-content" x-html="r.desc"></p>
+                    <div class="flex items-center justify-between gap-4">
+                        <h3 class="text-xl font-bold text-slate-900" x-text="r.title"></h3>
+                        <button class="btn-sm" @click="toggleResearch(r.id)" x-text="expandedResearchId === r.id ? 'Hide Details' : 'View More'"></button>
+                    </div>
+                    <div x-show="expandedResearchId === r.id" x-transition class="mt-4 space-y-4">
+                        <p class="text-slate-600 text-sm leading-relaxed rich-content" x-html="r.details || r.desc"></p>
+                        <template x-if="r.mediaUrl">
+                            <div class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+                                <template x-if="r.mediaType === 'image'">
+                                    <img :src="r.mediaUrl" class="w-full max-h-[420px] object-cover clickable-media" @click="openLightbox(r.mediaUrl, 'image', r.title)">
+                                </template>
+                                <template x-if="r.mediaType === 'video'">
+                                    <video :src="r.mediaUrl" controls class="w-full max-h-[420px] bg-black"></video>
+                                </template>
+                                <template x-if="r.mediaType === 'document'">
+                                    <a :href="r.mediaUrl" target="_blank" class="block p-5 text-sm font-bold text-blue-600 hover:underline">Open Research Document</a>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </template>
         </div>
@@ -490,12 +536,28 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 
     <!-- PUBLICATIONS PAGE (original) -->
     <div x-show="activePage === 'publications'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
-        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['publications'] || 'Publications'"></h2>
+        <h2 class="text-3xl font-bold mb-6 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="publicationTab === 'patents' ? 'Patents' : (pageNames['publications'] || 'Publications')"></h2>
+        <div class="flex justify-center gap-2 mb-6">
+            <button class="year-filter-btn" @click="publicationTab='publications'" :style="publicationTab === 'publications' ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}">Publications</button>
+            <button class="year-filter-btn" @click="publicationTab='patents'" :style="publicationTab === 'patents' ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}">Patents</button>
+        </div>
         <div class="mb-8 max-w-md mx-auto relative">
-            <input type="text" x-model="pubSearch" placeholder="Search papers..." class="w-full px-4 py-2.5 pl-10 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <input type="text" x-model="pubSearch" :placeholder="publicationTab === 'patents' ? 'Search patents...' : 'Search papers...'" class="w-full px-4 py-2.5 pl-10 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
             <div class="absolute left-3 top-3.5 text-slate-400"><i data-lucide="search" class="w-4 h-4"></i></div>
         </div>
-        <div class="space-y-4">
+        <div x-show="publicationTab === 'publications'" class="flex flex-wrap justify-center gap-2 mb-8">
+            <button class="year-filter-btn" @click="selectedPubYear='All'" :style="selectedPubYear === 'All' ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}">All</button>
+            <template x-for="year in publicationYears()" :key="'pub-year-' + year">
+                <button class="year-filter-btn" @click="selectedPubYear=year" :style="selectedPubYear === year ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}" x-text="year"></button>
+            </template>
+        </div>
+        <div x-show="publicationTab === 'patents'" class="flex flex-wrap justify-center gap-2 mb-8">
+            <button class="year-filter-btn" @click="selectedPatentYear='All'" :style="selectedPatentYear === 'All' ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}">All</button>
+            <template x-for="year in patentYears()" :key="'pat-year-' + year">
+                <button class="year-filter-btn" @click="selectedPatentYear=year" :style="selectedPatentYear === year ? { backgroundColor: themeColors.navy, borderColor: themeColors.navy, color: '#fff' } : {}" x-text="year"></button>
+            </template>
+        </div>
+        <div x-show="publicationTab === 'publications'" class="pub-grid">
             <template x-for="pub in filteredPublications" :key="pub.id">
                 <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs transition hover:border-l-4" :style="{ borderLeftColor: themeColors.sky }">
                     <span class="text-[10px] px-2 py-0.5 rounded text-white font-bold uppercase tracking-wider" :style="{ backgroundColor: themeColors.navy }" x-text="pub.year"></span>
@@ -508,6 +570,22 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                            :style="{ backgroundColor: themeColors.navy }">
                             <i data-lucide="external-link" class="w-3 h-3"></i>
                             View DOI / Paper
+                        </a>
+                    </template>
+                </div>
+            </template>
+        </div>
+        <div x-show="publicationTab === 'patents'" class="pub-grid">
+            <template x-for="patent in filteredPatents()" :key="patent.id">
+                <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-xs transition hover:border-l-4" :style="{ borderLeftColor: themeColors.sky }">
+                    <span class="text-[10px] px-2 py-0.5 rounded text-white font-bold uppercase tracking-wider" :style="{ backgroundColor: themeColors.navy }" x-text="patent.year"></span>
+                    <h4 class="text-base font-bold text-slate-900 mt-2" x-text="patent.title"></h4>
+                    <p class="text-xs text-slate-600 mt-1 italic" x-text="patent.inventors"></p>
+                    <p class="text-[11px] text-slate-400 mt-1 font-semibold" x-text="patent.status"></p>
+                    <template x-if="patent.link">
+                        <a :href="doiUrl(patent.link)" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-3 px-3 py-1.5 rounded-full text-xs font-bold text-white hover:opacity-90 transition" :style="{ backgroundColor: themeColors.navy }">
+                            <i data-lucide="external-link" class="w-3 h-3"></i>
+                            View Patent
                         </a>
                     </template>
                 </div>
@@ -672,6 +750,9 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                             </button>
                             <button class="adm-btn" :class="adminSubTab==='pubs-mgr'?'active':''" @click="adminSubTab='pubs-mgr';adminPanelTitle='Publications Manager'">
                                 <span>📚</span> Publications <span class="badge" x-text="publications.length"></span>
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='patents-mgr'?'active':''" @click="adminSubTab='patents-mgr';adminPanelTitle='Patents Manager'">
+                                <span>🧾</span> Patents <span class="badge" x-text="patents.length"></span>
                             </button>
                             <button class="adm-btn" :class="adminSubTab==='research-mgr'?'active':''" @click="adminSubTab='research-mgr';adminPanelTitle='Research Areas'">
                                 <span>🔬</span> Research Areas
@@ -1155,6 +1236,67 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                             </div>
                         </div>
 
+                        <!-- ── PATENTS ── -->
+                        <div x-show="adminSubTab === 'patents-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🧾 Patents Manager</div>
+                                    <button class="btn-pri text-xs" @click="showPatentForm=true;editingPatentId=null;patentForm={title:'',inventors:'',year:'',status:'Filed',link:''}">+ Add Patent</button>
+                                </div>
+                                <div x-show="showPatentForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div>
+                                        <label class="adm-label">Patent Title *</label>
+                                        <input type="text" x-model="patentForm.title" class="adm-input">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Inventors *</label>
+                                            <input type="text" x-model="patentForm.inventors" class="adm-input">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Year *</label>
+                                            <input type="text" x-model="patentForm.year" class="adm-input" placeholder="2026">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Status</label>
+                                            <input type="text" x-model="patentForm.status" class="adm-input" placeholder="Filed / Granted / Published">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Patent Link</label>
+                                            <input type="text" x-model="patentForm.link" class="adm-input" placeholder="https://...">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="savePatent()">💾 Save Patent</button>
+                                        <button class="btn-sm" @click="showPatentForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Title</th><th>Inventors</th><th>Year</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="patent in patents" :key="patent.id">
+                                                <tr>
+                                                    <td style="font-weight:600;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="patent.title"></td>
+                                                    <td x-text="patent.inventors"></td>
+                                                    <td x-text="patent.year"></td>
+                                                    <td><span class="status-pub" x-text="patent.status"></span></td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editPatent(patent)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="patents=patents.filter(x=>x.id!==patent.id);showToast('Patent deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- ── RESEARCH AREAS ── -->
                         <div x-show="adminSubTab === 'research-mgr'" class="space-y-4">
                             <div class="adm-card">
@@ -1304,6 +1446,13 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                 <div class="adm-card-hd">
                                     <div class="adm-card-title">📰 News & Updates Manager</div>
                                     <button class="btn-pri text-xs" @click="showNewsForm=true;editingNewsId=null;newsForm={date:'',text:''}">+ Add News</button>
+                                </div>
+                                <div class="p-4 border-b bg-slate-50">
+                                    <label class="adm-label">Home News Vertical Scroll Speed (seconds)</label>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+                                        <input type="range" min="8" max="80" x-model.number="siteSettings.newsScrollSeconds" class="w-full">
+                                        <input type="number" min="8" max="80" x-model.number="siteSettings.newsScrollSeconds" class="adm-input" style="max-width:110px">
+                                    </div>
                                 </div>
                                 <div x-show="showNewsForm" class="p-5 border-b bg-slate-50 space-y-3">
                                     <div class="grid grid-cols-2 gap-3">
@@ -1728,6 +1877,11 @@ function labCMS() {
         adminSubTab: 'dashboard',
         adminPanelTitle: 'Dashboard',
         pubSearch: '',
+        selectedPubYear: 'All',
+        selectedPatentYear: 'All',
+        publicationTab: 'publications',
+        navPubMenuOpen: false,
+        expandedResearchId: null,
         showAnnBar: true,
         newAnnText: '',
 
@@ -1735,6 +1889,7 @@ function labCMS() {
         showMemberForm: false,
         showPubForm: false,
         showOppForm: false,
+        showPatentForm: false,
         showNewsForm: false,
         showMediaForm: false,
         showGalleryForm: false,
@@ -1743,6 +1898,7 @@ function labCMS() {
         editingMemberId: null,
         editingPubId: null,
         editingOppId: null,
+        editingPatentId: null,
         editingNewsId: null,
 
         // AUTH
@@ -1765,6 +1921,7 @@ function labCMS() {
         siteSettings: {
             slideshowSeconds: 5,
             annSpeedSeconds: 50,
+            newsScrollSeconds: 28,
             annBgStart: '#0F4C81',
             annBgEnd: '#2A7F9E',
             annTextColor: '#ffffff',
@@ -1832,6 +1989,10 @@ function labCMS() {
             { id: 2, title: 'Nanomaterial-based Biosensors for Early Cancer Diagnosis', authors: 'Gupta S., Sharma P., et al.', journal: 'Biosensors & Bioelectronics · Elsevier', year: '2025', doi: '' }
         ],
 
+        patents: [
+            { id: 1, title: 'Near-infrared fluorescence based bioimaging technology', inventors: 'Gupta S. et al.', year: '2026', status: 'Granted', link: '' }
+        ],
+
         opportunities: [
             { id: 1, position: 'Research Intern Position Call', type: 'Internship', deadline: 'July 15, 2026', status: 'Open', desc: 'Work on advanced computational biophotonics instrumentation algorithms.' }
         ],
@@ -1848,6 +2009,7 @@ function labCMS() {
         oppForm: { position: '', type: 'Internship', deadline: '', status: 'Open', desc: '' },
         newsForm: { date: '', text: '' },
         pubForm: { title: '', authors: '', journal: '', year: '', doi: '' },
+        patentForm: { title: '', inventors: '', year: '', status: 'Filed', link: '' },
         userForm: { name: '', email: '', password: '', role: 'Admin' },
         galleryForm: { title: '', url: '', fileName: '' },
         applications: [],
@@ -1867,7 +2029,7 @@ function labCMS() {
         persistKeys: [
             'showAnnBar', 'labLogo', 'usersRegistry', 'themeColors', 'siteSettings', 'pageNames',
             'menuOrder', 'teamCategoryOrder', 'homeData', 'labMediaList', 'news', 'gallery',
-            'researchAreas', 'people', 'publications', 'opportunities',
+            'researchAreas', 'people', 'publications', 'patents', 'opportunities',
             'announcements', 'applications'
         ],
 
@@ -2091,6 +2253,35 @@ function labCMS() {
             this.lightbox = { open: false, src: '', type: 'image', title: '' };
         },
 
+        handleNavClick(menuItem) {
+            const key = menuItem.toLowerCase();
+            if (key === 'publications') {
+                this.navPubMenuOpen = !this.navPubMenuOpen;
+                this.activePage = 'publications';
+                this.publicationTab = 'publications';
+                return;
+            }
+            this.navPubMenuOpen = false;
+            this.activePage = key;
+        },
+
+        handleMobileNavClick(menuItem) {
+            const key = menuItem.toLowerCase();
+            this.activePage = key;
+            if (key === 'publications') this.publicationTab = 'publications';
+            this.mobileMenuOpen = false;
+        },
+
+        toggleResearch(id) {
+            this.expandedResearchId = this.expandedResearchId === id ? null : id;
+        },
+
+        duplicatedNews() {
+            const first = this.news.map((item, index) => ({ ...item, _key: 'n' + index + '-' + item.id }));
+            const second = this.news.map((item, index) => ({ ...item, _key: 'd' + index + '-' + item.id }));
+            return [...first, ...second];
+        },
+
         // ── AUTH ──
         async handleLogin() {
             this.ensureDefaultAdmin();
@@ -2207,6 +2398,31 @@ function labCMS() {
             this.refreshIcons();
         },
 
+        editPatent(patent) {
+            this.editingPatentId = patent.id;
+            this.patentForm = { ...patent };
+            this.showPatentForm = true;
+        },
+
+        savePatent() {
+            if (!this.patentForm.title || !this.patentForm.inventors || !this.patentForm.year) {
+                this.showToast('⚠️ Title, inventors and year required');
+                return;
+            }
+            this.patentForm.link = (this.patentForm.link || '').trim();
+            if (this.editingPatentId) {
+                const i = this.patents.findIndex(p => p.id === this.editingPatentId);
+                if (i > -1) this.patents[i] = { ...this.patents[i], ...this.patentForm };
+                this.showToast('✅ Patent updated!');
+            } else {
+                this.patents.push({ id: Date.now(), ...this.patentForm });
+                this.showToast('✅ Patent added!');
+            }
+            this.showPatentForm = false;
+            this.editingPatentId = null;
+            this.refreshIcons();
+        },
+
         // ── OPPORTUNITIES ──
         editOpp(o) {
             this.editingOppId = o.id;
@@ -2305,15 +2521,27 @@ function labCMS() {
             const t = prompt('Research Area Title:');
             if (!t) return;
             const d = prompt('Short Description:') || 'Description here...';
-            this.researchAreas.push({ id: Date.now(), title: t, desc: d });
+            const details = prompt('Detailed Description:', d) || d;
+            const mediaUrl = prompt('Optional media/document URL (image/video/pdf):') || '';
+            const mediaType = mediaUrl ? (prompt('Media type: image, video, or document', 'image') || 'image') : '';
+            this.researchAreas.push({ id: Date.now(), title: t, desc: d, details, mediaUrl, mediaType });
             this.showToast('✅ Research area added!');
         },
         editRA(r) {
             const t = prompt('Edit Title:', r.title);
             if (t === null) return;
             const d = prompt('Edit Description:', r.desc);
+            const details = prompt('Edit Detailed Description:', r.details || r.desc || '');
+            const mediaUrl = prompt('Media/document URL:', r.mediaUrl || '');
+            const mediaType = mediaUrl ? (prompt('Media type: image, video, or document', r.mediaType || 'image') || 'image') : '';
             const i = this.researchAreas.findIndex(x => x.id === r.id);
-            if (i > -1) { this.researchAreas[i].title = t; if (d !== null) this.researchAreas[i].desc = d; }
+            if (i > -1) {
+                this.researchAreas[i].title = t;
+                if (d !== null) this.researchAreas[i].desc = d;
+                if (details !== null) this.researchAreas[i].details = details;
+                this.researchAreas[i].mediaUrl = mediaUrl;
+                this.researchAreas[i].mediaType = mediaType;
+            }
             this.showToast('✅ Updated!');
         },
 
@@ -2535,11 +2763,34 @@ function labCMS() {
 
         // ── COMPUTED ──
         get filteredPublications() {
-            if (!this.pubSearch) return this.publications;
-            return this.publications.filter(p =>
-                p.title.toLowerCase().includes(this.pubSearch.toLowerCase()) ||
-                p.authors.toLowerCase().includes(this.pubSearch.toLowerCase())
-            );
+            return this.publications.filter(p => {
+                const matchesSearch = !this.pubSearch ||
+                    p.title.toLowerCase().includes(this.pubSearch.toLowerCase()) ||
+                    p.authors.toLowerCase().includes(this.pubSearch.toLowerCase());
+                const matchesYear = this.selectedPubYear === 'All' || String(p.year) === String(this.selectedPubYear);
+                return matchesSearch && matchesYear;
+            });
+        },
+
+        publicationYears() {
+            return [...new Set(this.publications.map(p => String(p.year || '').trim()).filter(Boolean))]
+                .sort((a, b) => Number(b) - Number(a));
+        },
+
+        patentYears() {
+            return [...new Set(this.patents.map(p => String(p.year || '').trim()).filter(Boolean))]
+                .sort((a, b) => Number(b) - Number(a));
+        },
+
+        filteredPatents() {
+            return this.patents.filter(p => {
+                const q = (this.pubSearch || '').toLowerCase();
+                const matchesSearch = !q ||
+                    (p.title || '').toLowerCase().includes(q) ||
+                    (p.inventors || '').toLowerCase().includes(q);
+                const matchesYear = this.selectedPatentYear === 'All' || String(p.year) === String(this.selectedPatentYear);
+                return matchesSearch && matchesYear;
+            });
         },
 
         doiUrl(doi) {
@@ -2582,6 +2833,7 @@ function labCMS() {
                 this.refreshIcons();
             });
             this.$watch('adminSubTab', () => this.refreshIcons());
+            this.$watch('publicationTab', () => this.refreshIcons());
             this.persistKeys.forEach(key => {
                 this.$watch(key, () => this.persistState());
             });
