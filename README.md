@@ -10,16 +10,16 @@ Static HTML website for the IIT Indore Biophysics & Biomedical Engineering Lab.
 
 Default login:
 
-- Email: `superadmin@iiti.ac.in` or `superadmin@iit.ac.in`
-- Password: `admin123`
+- Email: `` or ``
+- Password: ``
 
 Edits made from the admin panel are saved in the browser with `localStorage`, so they remain after refresh on the same browser.
 Firebase Firestore is also connected, so admin edits can be shared with all visitors after login.
 
 Firebase admin login:
 
-- Email: `22ibo048@smvdu.ac.in`
-- Password: `22ibo048@smvdu.ac.in`
+- Email: ``
+- Password: ``
 
 Current admin features:
 
