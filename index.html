@@ -593,6 +593,36 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
         </div>
     </div>
 
+    <!-- TEACHING PAGE -->
+    <div x-show="activePage === 'teaching'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
+        <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['teaching'] || 'Teaching'"></h2>
+        <div class="space-y-8">
+            <template x-for="category in teachingCategories()" :key="category">
+                <section class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs">
+                    <h3 class="text-2xl font-bold mb-4 pb-3 border-b font-poppins" :style="{ color: themeColors.navy }" x-text="category"></h3>
+                    <ul class="space-y-3">
+                        <template x-for="course in teachingByCategory(category)" :key="course.id">
+                            <li class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-slate-800">
+                                <div>
+                                    <span class="font-semibold" x-text="course.title"></span>
+                                    <template x-if="course.desc">
+                                        <p class="text-xs text-slate-500 mt-1" x-text="course.desc"></p>
+                                    </template>
+                                </div>
+                                <template x-if="course.link">
+                                    <a :href="course.link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-bold hover:underline" :style="{ color: themeColors.navy }">
+                                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                                        Open Link
+                                    </a>
+                                </template>
+                            </li>
+                        </template>
+                    </ul>
+                </section>
+            </template>
+        </div>
+    </div>
+
     <!-- OPPORTUNITIES PAGE (original) -->
     <div x-show="activePage === 'opportunities'" class="max-w-4xl mx-auto px-4 py-12" x-transition>
         <h2 class="text-3xl font-bold mb-8 text-center font-poppins" :style="{ color: themeColors.navy }" x-text="pageNames['opportunities'] || 'Opportunities'"></h2>
@@ -756,6 +786,9 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                             </button>
                             <button class="adm-btn" :class="adminSubTab==='research-mgr'?'active':''" @click="adminSubTab='research-mgr';adminPanelTitle='Research Areas'">
                                 <span>🔬</span> Research Areas
+                            </button>
+                            <button class="adm-btn" :class="adminSubTab==='teaching-mgr'?'active':''" @click="adminSubTab='teaching-mgr';adminPanelTitle='Teaching Manager'">
+                                <span>🎓</span> Teaching <span class="badge" x-text="teachingCourses.length"></span>
                             </button>
                             <button class="adm-btn" :class="adminSubTab==='opps-control'?'active':''" @click="adminSubTab='opps-control';adminPanelTitle='Opportunities'">
                                 <span>💼</span> Opportunities <span class="badge" x-text="opportunities.length"></span>
@@ -1317,6 +1350,64 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                             </div>
                                         </div>
                                     </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── TEACHING ── -->
+                        <div x-show="adminSubTab === 'teaching-mgr'" class="space-y-4">
+                            <div class="adm-card">
+                                <div class="adm-card-hd">
+                                    <div class="adm-card-title">🎓 Teaching Manager</div>
+                                    <button class="btn-pri text-xs" @click="showTeachingForm=true;editingTeachingId=null;teachingForm={title:'',category:'Undergraduate Courses',desc:'',link:''}">+ Add Course</button>
+                                </div>
+                                <div x-show="showTeachingForm" class="p-5 border-b bg-slate-50 space-y-3">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Course Title *</label>
+                                            <input type="text" x-model="teachingForm.title" class="adm-input" placeholder="BSE 405 Molecular Biophysics">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Section / Category *</label>
+                                            <input type="text" x-model="teachingForm.category" class="adm-input" placeholder="Undergraduate Courses">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Short Description</label>
+                                        <input type="text" x-model="teachingForm.desc" class="adm-input" placeholder="Quick link, page number, notes...">
+                                    </div>
+                                    <div>
+                                        <label class="adm-label">Document / Course Link</label>
+                                        <input type="text" x-model="teachingForm.link" class="adm-input" placeholder="https://... or PDF/document URL">
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="btn-pri" @click="saveTeaching()">💾 Save Course</button>
+                                        <button class="btn-sm" @click="showTeachingForm=false">Cancel</button>
+                                    </div>
+                                </div>
+                                <div style="overflow-x:auto">
+                                    <table class="adm-table">
+                                        <thead><tr><th>Course</th><th>Category</th><th>Link</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <template x-for="course in teachingCourses" :key="course.id">
+                                                <tr>
+                                                    <td style="font-weight:600" x-text="course.title"></td>
+                                                    <td x-text="course.category"></td>
+                                                    <td>
+                                                        <template x-if="course.link">
+                                                            <a :href="course.link" target="_blank" class="text-blue-600 font-bold text-xs hover:underline">Open</a>
+                                                        </template>
+                                                    </td>
+                                                    <td>
+                                                        <div style="display:flex;gap:5px">
+                                                            <button class="btn-sm" @click="editTeaching(course)">✏️</button>
+                                                            <button class="btn-sm btn-del" @click="teachingCourses=teachingCourses.filter(x=>x.id!==course.id);showToast('Course deleted.')">🗑</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -1890,6 +1981,7 @@ function labCMS() {
         showPubForm: false,
         showOppForm: false,
         showPatentForm: false,
+        showTeachingForm: false,
         showNewsForm: false,
         showMediaForm: false,
         showGalleryForm: false,
@@ -1899,6 +1991,7 @@ function labCMS() {
         editingPubId: null,
         editingOppId: null,
         editingPatentId: null,
+        editingTeachingId: null,
         editingNewsId: null,
 
         // AUTH
@@ -1940,11 +2033,12 @@ function labCMS() {
             research: 'Research',
             people: 'Team mamber',
             publications: 'Publications',
+            teaching: 'Teaching',
             opportunities: 'Opportunities',
             contact: 'Contact'
         },
 
-        menuOrder: ['Home', 'Research', 'People', 'Publications', 'Opportunities', 'Contact'],
+        menuOrder: ['Home', 'Research', 'People', 'Publications', 'Teaching', 'Opportunities', 'Contact'],
         teamCategoryOrder: ['Faculty', 'PhD', 'Post Doc', 'MSc', 'MTech', 'Intern', 'Alumni'],
 
         // DATA
@@ -1993,6 +2087,17 @@ function labCMS() {
             { id: 1, title: 'Near-infrared fluorescence based bioimaging technology', inventors: 'Gupta S. et al.', year: '2026', status: 'Granted', link: '' }
         ],
 
+        teachingCourses: [
+            { id: 1, category: 'Undergraduate Courses', title: 'BSE 405 Molecular Biophysics', desc: 'Quick link / course document', link: '' },
+            { id: 2, category: 'Undergraduate Courses', title: 'BSE 404 Biomedical Imaging', desc: 'Quick link / course document', link: '' },
+            { id: 3, category: 'Undergraduate Courses', title: 'BSE 102 Introduction to Bioengineering', desc: '', link: '' },
+            { id: 4, category: 'Undergraduate Courses', title: 'BSE 631 Bio-entrepreneurship, IPR and Biosafety', desc: '', link: '' },
+            { id: 5, category: 'Ph.D. Courses', title: 'BSE 635 Biomaterials and Bionanotechnology', desc: '', link: '' },
+            { id: 6, category: 'Ph.D. Courses', title: 'BSE 630 Biophotonics and Optical Imaging Techniques', desc: '', link: '' },
+            { id: 7, category: 'Ph.D. Courses', title: 'BSE 605 Molecular Biophysics', desc: 'Quick link / course document', link: '' },
+            { id: 8, category: 'Ph.D. Courses', title: 'BSE 604 Biomedical Imaging', desc: 'Quick link / course document', link: '' }
+        ],
+
         opportunities: [
             { id: 1, position: 'Research Intern Position Call', type: 'Internship', deadline: 'July 15, 2026', status: 'Open', desc: 'Work on advanced computational biophotonics instrumentation algorithms.' }
         ],
@@ -2010,6 +2115,7 @@ function labCMS() {
         newsForm: { date: '', text: '' },
         pubForm: { title: '', authors: '', journal: '', year: '', doi: '' },
         patentForm: { title: '', inventors: '', year: '', status: 'Filed', link: '' },
+        teachingForm: { title: '', category: 'Undergraduate Courses', desc: '', link: '' },
         userForm: { name: '', email: '', password: '', role: 'Admin' },
         galleryForm: { title: '', url: '', fileName: '' },
         applications: [],
@@ -2029,7 +2135,7 @@ function labCMS() {
         persistKeys: [
             'showAnnBar', 'labLogo', 'usersRegistry', 'themeColors', 'siteSettings', 'pageNames',
             'menuOrder', 'teamCategoryOrder', 'homeData', 'labMediaList', 'news', 'gallery',
-            'researchAreas', 'people', 'publications', 'patents', 'opportunities',
+            'researchAreas', 'people', 'publications', 'patents', 'teachingCourses', 'opportunities',
             'announcements', 'applications'
         ],
 
@@ -2048,9 +2154,11 @@ function labCMS() {
                     }
                 });
                 this.ensureDefaultAdmin();
+                this.ensureSiteStructure();
             } catch (error) {
                 console.warn('Could not load saved lab CMS data:', error);
                 this.ensureDefaultAdmin();
+                this.ensureSiteStructure();
             }
         },
 
@@ -2064,6 +2172,27 @@ function labCMS() {
                 const exists = this.usersRegistry.some(u => (u.email || '').toLowerCase() === admin.email);
                 if (!exists) this.usersRegistry.unshift(admin);
             });
+        },
+
+        ensureSiteStructure() {
+            this.pageNames = { ...this.pageNames, teaching: this.pageNames.teaching || 'Teaching' };
+            if (!this.menuOrder.includes('Teaching')) {
+                const idx = this.menuOrder.indexOf('Opportunities');
+                if (idx > -1) this.menuOrder.splice(idx, 0, 'Teaching');
+                else this.menuOrder.push('Teaching');
+            }
+            if (!Array.isArray(this.teachingCourses) || !this.teachingCourses.length) {
+                this.teachingCourses = [
+                    { id: 1, category: 'Undergraduate Courses', title: 'BSE 405 Molecular Biophysics', desc: 'Quick link / course document', link: '' },
+                    { id: 2, category: 'Undergraduate Courses', title: 'BSE 404 Biomedical Imaging', desc: 'Quick link / course document', link: '' },
+                    { id: 3, category: 'Undergraduate Courses', title: 'BSE 102 Introduction to Bioengineering', desc: '', link: '' },
+                    { id: 4, category: 'Undergraduate Courses', title: 'BSE 631 Bio-entrepreneurship, IPR and Biosafety', desc: '', link: '' },
+                    { id: 5, category: 'Ph.D. Courses', title: 'BSE 635 Biomaterials and Bionanotechnology', desc: '', link: '' },
+                    { id: 6, category: 'Ph.D. Courses', title: 'BSE 630 Biophotonics and Optical Imaging Techniques', desc: '', link: '' },
+                    { id: 7, category: 'Ph.D. Courses', title: 'BSE 605 Molecular Biophysics', desc: 'Quick link / course document', link: '' },
+                    { id: 8, category: 'Ph.D. Courses', title: 'BSE 604 Biomedical Imaging', desc: 'Quick link / course document', link: '' }
+                ];
+            }
         },
 
         persistState() {
@@ -2092,6 +2221,7 @@ function labCMS() {
                 }
             });
             this.ensureDefaultAdmin();
+            this.ensureSiteStructure();
         },
 
         async loadRemoteState() {
@@ -2743,7 +2873,7 @@ function labCMS() {
 
         // ── PAGE NAMES ──
         resetPageNames() {
-            this.pageNames = { home:'Home', research:'Research', people:'Team mamber', publications:'Publications', opportunities:'Opportunities', contact:'Contact' };
+            this.pageNames = { home:'Home', research:'Research', people:'Team mamber', publications:'Publications', teaching:'Teaching', opportunities:'Opportunities', contact:'Contact' };
             this.showToast('✅ Page names reset to defaults.');
         },
 
@@ -2791,6 +2921,39 @@ function labCMS() {
                 const matchesYear = this.selectedPatentYear === 'All' || String(p.year) === String(this.selectedPatentYear);
                 return matchesSearch && matchesYear;
             });
+        },
+
+        teachingCategories() {
+            return [...new Set(this.teachingCourses.map(c => c.category || 'Courses'))];
+        },
+
+        teachingByCategory(category) {
+            return this.teachingCourses.filter(c => (c.category || 'Courses') === category);
+        },
+
+        editTeaching(course) {
+            this.editingTeachingId = course.id;
+            this.teachingForm = { ...course };
+            this.showTeachingForm = true;
+        },
+
+        saveTeaching() {
+            if (!this.teachingForm.title || !this.teachingForm.category) {
+                this.showToast('⚠️ Course title and category required');
+                return;
+            }
+            this.teachingForm.link = (this.teachingForm.link || '').trim();
+            if (this.editingTeachingId) {
+                const i = this.teachingCourses.findIndex(c => c.id === this.editingTeachingId);
+                if (i > -1) this.teachingCourses[i] = { ...this.teachingCourses[i], ...this.teachingForm };
+                this.showToast('✅ Course updated!');
+            } else {
+                this.teachingCourses.push({ id: Date.now(), ...this.teachingForm });
+                this.showToast('✅ Course added!');
+            }
+            this.showTeachingForm = false;
+            this.editingTeachingId = null;
+            this.refreshIcons();
         },
 
         doiUrl(doi) {
