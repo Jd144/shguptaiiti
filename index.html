@@ -497,13 +497,13 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                 <button @click="peopleFilter = cat"
                         class="px-4 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer"
                         :style="peopleFilter === cat ? { backgroundColor: themeColors.sky, color: '#fff', borderColor: themeColors.sky } : { backgroundColor: '#fff', color: '#475569' }"
-                        x-text="cat"></button>
+                        x-text="teamFilterLabel(cat)"></button>
             </template>
         </div>
 
         <template x-for="category in visibleTeamCategories()" :key="category">
             <section>
-                <h3 class="team-section-title text-xl" :style="{ color: themeColors.navy }" x-text="category === 'Faculty' ? 'Principal Investigator' : category"></h3>
+                <h3 class="team-section-title text-xl" :style="{ color: themeColors.navy }" x-text="teamSectionTitle(category)"></h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <template x-for="person in peopleByCategory(category)" :key="person.id">
                         <div class="bg-white p-5 rounded-2xl shadow-2xs border border-slate-100 flex flex-col justify-between text-center space-y-4">
@@ -513,6 +513,12 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                 <p class="text-xs font-semibold inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 mt-1" x-text="person.role"></p>
                                 <template x-if="person.researchArea">
                                     <p class="text-[11px] text-slate-500 font-medium mt-3 bg-slate-50 p-2 rounded border border-dashed" x-text="'🎯 ' + person.researchArea"></p>
+                                </template>
+                                <template x-if="person.affiliation || person.duration">
+                                    <div class="mt-2 text-[11px] text-slate-600 bg-blue-50 border border-blue-100 rounded-lg p-2 space-y-1 text-left">
+                                        <p x-show="person.affiliation"><span class="font-bold">Institute:</span> <span x-text="person.affiliation"></span></p>
+                                        <p x-show="person.duration"><span class="font-bold">Duration:</span> <span x-text="person.duration"></span></p>
+                                    </div>
                                 </template>
                                 <template x-if="person.bio">
                                     <p class="text-xs text-slate-600 mt-2 text-left italic border-l-2 pl-2 rich-content" x-html="person.bio"></p>
@@ -1148,6 +1154,16 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <div>
                                             <label class="adm-label">Google Scholar URL</label>
                                             <input type="url" x-model="teamForm.scholarUrl" class="adm-input" placeholder="https://scholar.google.com/...">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="adm-label">Institute / Affiliation</label>
+                                            <input type="text" x-model="teamForm.affiliation" class="adm-input" placeholder="e.g. Visiting from XYZ University">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Project / Visit Duration</label>
+                                            <input type="text" x-model="teamForm.duration" class="adm-input" placeholder="e.g. 6 months, 1 year">
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1873,20 +1889,30 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <label class="adm-label">Team Page Subtitle</label>
                                         <input type="text" x-model="siteSettings.teamSubtitle" class="adm-input" placeholder="Our Superstars">
                                     </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="adm-label">All Filter Label</label>
+                                            <input type="text" x-model="siteSettings.teamAllLabel" class="adm-input" placeholder="All">
+                                        </div>
+                                        <div>
+                                            <label class="adm-label">Faculty / PI Section Title</label>
+                                            <input type="text" x-model="siteSettings.facultySectionTitle" class="adm-input" placeholder="Principal Investigator">
+                                        </div>
+                                    </div>
                                     <div>
                                         <label class="adm-label">Team Category Order</label>
                                         <div class="space-y-2">
                                             <template x-for="(cat, idx) in teamCategoryOrder" :key="cat">
                                                 <div class="flex items-center gap-2 bg-slate-50 border rounded-lg p-2">
                                                     <span class="text-xs font-bold text-slate-500 w-6" x-text="idx + 1"></span>
-                                                    <input type="text" x-model="teamCategoryOrder[idx]" class="adm-input" style="flex:1">
+                                                    <input type="text" :value="cat" @change="renameTeamCategory(idx, $event.target.value)" class="adm-input" style="flex:1">
                                                     <button class="btn-sm" @click="moveTeamCategoryUp(idx)" x-show="idx > 0">Up</button>
                                                     <button class="btn-sm" @click="moveTeamCategoryDown(idx)" x-show="idx < teamCategoryOrder.length - 1">Down</button>
-                                                    <button class="btn-sm btn-del" @click="teamCategoryOrder.splice(idx, 1)">Remove</button>
+                                                    <button class="btn-sm btn-del" @click="removeTeamCategory(idx)">Remove</button>
                                                 </div>
                                             </template>
                                         </div>
-                                        <button class="btn-sm mt-2" @click="teamCategoryOrder.push('New Category')">+ Add Category</button>
+                                        <button class="btn-sm mt-2" @click="addTeamCategory()">+ Add Category</button>
                                     </div>
                                     <div class="flex flex-wrap gap-3">
                                         <button class="btn-pri" @click="showToast('✅ Theme colors saved!')">💾 Apply Theme</button>
@@ -2023,6 +2049,8 @@ function labCMS() {
             heroTitleColor: '#ffffff',
             heroSubtitleColor: '#e0f2fe',
             teamSubtitle: 'Our Superstars',
+            teamAllLabel: 'All',
+            facultySectionTitle: 'Principal Investigator',
             footerLeftLogo: '',
             footerRightLogo: ''
         },
@@ -2039,7 +2067,7 @@ function labCMS() {
         },
 
         menuOrder: ['Home', 'Research', 'People', 'Publications', 'Teaching', 'Opportunities', 'Contact'],
-        teamCategoryOrder: ['Faculty', 'PhD', 'Post Doc', 'MSc', 'MTech', 'Intern', 'Alumni'],
+        teamCategoryOrder: ['Faculty', 'PhD', 'Post Doc', 'MSc', 'MTech', 'Intern', 'Project Students', 'Alumni'],
 
         // DATA
         homeData: {
@@ -2109,7 +2137,7 @@ function labCMS() {
         ],
 
         // FORMS
-        teamForm: { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' },
+        teamForm: { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', affiliation: '', duration: '', img: '', bio: '' },
         mediaForm: { title: '', type: 'image', url: '', desc: '', fileName: '', fileSize: '', uploadProgress: null },
         oppForm: { position: '', type: 'Internship', deadline: '', status: 'Open', desc: '' },
         newsForm: { date: '', text: '' },
@@ -2176,10 +2204,21 @@ function labCMS() {
 
         ensureSiteStructure() {
             this.pageNames = { ...this.pageNames, teaching: this.pageNames.teaching || 'Teaching' };
+            this.siteSettings = {
+                ...this.siteSettings,
+                teamAllLabel: this.siteSettings.teamAllLabel || 'All',
+                facultySectionTitle: this.siteSettings.facultySectionTitle || 'Principal Investigator'
+            };
             if (!this.menuOrder.includes('Teaching')) {
                 const idx = this.menuOrder.indexOf('Opportunities');
                 if (idx > -1) this.menuOrder.splice(idx, 0, 'Teaching');
                 else this.menuOrder.push('Teaching');
+            }
+            if (!Array.isArray(this.teamCategoryOrder)) this.teamCategoryOrder = [];
+            if (!this.teamCategoryOrder.includes('Project Students')) {
+                const internIdx = this.teamCategoryOrder.indexOf('Intern');
+                if (internIdx > -1) this.teamCategoryOrder.splice(internIdx + 1, 0, 'Project Students');
+                else this.teamCategoryOrder.push('Project Students');
             }
             if (!Array.isArray(this.teachingCourses) || !this.teachingCourses.length) {
                 this.teachingCourses = [
@@ -2349,6 +2388,15 @@ function labCMS() {
             return this.people.filter(person => person.category === category);
         },
 
+        teamFilterLabel(category) {
+            return category === 'All' ? (this.siteSettings.teamAllLabel || 'All') : this.teamSectionTitle(category);
+        },
+
+        teamSectionTitle(category) {
+            if (category === 'Faculty') return this.siteSettings.facultySectionTitle || 'Principal Investigator';
+            return category;
+        },
+
         visibleTeamCategories() {
             const categories = this.teamCategoryOrder.filter(category => {
                 const hasPeople = this.people.some(person => person.category === category);
@@ -2358,6 +2406,45 @@ function labCMS() {
                 .filter(category => !this.teamCategoryOrder.includes(category))
                 .filter(category => this.peopleFilter === 'All' || this.peopleFilter === category);
             return [...categories, ...extraCategories];
+        },
+
+        renameTeamCategory(idx, nextName) {
+            const oldName = this.teamCategoryOrder[idx];
+            const cleanName = String(nextName || '').trim();
+            if (!oldName || !cleanName) {
+                this.showToast('Category name required.');
+                return;
+            }
+            if (oldName === cleanName) return;
+            if (this.teamCategoryOrder.some((cat, i) => i !== idx && cat.toLowerCase() === cleanName.toLowerCase())) {
+                this.showToast('Category already exists.');
+                return;
+            }
+            this.teamCategoryOrder[idx] = cleanName;
+            this.people = this.people.map(person => person.category === oldName ? { ...person, category: cleanName } : person);
+            if (this.peopleFilter === oldName) this.peopleFilter = cleanName;
+            this.showToast('Category renamed.');
+        },
+
+        addTeamCategory() {
+            let base = 'New Category';
+            let name = base;
+            let count = 2;
+            while (this.teamCategoryOrder.includes(name)) {
+                name = `${base} ${count}`;
+                count += 1;
+            }
+            this.teamCategoryOrder.push(name);
+            this.showToast('Category added.');
+        },
+
+        removeTeamCategory(idx) {
+            const category = this.teamCategoryOrder[idx];
+            const hasPeople = this.people.some(person => person.category === category);
+            if (hasPeople && !confirm(`Remove "${category}" from order? Members will stay saved but move to the end as an extra category.`)) return;
+            this.teamCategoryOrder.splice(idx, 1);
+            if (this.peopleFilter === category) this.peopleFilter = 'All';
+            this.showToast('Category removed from order.');
         },
 
         moveTeamCategoryUp(idx) {
@@ -2484,7 +2571,7 @@ function labCMS() {
         // ── OUR SUPERSTARTS ──
         openAddMemberForm() {
             this.editingMemberId = null;
-            this.teamForm = { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', img: '', bio: '' };
+            this.teamForm = { name: '', role: '', category: 'PhD', email: '', scholarUrl: '', researchArea: '', affiliation: '', duration: '', img: '', bio: '' };
             this.showMemberForm = true;
         },
         editMemberForm(p) {
