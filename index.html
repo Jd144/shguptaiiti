@@ -1875,6 +1875,75 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                             <input type="text" x-model="siteSettings.footerRightLogo" class="adm-input" placeholder="Paste lab logo URL or leave blank for uploaded logo">
                                         </div>
                                     </div>
+                                    <div class="adm-card" style="border:1px solid #e2e8f0;box-shadow:none">
+                                        <div class="adm-card-hd">
+                                            <div class="adm-card-title">Footer Editor</div>
+                                            <span style="font-size:12px;color:#6e7681">Edit footer text and colors</span>
+                                        </div>
+                                        <div class="p-5 space-y-4">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="adm-label">Footer Lab Title</label>
+                                                    <input type="text" x-model="siteSettings.footerLabTitle" class="adm-input" placeholder="Biophysics & Biomedical Engineering Lab">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Footer Lab Subtitle</label>
+                                                    <input type="text" x-model="siteSettings.footerLabSubtitle" class="adm-input" placeholder="Indian Institute of Technology Indore">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Quick Links Heading</label>
+                                                    <input type="text" x-model="siteSettings.footerQuickLinksTitle" class="adm-input" placeholder="Quick Links">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Powered Text</label>
+                                                    <input type="text" x-model="siteSettings.footerPoweredText" class="adm-input" placeholder="Powered by BPBME CMS">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Copyright Text</label>
+                                                    <input type="text" x-model="siteSettings.footerCopyrightText" class="adm-input" placeholder="© 2026 IIT Indore">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Admin Login Link Label</label>
+                                                    <input type="text" x-model="siteSettings.footerAdminLoginLabel" class="adm-input" placeholder="Admin Login">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Admin Panel Link Label</label>
+                                                    <input type="text" x-model="siteSettings.footerAdminPanelLabel" class="adm-input" placeholder="Admin Panel">
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div>
+                                                    <label class="adm-label">Background Color</label>
+                                                    <input type="color" x-model="siteSettings.footerBgColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Default Text Color</label>
+                                                    <input type="color" x-model="siteSettings.footerTextColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Lab Title Color</label>
+                                                    <input type="color" x-model="siteSettings.footerTitleColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Lab Subtitle Color</label>
+                                                    <input type="color" x-model="siteSettings.footerSubtitleColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Heading Color</label>
+                                                    <input type="color" x-model="siteSettings.footerHeadingColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Link Color</label>
+                                                    <input type="color" x-model="siteSettings.footerLinkColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Meta Text Color</label>
+                                                    <input type="color" x-model="siteSettings.footerMetaColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                            </div>
+                                            <button class="btn-sm" @click="resetFooterSettings()">Reset Footer Defaults</button>
+                                        </div>
+                                    </div>
                                     <div>
                                         <label class="adm-label">Team Page Subtitle</label>
                                         <input type="text" x-model="siteSettings.teamSubtitle" class="adm-input" placeholder="Our Superstars">
@@ -2035,35 +2104,35 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 </main>
 
 <!-- FOOTER -->
-<footer class="text-white py-8 transition-colors duration-300" :style="{ backgroundColor: themeColors.navy }">
+<footer class="py-8 transition-colors duration-300" :style="{ backgroundColor: siteSettings.footerBgColor || themeColors.navy, color: siteSettings.footerTextColor || '#ffffff' }">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
         <div class="flex items-center justify-center md:justify-start gap-3">
             <template x-if="siteSettings.footerLeftLogo">
                 <img :src="siteSettings.footerLeftLogo" class="footer-logo clickable-media" alt="IIT Indore Logo" @click="openLightbox(siteSettings.footerLeftLogo, 'image', 'IIT Indore Logo')">
             </template>
             <div class="text-center md:text-left">
-                <div class="font-bold text-sm">Biophysics & Biomedical Engineering Lab</div>
-                <div class="text-xs opacity-75">Indian Institute of Technology Indore</div>
+                <div class="font-bold text-sm" :style="{ color: siteSettings.footerTitleColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerLabTitle || 'Biophysics & Biomedical Engineering Lab'"></div>
+                <div class="text-xs opacity-75" :style="{ color: siteSettings.footerSubtitleColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerLabSubtitle || 'Indian Institute of Technology Indore'"></div>
             </div>
         </div>
         <div class="text-center">
-            <h4 class="font-bold text-sm mb-3">Quick Links</h4>
+            <h4 class="font-bold text-sm mb-3" :style="{ color: siteSettings.footerHeadingColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerQuickLinksTitle || 'Quick Links'"></h4>
             <div class="flex flex-wrap justify-center gap-3 text-xs">
                 <template x-for="menuItem in menuOrder" :key="'footer-' + menuItem">
-                    <button @click="activePage = menuItem.toLowerCase(); window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100" x-text="pageNames[menuItem.toLowerCase()] || menuItem"></button>
+                    <button @click="activePage = menuItem.toLowerCase(); window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100" :style="{ color: siteSettings.footerLinkColor || siteSettings.footerTextColor || '#ffffff' }" x-text="pageNames[menuItem.toLowerCase()] || menuItem"></button>
                 </template>
                 <template x-if="!isLoggedIn">
-                    <button @click="activePage = 'login-gateway'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100">Admin Login</button>
+                    <button @click="activePage = 'login-gateway'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100" :style="{ color: siteSettings.footerLinkColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerAdminLoginLabel || 'Admin Login'"></button>
                 </template>
                 <template x-if="isLoggedIn">
-                    <button @click="activePage = 'admin'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100">Admin Panel</button>
+                    <button @click="activePage = 'admin'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="hover:underline opacity-85 hover:opacity-100" :style="{ color: siteSettings.footerLinkColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerAdminPanelLabel || 'Admin Panel'"></button>
                 </template>
             </div>
         </div>
         <div class="flex items-center justify-center md:justify-end gap-3">
             <div class="text-center md:text-right">
-                <div class="text-xs opacity-75">Powered by BPBME CMS</div>
-                <div class="text-xs opacity-75">© 2026 IIT Indore</div>
+                <div class="text-xs opacity-75" :style="{ color: siteSettings.footerMetaColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerPoweredText || 'Powered by BPBME CMS'"></div>
+                <div class="text-xs opacity-75" :style="{ color: siteSettings.footerMetaColor || siteSettings.footerTextColor || '#ffffff' }" x-text="siteSettings.footerCopyrightText || '© 2026 IIT Indore'"></div>
             </div>
             <template x-if="siteSettings.footerRightLogo || labLogo">
                 <img :src="siteSettings.footerRightLogo || labLogo" class="footer-logo clickable-media" alt="Lab Logo" @click="openLightbox(siteSettings.footerRightLogo || labLogo, 'image', 'Lab Logo')">
@@ -2168,7 +2237,21 @@ function labCMS() {
             teamAllLabel: 'All',
             facultySectionTitle: 'Principal Investigator',
             footerLeftLogo: '',
-            footerRightLogo: ''
+            footerRightLogo: '',
+            footerLabTitle: 'Biophysics & Biomedical Engineering Lab',
+            footerLabSubtitle: 'Indian Institute of Technology Indore',
+            footerQuickLinksTitle: 'Quick Links',
+            footerPoweredText: 'Powered by BPBME CMS',
+            footerCopyrightText: '© 2026 IIT Indore',
+            footerAdminLoginLabel: 'Admin Login',
+            footerAdminPanelLabel: 'Admin Panel',
+            footerBgColor: '#0F4C81',
+            footerTextColor: '#ffffff',
+            footerTitleColor: '#ffffff',
+            footerSubtitleColor: '#ffffff',
+            footerHeadingColor: '#ffffff',
+            footerLinkColor: '#ffffff',
+            footerMetaColor: '#ffffff'
         },
 
         // PAGE NAMES — editable in admin
@@ -2326,7 +2409,21 @@ function labCMS() {
             this.siteSettings = {
                 ...this.siteSettings,
                 teamAllLabel: this.siteSettings.teamAllLabel || 'All',
-                facultySectionTitle: this.siteSettings.facultySectionTitle || 'Principal Investigator'
+                facultySectionTitle: this.siteSettings.facultySectionTitle || 'Principal Investigator',
+                footerLabTitle: this.siteSettings.footerLabTitle || 'Biophysics & Biomedical Engineering Lab',
+                footerLabSubtitle: this.siteSettings.footerLabSubtitle || 'Indian Institute of Technology Indore',
+                footerQuickLinksTitle: this.siteSettings.footerQuickLinksTitle || 'Quick Links',
+                footerPoweredText: this.siteSettings.footerPoweredText || 'Powered by BPBME CMS',
+                footerCopyrightText: this.siteSettings.footerCopyrightText || '© 2026 IIT Indore',
+                footerAdminLoginLabel: this.siteSettings.footerAdminLoginLabel || 'Admin Login',
+                footerAdminPanelLabel: this.siteSettings.footerAdminPanelLabel || 'Admin Panel',
+                footerBgColor: this.siteSettings.footerBgColor || '#0F4C81',
+                footerTextColor: this.siteSettings.footerTextColor || '#ffffff',
+                footerTitleColor: this.siteSettings.footerTitleColor || '#ffffff',
+                footerSubtitleColor: this.siteSettings.footerSubtitleColor || '#ffffff',
+                footerHeadingColor: this.siteSettings.footerHeadingColor || '#ffffff',
+                footerLinkColor: this.siteSettings.footerLinkColor || '#ffffff',
+                footerMetaColor: this.siteSettings.footerMetaColor || '#ffffff'
             };
             if (!this.menuOrder.includes('Teaching')) {
                 const idx = this.menuOrder.indexOf('Opportunities');
@@ -3214,6 +3311,24 @@ function labCMS() {
             delete this.pageNames[id];
             if (this.activePage === id) this.activePage = 'home';
             this.showToast('Custom page removed.');
+        },
+
+        resetFooterSettings() {
+            this.siteSettings.footerLabTitle = 'Biophysics & Biomedical Engineering Lab';
+            this.siteSettings.footerLabSubtitle = 'Indian Institute of Technology Indore';
+            this.siteSettings.footerQuickLinksTitle = 'Quick Links';
+            this.siteSettings.footerPoweredText = 'Powered by BPBME CMS';
+            this.siteSettings.footerCopyrightText = '© 2026 IIT Indore';
+            this.siteSettings.footerAdminLoginLabel = 'Admin Login';
+            this.siteSettings.footerAdminPanelLabel = 'Admin Panel';
+            this.siteSettings.footerBgColor = '#0F4C81';
+            this.siteSettings.footerTextColor = '#ffffff';
+            this.siteSettings.footerTitleColor = '#ffffff';
+            this.siteSettings.footerSubtitleColor = '#ffffff';
+            this.siteSettings.footerHeadingColor = '#ffffff';
+            this.siteSettings.footerLinkColor = '#ffffff';
+            this.siteSettings.footerMetaColor = '#ffffff';
+            this.showToast('Footer settings reset.');
         },
 
         resetPageNames() {
