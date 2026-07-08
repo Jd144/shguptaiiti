@@ -2470,6 +2470,19 @@ function labCMS() {
             this.scheduleRemoteSave(state);
         },
 
+        async persistStateNow() {
+            const state = {};
+            this.persistKeys.forEach(key => { state[key] = this[key]; });
+            try {
+                localStorage.setItem(this.storageKey, JSON.stringify(state));
+            } catch (error) {
+                console.warn('Could not save lab CMS data:', error);
+                this.showToast('Storage full. Please reduce uploaded file sizes.');
+            }
+            clearTimeout(this.remoteSaveTimer);
+            await this.saveRemoteState(state);
+        },
+
         applyState(state) {
             if (!state) return;
             this.persistKeys.forEach(key => {
@@ -2805,8 +2818,20 @@ function labCMS() {
             this.teamForm = { ...p };
             this.showMemberForm = true;
         },
-        saveMember() {
+        async saveMember() {
+            if (!Array.isArray(this.people)) this.people = [];
+            this.teamForm.name = String(this.teamForm.name || '').trim();
+            this.teamForm.role = String(this.teamForm.role || '').trim();
+            this.teamForm.category = String(this.teamForm.category || '').trim() || 'PhD';
+            this.teamForm.email = String(this.teamForm.email || '').trim();
+            this.teamForm.scholarUrl = String(this.teamForm.scholarUrl || '').trim();
+            this.teamForm.researchArea = String(this.teamForm.researchArea || '').trim();
+            this.teamForm.affiliation = String(this.teamForm.affiliation || '').trim();
+            this.teamForm.duration = String(this.teamForm.duration || '').trim();
             if (!this.teamForm.name) { this.showToast('⚠️ Name is required'); return; }
+            if (!this.teamCategoryOrder.includes(this.teamForm.category)) {
+                this.teamCategoryOrder.push(this.teamForm.category);
+            }
             if (this.editingMemberId) {
                 const i = this.people.findIndex(p => p.id === this.editingMemberId);
                 if (i > -1) this.people[i] = { ...this.people[i], ...this.teamForm };
@@ -2817,6 +2842,8 @@ function labCMS() {
             }
             this.showMemberForm = false;
             this.editingMemberId = null;
+            await this.persistStateNow();
+            this.refreshIcons();
         },
 
         // ── PUBLICATIONS ──
