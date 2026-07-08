@@ -2436,6 +2436,15 @@ function labCMS() {
                 if (internIdx > -1) this.teamCategoryOrder.splice(internIdx + 1, 0, 'Project Students');
                 else this.teamCategoryOrder.push('Project Students');
             }
+            if (!Array.isArray(this.people)) this.people = [];
+            this.people = this.people.map((person, index) => {
+                if (person && person.id !== undefined && person.id !== null && person.id !== '') return person;
+                const nameKey = String(person && person.name ? person.name : 'member')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '') || 'member';
+                return { ...person, id: `member-${index}-${nameKey}` };
+            });
             if (!Array.isArray(this.customPages)) this.customPages = [];
             if (!Array.isArray(this.builderRequests)) this.builderRequests = [];
             this.customPages.forEach(page => {
@@ -2854,8 +2863,23 @@ function labCMS() {
             this.showMemberForm = true;
         },
         editMemberForm(p) {
+            if (p.id === undefined || p.id === null || p.id === '') {
+                p.id = `member-${Date.now()}`;
+            }
             this.editingMemberId = p.id;
-            this.teamForm = { ...p };
+            this.teamForm = {
+                name: '',
+                role: '',
+                category: 'PhD',
+                email: '',
+                scholarUrl: '',
+                researchArea: '',
+                affiliation: '',
+                duration: '',
+                img: '',
+                bio: '',
+                ...p
+            };
             this.showMemberForm = true;
         },
         async saveMember() {
@@ -2872,13 +2896,19 @@ function labCMS() {
             if (!this.teamCategoryOrder.includes(this.teamForm.category)) {
                 this.teamCategoryOrder.push(this.teamForm.category);
             }
-            if (this.editingMemberId) {
-                const i = this.people.findIndex(p => p.id === this.editingMemberId);
-                if (i > -1) this.people[i] = { ...this.people[i], ...this.teamForm };
+            const isEditing = this.editingMemberId !== null && this.editingMemberId !== undefined;
+            if (isEditing) {
+                const i = this.people.findIndex(p => String(p.id) === String(this.editingMemberId));
+                if (i > -1) {
+                    this.people[i] = { ...this.people[i], ...this.teamForm, id: this.people[i].id };
+                } else {
+                    this.people.push({ id: this.editingMemberId, ...this.teamForm });
+                }
             } else {
                 this.people.push({ id: Date.now(), ...this.teamForm });
             }
             this.showMemberForm = false;
+            this.peopleFilter = this.teamForm.category;
             this.editingMemberId = null;
             const remoteSaved = await this.saveCmsKeysNow(['people', 'teamCategoryOrder']);
             this.showToast(remoteSaved ? '✅ Member saved permanently!' : 'Member saved in this browser. Firebase save failed.');
@@ -2887,7 +2917,7 @@ function labCMS() {
 
         async removeMember(id) {
             if (!confirm('Remove this member?')) return;
-            this.people = this.people.filter(x => x.id !== id);
+            this.people = this.people.filter(x => String(x.id) !== String(id));
             const remoteSaved = await this.saveCmsKeysNow(['people', 'teamCategoryOrder']);
             this.showToast(remoteSaved ? 'Member removed permanently.' : 'Member removed in this browser. Firebase save failed.');
         },
