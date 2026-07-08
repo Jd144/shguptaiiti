@@ -1168,7 +1168,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                                 <div style="flex:1">
                                                     <input type="file" :id="'member-photo-'+Date.now()" class="member-photo-input" accept="image/*" style="display:none" @change="handleMemberPhoto($event)">
                                                     <button type="button" onclick="this.closest('div').querySelector('.member-photo-input').click()" class="btn-sm" style="font-size:11px">📁 Upload Photo</button>
-                                                    <div style="font-size:10px;color:#9ca3af;margin-top:3px">JPG, PNG, WEBP · max 5MB</div>
+                                                    <div style="font-size:10px;color:#9ca3af;margin-top:3px">JPG, PNG, WEBP · auto-compressed for CMS</div>
                                                 </div>
                                                 <template x-if="teamForm.img && teamForm.img !== 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=60&q=80'">
                                                     <button type="button" @click="teamForm.img=''" style="padding:3px 8px;border-radius:5px;font-size:10px;border:1px solid #fca5a5;color:#ef4444;background:#fff5f5;cursor:pointer">✕</button>
@@ -3071,19 +3071,30 @@ function labCMS() {
             });
         },
 
-        compressImageFile(file, maxWidth = 1200, quality = 0.72) {
+        compressImageFile(file, maxWidth = 1200, quality = 0.72, maxBytes = 0) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = event => {
                     const img = new Image();
                     img.onload = () => {
                         const scale = Math.min(1, maxWidth / img.width);
-                        const canvas = document.createElement('canvas');
-                        canvas.width = Math.round(img.width * scale);
-                        canvas.height = Math.round(img.height * scale);
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
+                        let width = Math.max(1, Math.round(img.width * scale));
+                        let height = Math.max(1, Math.round(img.height * scale));
+                        let q = quality;
+                        let result = '';
+                        for (let attempt = 0; attempt < 8; attempt += 1) {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            result = canvas.toDataURL('image/jpeg', q);
+                            if (!maxBytes || Math.ceil(result.length * 0.75) <= maxBytes) break;
+                            width = Math.max(80, Math.round(width * 0.82));
+                            height = Math.max(80, Math.round(height * 0.82));
+                            q = Math.max(0.38, q - 0.08);
+                        }
+                        resolve(result);
                     };
                     img.onerror = () => reject(new Error('Image compression failed'));
                     img.src = event.target.result;
@@ -3138,8 +3149,8 @@ function labCMS() {
             if (file.size > 5 * 1024 * 1024) { this.showToast('⚠️ File too large. Max 5MB.'); return; }
             if (!file.type.startsWith('image/')) { this.showToast('⚠️ Please select an image file.'); return; }
             try {
-                this.teamForm.img = await this.compressImageFile(file, 900, 0.72);
-                this.showToast('✅ Photo uploaded!');
+                this.teamForm.img = await this.compressImageFile(file, 360, 0.58, 120 * 1024);
+                this.showToast('✅ Photo uploaded and compressed!');
             } catch(e) { this.showToast('❌ Upload failed.'); }
         },
 
