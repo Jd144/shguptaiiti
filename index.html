@@ -1201,7 +1201,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                                     <td>
                                                         <div style="display:flex;gap:5px">
                                                             <button class="btn-sm" @click="editMemberForm(p)">✏️ Edit</button>
-                                                            <button class="btn-sm btn-del" @click="people = people.filter(x => x.id !== p.id); showToast('Member removed.')">🗑 Remove</button>
+                                                            <button class="btn-sm btn-del" @click="removeMember(p.id)">🗑 Remove</button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -2483,10 +2483,50 @@ function labCMS() {
             await this.saveRemoteState(state);
         },
 
+        async saveCmsKeysNow(keys) {
+            const state = {};
+            this.persistKeys.forEach(key => { state[key] = this[key]; });
+            const protectsTeam = keys.includes('people') || keys.includes('teamCategoryOrder');
+            try {
+                localStorage.setItem(this.storageKey, JSON.stringify(state));
+                if (protectsTeam) localStorage.setItem(this.storageKey + ':teamPending', String(Date.now()));
+            } catch (error) {
+                console.warn('Could not save lab CMS data:', error);
+                this.showToast('Storage full. Please reduce uploaded file sizes.');
+            }
+            if (!window.labDb || !this.isLoggedIn) return false;
+            try {
+                clearTimeout(this.remoteSaveTimer);
+                for (const key of keys) {
+                    await window.labDb.collection('cms_state').doc(key).set({
+                        value: this[key],
+                        updatedAt: new Date().toISOString(),
+                        updatedBy: this.currentUser ? this.currentUser.email : ''
+                    }, { merge: true });
+                }
+                if (protectsTeam) localStorage.removeItem(this.storageKey + ':teamPending');
+                return true;
+            } catch (error) {
+                console.warn('Could not save CMS keys immediately:', error);
+                this.showToast('Firebase save failed. Please check login/rules, then try again.');
+                return false;
+            }
+        },
+
         applyState(state) {
             if (!state) return;
+            let localFallback = null;
+            const hasPendingTeamSave = !!localStorage.getItem(this.storageKey + ':teamPending');
+            if (hasPendingTeamSave) {
+                try { localFallback = JSON.parse(localStorage.getItem(this.storageKey) || '{}'); }
+                catch (error) { console.warn('Could not read local team fallback:', error); }
+            }
             this.persistKeys.forEach(key => {
                 if (Object.prototype.hasOwnProperty.call(state, key)) {
+                    if ((key === 'people' || key === 'teamCategoryOrder') && localFallback && Object.prototype.hasOwnProperty.call(localFallback, key)) {
+                        this[key] = localFallback[key];
+                        return;
+                    }
                     if (Array.isArray(this[key])) {
                         this[key] = state[key];
                     } else if (this[key] && typeof this[key] === 'object' && state[key] && typeof state[key] === 'object') {
@@ -2835,15 +2875,21 @@ function labCMS() {
             if (this.editingMemberId) {
                 const i = this.people.findIndex(p => p.id === this.editingMemberId);
                 if (i > -1) this.people[i] = { ...this.people[i], ...this.teamForm };
-                this.showToast('✅ Member updated!');
             } else {
                 this.people.push({ id: Date.now(), ...this.teamForm });
-                this.showToast('✅ Member added!');
             }
             this.showMemberForm = false;
             this.editingMemberId = null;
-            await this.persistStateNow();
+            const remoteSaved = await this.saveCmsKeysNow(['people', 'teamCategoryOrder']);
+            this.showToast(remoteSaved ? '✅ Member saved permanently!' : 'Member saved in this browser. Firebase save failed.');
             this.refreshIcons();
+        },
+
+        async removeMember(id) {
+            if (!confirm('Remove this member?')) return;
+            this.people = this.people.filter(x => x.id !== id);
+            const remoteSaved = await this.saveCmsKeysNow(['people', 'teamCategoryOrder']);
+            this.showToast(remoteSaved ? 'Member removed permanently.' : 'Member removed in this browser. Firebase save failed.');
         },
 
         // ── PUBLICATIONS ──
