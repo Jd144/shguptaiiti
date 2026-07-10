@@ -174,6 +174,100 @@
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         #ann-bar.off { display: none; }
         [x-cloak] { display: none !important; }
+        .cms-booting > *:not(.cms-boot-screen):not(script) {
+            display: none !important;
+        }
+        .cms-boot-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(77, 168, 218, 0.32), transparent 28%),
+                radial-gradient(circle at 80% 30%, rgba(15, 76, 129, 0.36), transparent 32%),
+                linear-gradient(135deg, #07182f 0%, #0F4C81 48%, #8f1515 100%);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            padding: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+        .cms-boot-screen::before,
+        .cms-boot-screen::after {
+            content: "";
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            animation: cmsOrbit 5.5s linear infinite;
+        }
+        .cms-boot-screen::before {
+            left: -90px;
+            top: -70px;
+        }
+        .cms-boot-screen::after {
+            right: -110px;
+            bottom: -95px;
+            animation-direction: reverse;
+        }
+        .cms-boot-card {
+            position: relative;
+            z-index: 1;
+            width: min(92vw, 520px);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            padding: 34px 28px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+        }
+        .cms-boot-spinner {
+            width: 64px;
+            height: 64px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #ffffff;
+            border-right-color: #4DA8DA;
+            border-radius: 999px;
+            margin: 0 auto 18px;
+            animation: cmsSpin 0.9s linear infinite;
+            position: relative;
+        }
+        .cms-boot-spinner::after {
+            content: "";
+            position: absolute;
+            inset: 17px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 22px rgba(77, 168, 218, 0.9);
+        }
+        .cms-boot-title {
+            font-size: clamp(1.25rem, 4vw, 2.1rem);
+            line-height: 1.18;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+        .cms-boot-line {
+            height: 3px;
+            width: 180px;
+            margin: 16px auto 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, #ffffff, #4DA8DA, transparent);
+            animation: cmsPulse 1.4s ease-in-out infinite;
+        }
+        .cms-boot-subtitle {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.82rem;
+        }
+        @keyframes cmsSpin { to { transform: rotate(360deg); } }
+        @keyframes cmsPulse {
+            0%, 100% { opacity: 0.45; transform: scaleX(0.78); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+        @keyframes cmsOrbit {
+            to { transform: rotate(360deg); }
+        }
 
         @media (max-width: 767px) {
             .mobile-text-fit h1 { font-size: 1rem; line-height: 1.2; }
@@ -216,8 +310,18 @@
 </head>
 <body
     x-data="labCMS()"
-    class="text-slate-800"
+    class="text-slate-800 cms-booting"
+    :class="{ 'cms-booting': !isBootReady }"
     :style="{ backgroundColor: themeColors.background }">
+
+<div class="cms-boot-screen" x-show="!isBootReady">
+    <div class="cms-boot-card">
+        <div class="cms-boot-spinner"></div>
+        <div class="cms-boot-title">WELCOME TO BPBME LAB PORTAL</div>
+        <div class="cms-boot-line"></div>
+        <div class="cms-boot-subtitle">Loading the latest laboratory content...</div>
+    </div>
+</div>
 
 <!-- ══════════════════════════════════════════
      ANNOUNCEMENT SCROLLING BAR
@@ -347,7 +451,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                     <section class="bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-100">
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b font-poppins" :style="{ color: themeColors.navy }">Principal Investigator</h3>
                         <div class="pi-profile-row flex flex-col sm:flex-row gap-6">
-                            <img :src="homeData.piImage" alt="PI" class="pi-profile-img rounded-2xl shadow-sm border-4 clickable-media" :style="{ borderColor: themeColors.sky }" @click="openLightbox(homeData.piImage, 'image', homeData.piName)">
+                            <img :src="piPhotoSrc()" alt="PI" class="pi-profile-img rounded-2xl shadow-sm border-4 clickable-media" :style="{ borderColor: themeColors.sky }" @click="openLightbox(piPhotoSrc(), 'image', homeData.piName)">
                             <div class="space-y-3 text-center sm:text-left">
                                 <h4 class="text-2xl font-bold text-slate-900" x-text="homeData.piName"></h4>
                                 <p class="text-sm font-semibold" :style="{ color: themeColors.sky }" x-text="homeData.piRole"></p>
@@ -984,7 +1088,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                     <div>
                                         <label class="adm-label">PI Photo (Upload from device)</label>
                                         <div style="display:flex;align-items:center;gap:12px;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px;background:#f8fafc">
-                                            <img :src="homeData.piImage || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=60&q=80'" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0">
+                                            <img :src="piPhotoSrc()" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;flex-shrink:0">
                                             <div style="flex:1">
                                                 <input type="file" id="pi-photo-input" accept="image/*" style="display:none" @change="uploadPIPhoto($event)">
                                                 <button type="button" onclick="document.getElementById('pi-photo-input').click()" class="btn-pri" style="font-size:12px;padding:7px 14px">📁 Choose PI Photo</button>
@@ -2167,6 +2271,7 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
 function labCMS() {
     return {
         storageKey: 'bpmeLabCMSStateV1',
+        defaultPiImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='520' viewBox='0 0 400 520'%3E%3Crect width='400' height='520' fill='%23f8fafc'/%3E%3Ccircle cx='200' cy='178' r='74' fill='%230F4C81' opacity='0.16'/%3E%3Ccircle cx='200' cy='160' r='48' fill='%230F4C81'/%3E%3Cpath d='M105 410c10-76 56-118 95-118s85 42 95 118' fill='%230F4C81'/%3E%3Ctext x='200' y='470' text-anchor='middle' font-family='Arial' font-size='24' font-weight='700' fill='%230F4C81'%3EProf. Sharad Gupta%3C/text%3E%3C/svg%3E",
         activePage: 'home',
         mobileMenuOpen: false,
         peopleFilter: 'All',
@@ -2210,6 +2315,7 @@ function labCMS() {
         lightbox: { open: false, src: '', type: 'image', title: '' },
         remoteSaveTimer: null,
         isRemoteLoading: false,
+        isBootReady: false,
         builderUnlocked: false,
         builderPasswordInput: '',
         builderPrompt: '',
@@ -2274,10 +2380,10 @@ function labCMS() {
             labSubName: 'Biophysics & Biomedical Engineering Lab',
             headline: 'Biophysics & Biomedical Engineering Laboratory',
             subheadline: 'Pushing the boundaries of light, life, and advanced diagnostic optics at Indian Institute of Technology Indore.',
-            piName: 'Dr. S. Gupta',
-            piRole: 'Associate Professor, Biosciences and Biomedical Engineering',
-            piImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-            piBio: `<p class="mb-2">Welcome to our research hub. Our lab focuses on interactions between light waves and biomedical structures.</p><p>We are engineering non-invasive computational diagnostic platforms for early-stage screening parameters, especially focusing on affordable Indian healthcare systems.</p>`
+            piName: 'Prof. Sharad Gupta',
+            piRole: 'Professor',
+            piImage: '',
+            piBio: `<p class="mb-2">Welcome to the BioPhysics and BioMedical Engineering (BPBME) research group at Indian Institute of Technology, Indore. We are an interdisciplinary research group; our research lies at the intersection of optics, material science, and biology.</p><p>Our major focus is on the development of novel biological and metallic nanomaterials for theranostics applications, biomaterials for tissue engineering, virus-like particles for targeted drug delivery, and optical tools for early disease diagnosis.</p>`
         },
 
         labMediaList: [
@@ -2301,7 +2407,7 @@ function labCMS() {
         ],
 
         people: [
-            { id: 1, name: 'Dr. S. Gupta', role: 'Principal Investigator', category: 'Faculty', email: 'sgupta@iiti.ac.in', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80', researchArea: 'Biophotonics Tomography Systems', scholarUrl: '', bio: 'Directing advanced diagnostic optics platforms.' },
+            { id: 1, name: 'Prof. Sharad Gupta', role: 'Principal Investigator', category: 'Faculty', email: 'shgupta@iiti.ac.in', img: '', researchArea: 'Non-Invasive Characterization and Disease Diagnosis', scholarUrl: '', bio: 'Leading the BioPhysics and BioMedical Engineering research group at IIT Indore.' },
             { id: 2, name: 'Amit Kumar', role: 'Senior PhD Candidate', category: 'PhD', email: 'amit.k@iiti.ac.in', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80', researchArea: 'Deep Biophotonics Analytics', scholarUrl: 'https://scholar.google.com', bio: 'Focusing on Convolutional bio-sensor noise filters.' }
         ],
 
@@ -3553,9 +3659,21 @@ function labCMS() {
         refreshIcons() {
             setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 60);
         },
-        init() {
+        piPhotoSrc() {
+            return this.homeData.piImage || this.defaultPiImage;
+        },
+        async bootSite() {
             this.loadSavedState();
-            this.loadRemoteState();
+            const startedAt = Date.now();
+            await this.loadRemoteState();
+            const remaining = Math.max(0, 900 - (Date.now() - startedAt));
+            setTimeout(() => {
+                this.isBootReady = true;
+                this.refreshIcons();
+            }, remaining);
+        },
+        init() {
+            this.bootSite();
             if (window.labAuth) {
                 window.labAuth.onAuthStateChanged(user => {
                     if (user) {
