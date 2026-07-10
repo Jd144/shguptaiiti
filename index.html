@@ -183,9 +183,9 @@
             align-items: center;
             justify-content: center;
             background:
-                radial-gradient(circle at 20% 20%, rgba(77, 168, 218, 0.32), transparent 28%),
-                radial-gradient(circle at 80% 30%, rgba(15, 76, 129, 0.36), transparent 32%),
-                linear-gradient(135deg, #07182f 0%, #0F4C81 48%, #8f1515 100%);
+                radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--boot-accent, #4DA8DA) 32%, transparent), transparent 28%),
+                radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--boot-mid, #0F4C81) 36%, transparent), transparent 32%),
+                linear-gradient(135deg, var(--boot-start, #07182f) 0%, var(--boot-mid, #0F4C81) 48%, var(--boot-end, #8f1515) 100%);
             color: #ffffff;
             font-family: 'Poppins', sans-serif;
             text-align: center;
@@ -227,8 +227,8 @@
             width: 64px;
             height: 64px;
             border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #ffffff;
-            border-right-color: #4DA8DA;
+            border-top-color: var(--boot-text, #ffffff);
+            border-right-color: var(--boot-accent, #4DA8DA);
             border-radius: 999px;
             margin: 0 auto 18px;
             animation: cmsSpin 0.9s linear infinite;
@@ -239,8 +239,8 @@
             position: absolute;
             inset: 17px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 22px rgba(77, 168, 218, 0.9);
+            background: var(--boot-text, #ffffff);
+            box-shadow: 0 0 22px var(--boot-accent, #4DA8DA);
         }
         .cms-boot-title {
             font-size: clamp(1.25rem, 4vw, 2.1rem);
@@ -253,11 +253,11 @@
             width: 180px;
             margin: 16px auto 14px;
             border-radius: 999px;
-            background: linear-gradient(90deg, transparent, #ffffff, #4DA8DA, transparent);
+            background: linear-gradient(90deg, transparent, var(--boot-text, #ffffff), var(--boot-accent, #4DA8DA), transparent);
             animation: cmsPulse 1.4s ease-in-out infinite;
         }
         .cms-boot-subtitle {
-            color: rgba(255, 255, 255, 0.82);
+            color: var(--boot-subtitle, #dbeafe);
             font-size: 0.82rem;
         }
         @keyframes cmsSpin { to { transform: rotate(360deg); } }
@@ -314,12 +314,12 @@
     :class="{ 'cms-booting': !isBootReady }"
     :style="{ backgroundColor: themeColors.background }">
 
-<div class="cms-boot-screen" x-show="!isBootReady">
+<div class="cms-boot-screen" x-show="!isBootReady" :style="loaderStyle()">
     <div class="cms-boot-card">
         <div class="cms-boot-spinner"></div>
-        <div class="cms-boot-title">WELCOME TO BPBME LAB PORTAL</div>
+        <div class="cms-boot-title" x-text="siteSettings.loaderTitle || 'WELCOME TO BPBME LAB PORTAL'"></div>
         <div class="cms-boot-line"></div>
-        <div class="cms-boot-subtitle">Loading the latest laboratory content...</div>
+        <div class="cms-boot-subtitle" x-text="siteSettings.loaderSubtitle || 'Loading the latest laboratory content...'"></div>
     </div>
 </div>
 
@@ -1969,6 +1969,57 @@ Authorized Personnel Only. All login attempts are encrypted, monitored, and logg
                                         <div style="width:48px;height:48px;border-radius:10px" :style="{background:themeColors.sky}"></div>
                                         <div style="font-size:12px;color:#6b7280">Live preview — changes apply to navbar, buttons, and headings instantly.</div>
                                     </div>
+                                    <div class="adm-card" style="border:1px solid #e2e8f0;box-shadow:none">
+                                        <div class="adm-card-hd">
+                                            <div class="adm-card-title">Welcome Loader Editor</div>
+                                            <span style="font-size:12px;color:#6e7681">Edit the loading animation text and colors</span>
+                                        </div>
+                                        <div class="p-5 space-y-4">
+                                            <div class="rounded-xl p-5 text-center" :style="loaderPreviewStyle()">
+                                                <div class="cms-boot-spinner" style="transform:scale(.72);margin-bottom:10px"></div>
+                                                <div class="cms-boot-title" style="font-size:1.35rem" x-text="siteSettings.loaderTitle || 'WELCOME TO BPBME LAB PORTAL'"></div>
+                                                <div class="cms-boot-line"></div>
+                                                <div class="cms-boot-subtitle" x-text="siteSettings.loaderSubtitle || 'Loading the latest laboratory content...'"></div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="adm-label">Loader Title</label>
+                                                    <input type="text" x-model="siteSettings.loaderTitle" class="adm-input" placeholder="WELCOME TO BPBME LAB PORTAL">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Loader Subtitle</label>
+                                                    <input type="text" x-model="siteSettings.loaderSubtitle" class="adm-input" placeholder="Loading the latest laboratory content...">
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div>
+                                                    <label class="adm-label">Background Start</label>
+                                                    <input type="color" x-model="siteSettings.loaderBgStart" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Background Middle</label>
+                                                    <input type="color" x-model="siteSettings.loaderBgMiddle" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Background End</label>
+                                                    <input type="color" x-model="siteSettings.loaderBgEnd" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Title / Main Text</label>
+                                                    <input type="color" x-model="siteSettings.loaderTextColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Subtitle Text</label>
+                                                    <input type="color" x-model="siteSettings.loaderSubtitleColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                                <div>
+                                                    <label class="adm-label">Animation Accent</label>
+                                                    <input type="color" x-model="siteSettings.loaderAccentColor" class="adm-input" style="height:40px;padding:3px">
+                                                </div>
+                                            </div>
+                                            <button class="btn-sm" @click="resetLoaderSettings()">Reset Loader Defaults</button>
+                                        </div>
+                                    </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label class="adm-label">Footer Left Logo URL (IIT Indore)</label>
@@ -2339,6 +2390,14 @@ function labCMS() {
             heroBgImage: '',
             heroTitleColor: '#ffffff',
             heroSubtitleColor: '#e0f2fe',
+            loaderTitle: 'WELCOME TO BPBME LAB PORTAL',
+            loaderSubtitle: 'Loading the latest laboratory content...',
+            loaderBgStart: '#07182f',
+            loaderBgMiddle: '#0F4C81',
+            loaderBgEnd: '#8f1515',
+            loaderTextColor: '#ffffff',
+            loaderSubtitleColor: '#dbeafe',
+            loaderAccentColor: '#4DA8DA',
             teamSubtitle: 'Our Superstars',
             teamAllLabel: 'All',
             facultySectionTitle: 'Principal Investigator',
@@ -2514,6 +2573,14 @@ function labCMS() {
             this.pageNames = { ...this.pageNames, teaching: this.pageNames.teaching || 'Teaching' };
             this.siteSettings = {
                 ...this.siteSettings,
+                loaderTitle: this.siteSettings.loaderTitle || 'WELCOME TO BPBME LAB PORTAL',
+                loaderSubtitle: this.siteSettings.loaderSubtitle || 'Loading the latest laboratory content...',
+                loaderBgStart: this.siteSettings.loaderBgStart || '#07182f',
+                loaderBgMiddle: this.siteSettings.loaderBgMiddle || '#0F4C81',
+                loaderBgEnd: this.siteSettings.loaderBgEnd || '#8f1515',
+                loaderTextColor: this.siteSettings.loaderTextColor || '#ffffff',
+                loaderSubtitleColor: this.siteSettings.loaderSubtitleColor || '#dbeafe',
+                loaderAccentColor: this.siteSettings.loaderAccentColor || '#4DA8DA',
                 teamAllLabel: this.siteSettings.teamAllLabel || 'All',
                 facultySectionTitle: this.siteSettings.facultySectionTitle || 'Principal Investigator',
                 footerLabTitle: this.siteSettings.footerLabTitle || 'Biophysics & Biomedical Engineering Lab',
@@ -2726,6 +2793,30 @@ function labCMS() {
 
         announcementBarStyle() {
             return `linear-gradient(90deg, ${this.siteSettings.annBgStart}, ${this.siteSettings.annBgEnd})`;
+        },
+        loaderStyle() {
+            const start = this.siteSettings.loaderBgStart || '#07182f';
+            const middle = this.siteSettings.loaderBgMiddle || '#0F4C81';
+            const end = this.siteSettings.loaderBgEnd || '#8f1515';
+            const text = this.siteSettings.loaderTextColor || '#ffffff';
+            const subtitle = this.siteSettings.loaderSubtitleColor || '#dbeafe';
+            const accent = this.siteSettings.loaderAccentColor || '#4DA8DA';
+            return {
+                '--boot-start': start,
+                '--boot-mid': middle,
+                '--boot-end': end,
+                '--boot-text': text,
+                '--boot-subtitle': subtitle,
+                '--boot-accent': accent,
+                color: text
+            };
+        },
+        loaderPreviewStyle() {
+            return {
+                ...this.loaderStyle(),
+                background: `linear-gradient(135deg, ${this.siteSettings.loaderBgStart || '#07182f'} 0%, ${this.siteSettings.loaderBgMiddle || '#0F4C81'} 48%, ${this.siteSettings.loaderBgEnd || '#8f1515'} 100%)`,
+                color: this.siteSettings.loaderTextColor || '#ffffff'
+            };
         },
 
         heroStyle() {
@@ -3531,6 +3622,18 @@ function labCMS() {
             delete this.pageNames[id];
             if (this.activePage === id) this.activePage = 'home';
             this.showToast('Custom page removed.');
+        },
+
+        resetLoaderSettings() {
+            this.siteSettings.loaderTitle = 'WELCOME TO BPBME LAB PORTAL';
+            this.siteSettings.loaderSubtitle = 'Loading the latest laboratory content...';
+            this.siteSettings.loaderBgStart = '#07182f';
+            this.siteSettings.loaderBgMiddle = '#0F4C81';
+            this.siteSettings.loaderBgEnd = '#8f1515';
+            this.siteSettings.loaderTextColor = '#ffffff';
+            this.siteSettings.loaderSubtitleColor = '#dbeafe';
+            this.siteSettings.loaderAccentColor = '#4DA8DA';
+            this.showToast('Loader settings reset.');
         },
 
         resetFooterSettings() {
